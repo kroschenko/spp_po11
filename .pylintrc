@@ -20,7 +20,9 @@ disable=
         too-many-locals,
         no-name-in-module,
         too-many-instance-attributes,
-        logging-fstring-interpolation
+        logging-fstring-interpolation,
+        missing-module-docstring,
+        missing-function-docstring
 
 
 [BASIC]
