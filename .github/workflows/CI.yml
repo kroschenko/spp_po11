@@ -53,3 +53,21 @@ jobs:
           checkAllCommitMessages: true # optional, default is false
           # you must provide GITHUB_TOKEN to this input if checkAllCommitMessages is true
           accessToken: ${{ secrets.GITHUB_TOKEN }} # optional, default is false
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Python environment 
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install isort black pylint
+        
+      - name: Checking quality of the Python code
+        run: |
+          source venv/bin/activate
+          python -m isort -c --profile black reports
+          python -m black --diff --color --line-length 120 reports
+          python -m pylint reports
