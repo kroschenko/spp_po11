@@ -1,4 +1,3 @@
-
 amountOfNumbers: int = int(input("Enter amount of numbers: "))
 listOfNumbers: list = []
 
