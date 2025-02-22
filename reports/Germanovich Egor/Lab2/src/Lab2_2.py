@@ -17,7 +17,10 @@ class Applicant:
         return sum(g.value for g in self.grades) / len(self.grades)
 
     def __str__(self):
-        return f"Абитуриент: {self.name}, Факультет: {self.faculty.name if self.faculty else 'Не зарегистрирован'}"
+        return (
+            f"Абитуриент: {self.name}, "
+            f"Факультет: {self.faculty.name if self.faculty else 'Не зарегистрирован'}"
+        )
 
 
 class Faculty:
@@ -78,30 +81,31 @@ class AdmissionSystem:
     def add_faculty(self, faculty):
         self.faculties.append(faculty)
 
-    def admit_applicants(self, threshold: float):
-        admitted = []
+    def admit_applicants(self, threshold_score: float):
+        admitted_list = []
         for applicant in self.applicants:
-            if applicant.average_score() >= threshold:
-                admitted.append(applicant)
-        return admitted
+            if applicant.average_score() >= threshold_score:
+                admitted_list.append(applicant)
+        return admitted_list
 
     def __str__(self):
         return f"Система зачислений: {len(self.applicants)} абитуриентов, {len(self.faculties)} факультетов"
 
 
-def get_user_input():
-    system = AdmissionSystem()
-
+def input_faculties(admission_system):
     faculties = []
     while True:
         faculty_name = input("Введите название факультета (или 'стоп' для завершения): ")
         if faculty_name.lower() == "стоп":
             break
         faculty = Faculty(faculty_name)
-        system.add_faculty(faculty)
+        admission_system.add_faculty(faculty)
         faculties.append(faculty)
         print(f"Факультет '{faculty_name}' добавлен.")
+    return faculties
 
+
+def input_applicants(admission_system, faculties):
     applicants = []
     while True:
         applicant_name = input("Введите имя абитуриента (или 'стоп' для завершения): ")
@@ -113,10 +117,16 @@ def get_user_input():
             print(f"{i + 1}. {faculty.name}")
         faculty_index = int(input("Выберите факультет (номер): ")) - 1
         applicant.register_faculty(faculties[faculty_index])
-        system.add_applicant(applicant)
+        admission_system.add_applicant(applicant)
         applicants.append(applicant)
-        print(f"Абитуриент '{applicant_name}' зарегистрирован на факультет '{faculties[faculty_index].name}'.")
+        print(
+            f"Абитуриент '{applicant_name}' зарегистрирован на факультет "
+            f"'{faculties[faculty_index].name}'."
+        )
+    return applicants
 
+
+def input_exams():
     exams = []
     while True:
         exam_name = input("Введите название экзамена (или 'стоп' для завершения): ")
@@ -125,7 +135,10 @@ def get_user_input():
         exam = Exam(exam_name)
         exams.append(exam)
         print(f"Экзамен '{exam_name}' добавлен.")
+    return exams
 
+
+def input_teachers():
     teachers = []
     while True:
         teacher_name = input("Введите имя преподавателя (или 'стоп' для завершения): ")
@@ -134,7 +147,10 @@ def get_user_input():
         teacher = Teacher(teacher_name)
         teachers.append(teacher)
         print(f"Преподаватель '{teacher_name}' добавлен.")
+    return teachers
 
+
+def assign_grades(applicants, exams, teachers):
     while True:
         print("Выберите абитуриента:")
         for i, applicant in enumerate(applicants):
@@ -155,17 +171,32 @@ def get_user_input():
 
         grade_value = float(input("Введите оценку: "))
         teachers[teacher_index].assign_grade(grade_value, applicants[applicant_index], exams[exam_index])
-        print(f"Оценка {grade_value} выставлена абитуриенту {applicants[applicant_index].name} за экзамен {exams[exam_index].name}.")
+        print(
+            f"Оценка {grade_value} выставлена абитуриенту {applicants[applicant_index].name} "
+            f"за экзамен {exams[exam_index].name}."
+        )
 
-    return system
+
+def get_user_input():
+    admission_system = AdmissionSystem()
+    faculties = input_faculties(admission_system)
+    applicants = input_applicants(admission_system, faculties)
+    exams = input_exams()
+    teachers = input_teachers()
+    assign_grades(applicants, exams, teachers)
+    return admission_system
+
+
+def main():
+    admission_system = get_user_input()
+
+    threshold_score = float(input("Введите порог среднего балла для зачисления: "))
+    admitted_students = admission_system.admit_applicants(threshold_score)
+
+    print("\nСписок зачисленных:")
+    for student in admitted_students:
+        print(f"{student.name} (Средний балл: {student.average_score()})")
 
 
 if __name__ == "__main__":
-    system = get_user_input()
-
-    threshold = float(input("Введите порог среднего балла для зачисления: "))
-    admitted = system.admit_applicants(threshold)
-
-    print("\nСписок зачисленных:")
-    for a in admitted:
-        print(f"{a.name} (Средний балл: {a.average_score()})")
+    main()

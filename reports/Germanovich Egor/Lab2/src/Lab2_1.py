@@ -1,9 +1,9 @@
 class Rectangle:
-    def __init__(self, width: float, height: float):
-        if width < 0 or height < 0:
+    def __init__(self, rect_width: float, rect_height: float):
+        if rect_width < 0 or rect_height < 0:
             raise ValueError("Ошибка: Ширина и высота прямоугольника должны быть положительными числами.")
-        self._width = width
-        self._height = height
+        self._width = rect_width
+        self._height = rect_height
 
     @property
     def width(self) -> float:
