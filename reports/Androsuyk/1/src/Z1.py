@@ -4,12 +4,13 @@ def check_sequence(sequence):
     else:
         return "не равны"
 
+
 N = int(input("Введите длину последовательности: "))
 
-sequence = []
+_sequence = []
 for i in range(N):
     element = int(input(f"Введите элемент {i + 1}: "))
-    sequence.append(element)
+    _sequence.append(element)
 
-result = check_sequence(sequence)
-print(f"Элементы последовательности {result}.")
+result = check_sequence(_sequence)
+print(f"Элементы последовательности: {result}.")
