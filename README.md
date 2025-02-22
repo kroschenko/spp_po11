@@ -15,5 +15,4 @@
 Тексты лабораторных: [тут](https://drive.google.com/drive/folders/1tu0VoKrLnYtrD0YSSm3M1P7d0Fq2eG0M?usp=share_link)
 
 Отчеты коммитаем в reports/<Ваша_фамилия>/<Номер_лабораторной_работы>/rep
-
 Код коммитаем в reports/<Ваша_фамилия>/<Номер_лабораторной_работы>/src
