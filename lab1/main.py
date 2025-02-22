@@ -18,8 +18,8 @@ def main():
     if max_key == 1:
         print(*arr)
         return
-    arr.pop(max_key)
-    print(*arr)
+    
+    print(arr.pop(max_key))
 
 
 if __name__ == "__main__":
