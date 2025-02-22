@@ -1,8 +1,7 @@
 def check_sequence(sequence):
     if all(x == sequence[0] for x in sequence):
         return "равны"
-    else:
-        return "не равны"
+    return "не равны"
 
 
 N = int(input("Введите длину последовательности: "))
