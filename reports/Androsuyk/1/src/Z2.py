@@ -4,6 +4,8 @@ def two_sum(numbers, target):
         complement = target - number
         if complement in num_to_index:
             return [num_to_index[complement], index]
+        if number == target:
+            return [index]
         num_to_index[number] = index
     return []
 
@@ -12,7 +14,7 @@ N = int(input("Введите количество элементов в мас�
 
 _numbers = []
 for i in range(N):
-    num = int(input(f"Введите элемент {i + 1}: "))
+    num = int(input(f"Введите элемент {i}: "))
     _numbers.append(num)
 
 target_sum = int(input("Введите целевое число: "))
