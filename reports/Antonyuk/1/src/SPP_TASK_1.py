@@ -1,15 +1,15 @@
 def process_sequence(sequence):
     if not sequence:
         return "The sequence is empty"
-    
+
     max_value = max(sequence)
     min_value = min(sequence)
     sum_value = sum(sequence)
-    
+
     product_value = 1
     for num in sequence:
         product_value *= num
-    
+
     return max_value, min_value, sum_value, product_value
 
 
