@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from typing import List
 
 
 class Person(ABC):
@@ -147,6 +146,45 @@ def assign_grade(students, courses):
     )
 
 
+def display_courses(courses):
+    if courses:
+        for course in courses:
+            course.display_info()
+    else:
+        print("Нет доступных курсов.")
+
+
+def handle_menu_choice(choice, students, courses, teacher):
+    if choice == "1":
+        teacher = create_teacher()
+        print(f"Преподаватель {teacher.name} создан.")
+    elif choice == "2":
+        student = create_student()
+        students.append(student)
+        print(f"Студент {student.name} создан.")
+    elif choice == "3":
+        if teacher:
+            course = create_course(teacher)
+            courses.append(course)
+            print(f"Курс {course.name} создан.")
+        else:
+            print("Сначала создайте преподавателя.")
+    elif choice == "4":
+        enroll_student(students, courses)
+    elif choice == "5":
+        assign_grade(students, courses)
+    elif choice == "6":
+        display_courses(courses)
+    elif choice == "7":
+        Archive.display_grades()
+    elif choice == "8":
+        print("Выход...")
+        return False
+    else:
+        print("Неверный выбор. Попробуйте снова.")
+    return True
+
+
 def main():
     students = []
     courses = []
@@ -164,39 +202,9 @@ def main():
         print("8. Выйти")
         choice = input("Введите ваш выбор: ")
 
-        if choice == "1":
-            teacher = create_teacher()
-            print(f"Преподаватель {teacher.name} создан.")
-        elif choice == "2":
-            student = create_student()
-            students.append(student)
-            print(f"Студент {student.name} создан.")
-        elif choice == "3":
-            if teacher:
-                course = create_course(teacher)
-                courses.append(course)
-                print(f"Курс {course.name} создан.")
-            else:
-                print("Сначала создайте преподавателя.")
-        elif choice == "4":
-            enroll_student(students, courses)
-        elif choice == "5":
-            assign_grade(students, courses)
-        elif choice == "6":
-            if courses:
-                for course in courses:
-                    course.display_info()
-            else:
-                print("Нет доступных курсов.")
-        elif choice == "7":
-            Archive.display_grades()
-        elif choice == "8":
-            print("Выход...")
+        if not handle_menu_choice(choice, students, courses, teacher):
             break
-        else:
-            print("Неверный выбор. Попробуйте снова.")
 
 
 if __name__ == "__main__":
     main()
-    
