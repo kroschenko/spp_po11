@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
+
 class Person(ABC):
     def __init__(self, name: str, person_id: int):
         self.name = name
