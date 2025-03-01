@@ -11,9 +11,11 @@ class IsoscelesTriangle:
         return (self.side_a == self.side_b) or (self.side_a == self.side_c) or (self.side_b == self.side_c)
 
     def exists(self):
-        return (self.side_a + self.side_b > self.side_c) and \
-               (self.side_a + self.side_c > self.side_b) and \
-               (self.side_b + self.side_c > self.side_a)
+        return (
+            (self.side_a + self.side_b > self.side_c)
+            and (self.side_a + self.side_c > self.side_b)
+            and (self.side_b + self.side_c > self.side_a)
+       )
 
     def perimeter(self):
         return self.side_a + self.side_b + self.side_c
@@ -65,11 +67,6 @@ class IsoscelesTriangle:
 
 
 def input_positive_number(prompt):
-    """
-    Функция для ввода положительного числа.
-    :param prompt: подсказка для пользователя
-    :return: положительное число
-    """
     while True:
         try:
             value = float(input(prompt))
@@ -83,11 +80,11 @@ def input_positive_number(prompt):
 
 if __name__ == "__main__":
     print("Введите длины сторон треугольника:")
-    side_a = input_positive_number("Введите длину первой стороны: ")
-    side_b = input_positive_number("Введите длину второй стороны: ")
-    side_c = input_positive_number("Введите длину третьей стороны: ")
+    _side_a = input_positive_number("Введите длину первой стороны: ")
+    _side_b = input_positive_number("Введите длину второй стороны: ")
+    _side_c = input_positive_number("Введите длину третьей стороны: ")
 
-    triangle = IsoscelesTriangle(side_a, side_b, side_c)
+    triangle = IsoscelesTriangle(_side_a, _side_b, _side_c)
 
     if not triangle.exists():
         print("\nТреугольник с такими сторонами не существует.")

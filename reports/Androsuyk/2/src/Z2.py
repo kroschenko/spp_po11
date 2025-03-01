@@ -11,6 +11,7 @@ class Person(ABC):
     def display_info(self):
         pass
 
+
 class Student(Person):
     def __init__(self, name: str, student_id: int):
         super().__init__(name, student_id)
@@ -22,6 +23,7 @@ class Student(Person):
 
     def display_info(self):
         print(f"Студент: {self.name}, ID: {self.person_id}")
+
 
 class Teacher(Person):
     def __init__(self, name: str, teacher_id: int):
@@ -40,6 +42,7 @@ class Teacher(Person):
     def display_info(self):
         print(f"Преподаватель: {self.name}, ID: {self.person_id}")
 
+
 class Course:
     def __init__(self, name: str, teacher: Teacher):
         self.name = name
@@ -55,6 +58,7 @@ class Course:
         for student in self.students:
             print(f" - {student.name}")
 
+
 class Grade:
     def __init__(self, student: Student, course: Course, grade_value: int):
         self.student = student
@@ -63,6 +67,7 @@ class Grade:
 
     def display_info(self):
         print(f"Оценка: {self.grade_value}, Студент: {self.student.name}, Курс: {self.course.name}")
+
 
 class Archive:
     _grades = []
@@ -77,19 +82,23 @@ class Archive:
         for grade in cls._grades:
             grade.display_info()
 
+
 def create_teacher():
     name = input("Введите имя преподавателя: ")
     teacher_id = int(input("Введите ID преподавателя: "))
     return Teacher(name, teacher_id)
+
 
 def create_student():
     name = input("Введите имя студента: ")
     student_id = int(input("Введите ID студента: "))
     return Student(name, student_id)
 
+
 def create_course(teacher):
     course_name = input("Введите название курса: ")
     return teacher.create_course(course_name)
+
 
 def enroll_student(students, courses):
     if not students:
@@ -112,6 +121,7 @@ def enroll_student(students, courses):
     students[student_index].enroll(courses[course_index])
     print(f"Студент {students[student_index].name} записан на курс {courses[course_index].name}.")
 
+
 def assign_grade(students, courses):
     if not students:
         print("Нет доступных студентов.")
@@ -132,7 +142,10 @@ def assign_grade(students, courses):
 
     grade_value = int(input("Введите оценку: "))
     courses[course_index].teacher.assign_grade(students[student_index], courses[course_index], grade_value)
-    print(f"Оценка {grade_value} выставлена студенту {students[student_index].name} за курс {courses[course_index].name}.")
+    print(
+        f"Оценка {grade_value} выставлена студенту {students[student_index].name} за курс {courses[course_index].name}."
+    )
+
 
 def main():
     students = []
@@ -182,6 +195,7 @@ def main():
             break
         else:
             print("Неверный выбор. Попробуйте снова.")
+
 
 if __name__ == "__main__":
     main()
