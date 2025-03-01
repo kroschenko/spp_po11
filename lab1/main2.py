@@ -5,9 +5,11 @@ def isPalindrome(x):
         return False
     
 def main():
-    num = int(input('Введите число: '))
-    print(isPalindrome(num))
-    
+    try:
+        num = int(input('Введите число: '))
+        print(isPalindrome(num))
+    except:
+        print(False)
 if __name__ == "__main__":
     main()
     
