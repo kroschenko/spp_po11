@@ -154,21 +154,34 @@ def display_courses(courses):
         print("Нет доступных курсов.")
 
 
+def handle_create_teacher(teacher):
+    teacher = create_teacher()
+    print(f"Преподаватель {teacher.name} создан.")
+    return teacher
+
+
+def handle_create_student(students):
+    student = create_student()
+    students.append(student)
+    print(f"Студент {student.name} создан.")
+
+
+def handle_create_course(teacher, courses):
+    if teacher:
+        course = create_course(teacher)
+        courses.append(course)
+        print(f"Курс {course.name} создан.")
+    else:
+        print("Сначала создайте преподавателя.")
+
+
 def handle_menu_choice(choice, students, courses, teacher):
     if choice == "1":
-        teacher = create_teacher()
-        print(f"Преподаватель {teacher.name} создан.")
+        teacher = handle_create_teacher(teacher)
     elif choice == "2":
-        student = create_student()
-        students.append(student)
-        print(f"Студент {student.name} создан.")
+        handle_create_student(students)
     elif choice == "3":
-        if teacher:
-            course = create_course(teacher)
-            courses.append(course)
-            print(f"Курс {course.name} создан.")
-        else:
-            print("Сначала создайте преподавателя.")
+        handle_create_course(teacher, courses)
     elif choice == "4":
         enroll_student(students, courses)
     elif choice == "5":
@@ -208,3 +221,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
