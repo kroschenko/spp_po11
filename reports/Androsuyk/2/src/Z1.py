@@ -15,7 +15,7 @@ class IsoscelesTriangle:
             (self.side_a + self.side_b > self.side_c)
             and (self.side_a + self.side_c > self.side_b)
             and (self.side_b + self.side_c > self.side_a)
-       )
+        )
 
     def perimeter(self):
         return self.side_a + self.side_b + self.side_c
