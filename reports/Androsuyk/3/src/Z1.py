@@ -88,10 +88,10 @@ if __name__ == "__main__":
 
     while True:
         display_menu()
-        choice = input("Введите номер кофе или 'q', если нужно выйти: ").strip()
+        _choice = input("Введите номер кофе или 'q', если нужно выйти: ").strip()
 
-        if choice.lower() == 'q':
+        if _choice.lower() == 'q':
             print("Выход")
             break
 
-        coffee_machine.make_coffee(choice)
+        coffee_machine.make_coffee(_choice)

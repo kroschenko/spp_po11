@@ -20,19 +20,18 @@ class FixedButton(Button):
 class ConfigurableButton(Button):
     def __init__(self, label):
         self.label = label
-        self.strategy = None
+        self._strategy = None
 
-    def set_strategy(self, strategy):
-        self.strategy = strategy
+    def set_strategy(self, new_strategy):
+        self._strategy = new_strategy
 
     def press(self):
-        if self.strategy:
-            result = self.strategy.execute()
+        if self._strategy:
+            result = self._strategy.execute()
             print(f"Нажата кнопка '{self.label}': {result}")
             return result
-        else:
-            print(f"Кнопка '{self.label}' не настроена.")
-            return None
+        print(f"Кнопка '{self.label}' не настроена.")
+        return None
 
 
 class Strategy(ABC):
@@ -76,9 +75,8 @@ class Keyboard:
     def press_button(self, name):
         if name in self.buttons:
             return self.buttons[name].press()
-        else:
-            print(f"Кнопка '{name}' не найдена.")
-            return None
+        print(f"Кнопка '{name}' не найдена.")
+        return None
 
     def list_buttons(self):
         print("Доступные кнопки:")
@@ -108,7 +106,6 @@ if __name__ == "__main__":
     keyboard.add_button("A", config_button_a)
     keyboard.add_button("B", config_button_b)
 
-
     strategies = {
         "1": ClearStrategy(),
         "2": MemorySaveStrategy(),
@@ -121,11 +118,11 @@ if __name__ == "__main__":
         display_menu()
         choice = input("Выберите действие: ").strip()
 
-        if choice == "1":  
+        if choice == "1":
             button_name = input("Введите название кнопки: ").strip()
             keyboard.press_button(button_name)
 
-        elif choice == "2":  
+        elif choice == "2":
             button_name = input("Введите название настраиваемой кнопки (A или B): ").strip().upper()
             if button_name in ["A", "B"]:
                 print("Доступные функции:")
@@ -143,12 +140,13 @@ if __name__ == "__main__":
             else:
                 print("Неверное название кнопки.")
 
-        elif choice == "3":  
+        elif choice == "3":
             keyboard.list_buttons()
 
-        elif choice == "4":  
+        elif choice == "4":
             print("Выход")
             break
 
         else:
             print("Ошибка.")
+            
