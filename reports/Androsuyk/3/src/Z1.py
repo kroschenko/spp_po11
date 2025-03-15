@@ -11,17 +11,21 @@ class Espresso(Coffee):
     def prepare(self):
         return "Espresso: крепкий кофе без молока!"
 
+
 class Latte(Coffee):
     def prepare(self):
         return "Latte: эспрессо с молоком и молочной пенкой!"
+
 
 class Cappuccino(Coffee):
     def prepare(self):
         return "Cappuccino: эспрессо с большим количеством молочной пенки!"
 
+
 class Americano(Coffee):
     def prepare(self):
         return "Americano: эспрессо с добавлением горячей воды!"
+
 
 class Mocha(Coffee):
     def prepare(self):
@@ -38,17 +42,21 @@ class EspressoFactory(CoffeeFactory):
     def create_coffee(self) -> Coffee:
         return Espresso()
 
+
 class LatteFactory(CoffeeFactory):
     def create_coffee(self) -> Coffee:
         return Latte()
+
 
 class CappuccinoFactory(CoffeeFactory):
     def create_coffee(self) -> Coffee:
         return Cappuccino()
 
+
 class AmericanoFactory(CoffeeFactory):
     def create_coffee(self) -> Coffee:
         return Americano()
+
 
 class MochaFactory(CoffeeFactory):
     def create_coffee(self) -> Coffee:
@@ -90,7 +98,7 @@ if __name__ == "__main__":
         display_menu()
         _choice = input("Введите номер кофе или 'q', если нужно выйти: ").strip()
 
-        if _choice.lower() == 'q':
+        if _choice.lower() == "q":
             print("Выход")
             break
 

@@ -37,14 +37,12 @@ class DigitalToAnalogAdapter(AnalogClock):
 
 def get_time_from_user():
     while True:
-        time_input = input(
-            "Введите время в формате ЧЧ:ММ:СС или 'q', если нужно выйти: "
-        ).strip()
+        time_input = input("Введите время в формате ЧЧ:ММ:СС или 'q', если нужно выйти: ").strip()
 
-        if time_input.lower() == 'q':
+        if time_input.lower() == "q":
             return None
 
-        hours, minutes, seconds = map(int, time_input.split(':'))
+        hours, minutes, seconds = map(int, time_input.split(":"))
         if 0 <= hours < 24 and 0 <= minutes < 60 and 0 <= seconds < 60:
             return hours, minutes, seconds
         print("Ошибка.")
@@ -65,4 +63,3 @@ if __name__ == "__main__":
 
         print(_digital_clock.display_time())
         print(analog_clock.display_time())
-        
