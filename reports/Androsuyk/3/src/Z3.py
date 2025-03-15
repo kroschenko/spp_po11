@@ -117,11 +117,9 @@ if __name__ == "__main__":
     while True:
         display_menu()
         choice = input("Выберите действие: ").strip()
-
         if choice == "1":
             button_name = input("Введите название кнопки: ").strip()
             keyboard.press_button(button_name)
-
         elif choice == "2":
             button_name = input("Введите название настраиваемой кнопки (A или B): ").strip().upper()
             if button_name in ["A", "B"]:
@@ -139,14 +137,10 @@ if __name__ == "__main__":
                     print("Неверный выбор функции.")
             else:
                 print("Неверное название кнопки.")
-
         elif choice == "3":
             keyboard.list_buttons()
-
         elif choice == "4":
             print("Выход.")
             break
-
         else:
             print("Ошибка.")
-            
