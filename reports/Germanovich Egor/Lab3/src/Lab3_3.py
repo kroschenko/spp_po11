@@ -1,6 +1,7 @@
+import random
 from abc import ABC, abstractmethod
 from datetime import datetime
-import random
+
 
 class FileSystemComponent(ABC):
     @abstractmethod
@@ -10,6 +11,7 @@ class FileSystemComponent(ABC):
     @abstractmethod
     def display(self, indent: str = "") -> str:
         pass
+
 
 class File(FileSystemComponent):
     def __init__(self, name: str, size: int, extension: str, created: datetime):
@@ -23,6 +25,7 @@ class File(FileSystemComponent):
 
     def display(self, indent: str = "") -> str:
         return f"{indent}📄 {self.name}.{self.extension} (Size: {self.size} bytes, Created: {self.created.strftime('%Y-%m-%d %H:%M:%S')})"
+
 
 class Directory(FileSystemComponent):
     def __init__(self, name: str):
@@ -44,10 +47,12 @@ class Directory(FileSystemComponent):
             result += child.display(indent + "  ") + "\n"
         return result.rstrip()
 
+
 class DisplayStrategy(ABC):
     @abstractmethod
     def display_components(self, components: list[FileSystemComponent], indent: str = "") -> str:
         pass
+
 
 class RandomOrderDisplay(DisplayStrategy):
     def display_components(self, components: list[FileSystemComponent], indent: str = "") -> str:
@@ -56,6 +61,7 @@ class RandomOrderDisplay(DisplayStrategy):
         for component in components:
             result += component.display(indent) + "\n"
         return result.rstrip()
+
 
 class DirectoryWithStrategy(Directory):
     def __init__(self, name: str, display_strategy: DisplayStrategy):
@@ -67,6 +73,7 @@ class DirectoryWithStrategy(Directory):
         result += self.display_strategy.display_components(self.children, indent + "  ")
         return result
 
+
 def create_file():
     name = input("Введите имя файла: ")
     size = int(input("Введите размер файла (в байтах): "))
@@ -74,9 +81,11 @@ def create_file():
     created = datetime.now()
     return File(name, size, extension, created)
 
+
 def create_directory():
     name = input("Введите имя директории: ")
     return DirectoryWithStrategy(name, RandomOrderDisplay())
+
 
 def main():
     root = DirectoryWithStrategy("Root", RandomOrderDisplay())
@@ -127,6 +136,7 @@ def main():
             break
         else:
             print("Неверный выбор. Попробуйте снова.")
+
 
 if __name__ == "__main__":
     main()

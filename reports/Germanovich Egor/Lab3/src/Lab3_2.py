@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
+
 class FileSystemComponent(ABC):
     @abstractmethod
     def get_size(self) -> int:
@@ -9,6 +10,7 @@ class FileSystemComponent(ABC):
     @abstractmethod
     def display(self, indent: str = "") -> str:
         pass
+
 
 class File(FileSystemComponent):
     def __init__(self, name: str, size: int, extension: str, created: datetime):
@@ -22,6 +24,7 @@ class File(FileSystemComponent):
 
     def display(self, indent: str = "") -> str:
         return f"{indent}📄 {self.name}.{self.extension} (Size: {self.size} bytes, Created: {self.created.strftime('%Y-%m-%d %H:%M:%S')})"
+
 
 class Directory(FileSystemComponent):
     def __init__(self, name: str):
@@ -43,6 +46,7 @@ class Directory(FileSystemComponent):
             result += child.display(indent + "  ") + "\n"
         return result.rstrip()
 
+
 def create_file():
     name = input("Введите имя файла: ")
     size = int(input("Введите размер файла (в байтах): "))
@@ -50,9 +54,11 @@ def create_file():
     created = datetime.now()
     return File(name, size, extension, created)
 
+
 def create_directory():
     name = input("Введите имя директории: ")
     return Directory(name)
+
 
 def main():
     root = Directory("Root")
@@ -103,6 +109,7 @@ def main():
             break
         else:
             print("Неверный выбор. Попробуйте снова.")
+
 
 if __name__ == "__main__":
     main()

@@ -17,10 +17,7 @@ class Applicant:
         return sum(g.value for g in self.grades) / len(self.grades)
 
     def __str__(self):
-        return (
-            f"Абитуриент: {self.name}, "
-            f"Факультет: {self.faculty.name if self.faculty else 'Не зарегистрирован'}"
-        )
+        return f"Абитуриент: {self.name}, " f"Факультет: {self.faculty.name if self.faculty else 'Не зарегистрирован'}"
 
 
 class Faculty:
@@ -119,10 +116,7 @@ def input_applicants(admission_system, faculties):
         applicant.register_faculty(faculties[faculty_index])
         admission_system.add_applicant(applicant)
         applicants.append(applicant)
-        print(
-            f"Абитуриент '{applicant_name}' зарегистрирован на факультет "
-            f"'{faculties[faculty_index].name}'."
-        )
+        print(f"Абитуриент '{applicant_name}' зарегистрирован на факультет " f"'{faculties[faculty_index].name}'.")
     return applicants
 
 
