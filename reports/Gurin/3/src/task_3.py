@@ -66,19 +66,30 @@ class WriteFileCommand(Command):
 
 class FileManager:
     def __init__(self):
-        self.history = []
+        self.executed_commands = []
+        self.undone_commands = []
 
     def execute_command(self, command):
         result = command.execute()
-        self.history.append(command)
+        self.executed_commands.append(command)
+        self.undone_commands.clear()
         return result
 
     def undo_last_command(self):
-        if self.history:
-            command = self.history.pop()
+        if self.executed_commands:
+            command = self.executed_commands.pop()
             command.undo()
+            self.undone_commands.append(command)
         else:
             print("Нет операций для отмены.")
+
+    def redo_last_command(self):
+        if self.undone_commands:
+            command = self.undone_commands.pop()
+            command.execute()
+            self.executed_commands.append(command)
+        else:
+            print("Нет отмененных операций для повторения.")
 
 
 def main():
@@ -101,6 +112,10 @@ def main():
     print(content)
 
     manager.undo_last_command()
+    manager.undo_last_command()
+
+    manager.redo_last_command()
+    manager.redo_last_command()
 
 
 if __name__ == "__main__":
