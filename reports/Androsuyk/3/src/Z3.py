@@ -144,7 +144,7 @@ if __name__ == "__main__":
             keyboard.list_buttons()
 
         elif choice == "4":
-            print("Выход")
+            print("Выход.")
             break
 
         else:
