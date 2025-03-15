@@ -23,7 +23,8 @@ class File(FileSystemComponent):
         return self.size
 
     def display(self, indent: str = "") -> str:
-        return f"{indent}📄 {self.name}.{self.extension} (Size: {self.size} bytes, Created: {self.created.strftime('%Y-%m-%d %H:%M:%S')})"
+        date: str = self.created.strftime('%Y-%m-%d %H:%M:%S')
+        return f"{indent}📄 {self.name}.{self.extension} (Size: {self.size} bytes, Created: {date})"
 
 
 class Directory(FileSystemComponent):
