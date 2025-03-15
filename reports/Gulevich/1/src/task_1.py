@@ -4,7 +4,6 @@ def find_median(numbers):
 
     if n % 2 == 1:
         return numbers[n // 2]  # Возвращаем средний элемент, если количество нечетное
-    
     mid1, mid2 = numbers[n // 2 - 1], numbers[n // 2]
     return (mid1 + mid2) / 2  # Возвращаем среднее двух средних элементов
 
