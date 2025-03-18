@@ -1,0 +1,29 @@
+query($username: String!) {
+    user (login: $username) {
+        repositories (first: 100) {
+            edges {
+                node {
+                    name
+                    defaultBranchRef {
+                        target {
+                            ... on Commit {
+                                history(first: 10) {
+                                    totalCount
+                                    edges {
+                                        node {
+                                            committedDate
+                                            message
+                                            author {
+                                                name
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
