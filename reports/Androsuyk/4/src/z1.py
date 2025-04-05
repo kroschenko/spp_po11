@@ -24,12 +24,7 @@ def get_trending_repos(language, days, min_stars=None):
     since_date = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
 
     url = "https://api.github.com/search/repositories"
-    params = {
-        "q": f"language:{language} created:>={since_date}",
-        "sort": "stars",
-        "order": "desc",
-        "per_page": 50
-    }
+    params = {"q": f"language:{language} created:>={since_date}", "sort": "stars", "order": "desc", "per_page": 50}
 
     if min_stars:
         params["q"] += f" stars:>={min_stars}"
@@ -167,4 +162,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
