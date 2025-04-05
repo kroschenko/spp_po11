@@ -1,14 +1,15 @@
-def rep(start, end, step):
-    if start >= end:
+def rep(start_val, end_val, step_val):
+    if start_val >= end_val:
         raise ValueError("start должен быть меньше end")
 
     sequence = []
-    current = start
-    while current < end:
+    current = start_val
+    while current < end_val:
         sequence.append(current)
-        current += step
-    
+        current += step_val
+
     return sequence
+
 
 if __name__ == "__main__":
     try:
@@ -18,7 +19,6 @@ if __name__ == "__main__":
 
         result = rep(start, end, step)
         print("Сгенерированная последовательность:", result)
-    
+
     except ValueError as e:
         print("Ошибка:", e)
-    
