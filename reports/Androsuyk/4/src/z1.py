@@ -20,7 +20,8 @@ except:
     pass
 
 def get_trending_repos(language, days, min_stars=None):
-    since_date = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
+
+    since_date = (datetime.now() - timedelta(days=args.days)).strftime("%Y-%m-%d")
     
     url = "https://api.github.com/search/repositories"
     params = {
@@ -128,10 +129,10 @@ def visualize_trends(repos, language, days, filename=None):
         plt.close()
 
 def main():
-    parser = argparse.ArgumentParser(description='Анализатор трендов GitHub')
-    parser.add_argument('--language', type=str, help='Python/Java/JavaScript)')
-    parser.add_argument('--days', type=int, choices=[7, 30], help='7 или 30 дней')
-    parser.add_argument('--min-stars', type=int, help='Минимальное количество звёзд')
+    parser = argparse.ArgumentParser(description="Анализатор трендов GitHub")
+    parser.add_argument("--language", type=str, help="Python/Java/JavaScript)")
+    parser.add_argument("--days", type=int, choices=[7, 30], help="7 или 30 дней")
+    parser.add_argument("--min-stars", type=int, help="Минимальное количество звёзд")
     
     args = parser.parse_args()
     
