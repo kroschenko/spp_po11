@@ -96,6 +96,8 @@ class CreditCard:
 
 
 class Client:
+    """Класс клиента банка с банковским счетом и кредитной картой"""
+    
     def __init__(self, name, account, credit_card):
         self._name = name
         self._account = account
@@ -154,6 +156,8 @@ class Client:
 
 
 class Administrator:
+    """Класс администратора банковской системы"""
+    
     @staticmethod
     def get_excess_status(client):
         """Проверка превышения кредитного лимита"""
@@ -208,29 +212,29 @@ def create_client():
     return Client(name, account, card)
 
 
-def handle_payment(client):
+def process_payment(client):
     """Обработка операции оплаты"""
     merchant = input("Введите название магазина/услуги: ")
-    amount = input_float("Введите сумму оплаты: ")
+    amount = input_float("Введите сумму оплатии: ")
     use_credit = input("Использовать кредитную карту? (y/n): ").lower() == 'y'
     client.pay_order(merchant, amount, use_credit)
 
 
-def handle_transfer(client):
+def process_transfer(client):
     """Обработка операции перевода"""
     target = input("Введите номер целевого счета: ")
     amount = input_float("Введите сумму перевода: ")
     client.transfer_to_account(target, amount)
 
 
-def show_client_info(client):
+def show_client_details(client):
     """Отображение информации о клиенте"""
     print("\n=== ИНФОРМАЦИЯ О КЛИЕНТЕ ===")
     print(client)
 
 
-def handle_account_closure(client):
-    """Обработка закрытия счета"""
+def confirm_account_closure(client):
+    """Подтверждение и обработка закрытия счета"""
     confirm = input("Вы уверены? Счет будет аннулирован! (y/n): ").lower() == 'y'
     if confirm:
         client.close_account()
@@ -238,15 +242,27 @@ def handle_account_closure(client):
     return False
 
 
+def execute_client_operation(client, admin, choice):
+    """Выполнение выбранной операции клиента"""
+    operations = {
+        '1': process_payment,
+        '2': process_transfer,
+        '3': Client.block_credit_card,
+        '5': show_client_details
+    }
+    
+    if choice == '4':
+        return confirm_account_closure(client)
+    elif choice in operations:
+        if choice == '3':
+            client.block_credit_card()
+        else:
+            operations[choice](client)
+    return False
+
+
 def show_client_menu(client, admin):
     """Меню операций с клиентом"""
-    menu_handlers = {
-        '1': lambda: handle_payment(client),
-        '2': lambda: handle_transfer(client),
-        '3': lambda: client.block_credit_card(),
-        '5': lambda: show_client_info(client)
-    }
-
     while True:
         print("\n=== ОПЕРАЦИИ С КЛИЕНТЕМ ===")
         print("1. Оплатить заказ")
@@ -259,19 +275,15 @@ def show_client_menu(client, admin):
 
         choice = input("Выберите действие (1-7): ")
 
-        if choice == '4':
-            if handle_account_closure(client):
-                return
-        elif choice == '6':
+        if choice == '6':
             return
         elif choice == '7':
             print("\nВыход из системы...")
             sys.exit()
-        elif choice in menu_handlers:
-            menu_handlers[choice]()
-        else:
-            print("Неверный выбор!")
-
+        
+        if execute_client_operation(client, admin, choice):
+            return
+            
         admin.block_card_for_excess(client)
 
 
@@ -295,6 +307,16 @@ def show_admin_menu(clients):
         print("Пожалуйста, введите число!")
 
 
+def main_menu():
+    """Отображение главного меню"""
+    print("\n=== ГЛАВНОЕ МЕНЮ ===")
+    print("1. Создать нового клиента")
+    print("2. Выбрать клиента")
+    print("3. Административные функции")
+    print("4. Выход")
+    return input("Выберите действие (1-4): ")
+
+
 def main():
     """Главная функция программы"""
     print("\n=== БАНКОВСКАЯ СИСТЕМА 'ПЛАТЕЖИ' ===")
@@ -302,13 +324,7 @@ def main():
     admin = Administrator()
 
     while True:
-        print("\n=== ГЛАВНОЕ МЕНЮ ===")
-        print("1. Создать нового клиента")
-        print("2. Выбрать клиента")
-        print("3. Административные функции")
-        print("4. Выход")
-
-        choice = input("Выберите действие (1-4): ")
+        choice = main_menu()
 
         if choice == '1':
             clients.append(create_client())
