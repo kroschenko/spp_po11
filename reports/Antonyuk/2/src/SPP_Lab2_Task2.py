@@ -28,7 +28,7 @@ class BankAccount:
 
     def withdraw(self, amount):
         if amount <= 0:
-            raise ValueError("Сумма должна быть положительной")
+            raise ValueError("Сумма должна быть положительными")
         if not self._is_active:
             raise ValueError("Счет не активен")
         if amount > self._balance:
@@ -229,13 +229,22 @@ def show_client_info(client):
     print(client)
 
 
+def handle_account_closure(client):
+    """Обработка закрытия счета"""
+    confirm = input("Вы уверены? Счет будет аннулирован! (y/n): ").lower() == 'y'
+    if confirm:
+        client.close_account()
+        return True
+    return False
+
+
 def show_client_menu(client, admin):
     """Меню операций с клиентом"""
-    menu_options = {
-        '1': handle_payment,
-        '2': handle_transfer,
-        '3': lambda c: c.block_credit_card(),
-        '5': show_client_info
+    menu_handlers = {
+        '1': lambda: handle_payment(client),
+        '2': lambda: handle_transfer(client),
+        '3': lambda: client.block_credit_card(),
+        '5': lambda: show_client_info(client)
     }
 
     while True:
@@ -251,17 +260,15 @@ def show_client_menu(client, admin):
         choice = input("Выберите действие (1-7): ")
 
         if choice == '4':
-            confirm = input("Вы уверены? Счет будет аннулирован! (y/n): ").lower() == 'y'
-            if confirm:
-                client.close_account()
+            if handle_account_closure(client):
                 return
         elif choice == '6':
             return
         elif choice == '7':
             print("\nВыход из системы...")
             sys.exit()
-        elif choice in menu_options:
-            menu_options[choice](client)
+        elif choice in menu_handlers:
+            menu_handlers[choice]()
         else:
             print("Неверный выбор!")
 
