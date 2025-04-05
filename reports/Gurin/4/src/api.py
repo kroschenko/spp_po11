@@ -1,13 +1,13 @@
 from requests import post
 
-from const import GITHUB_API_GRAPHQL_ENDPOINT, GITHUB_TOKEN, QUERY_FILENAME
+from const import MainConst
 
 
 def get_github_data(username: str) -> str:
-    headers = {"Authorization": f"Bearer {GITHUB_TOKEN}"}
-    query: str = load_query_from_file(QUERY_FILENAME)
+    headers = {"Authorization": f"Bearer {MainConst.GITHUB_TOKEN}"}
+    query: str = load_query_from_file(MainConst.QUERY_FILENAME)
     variables = {"username": username}
-    response = post(GITHUB_API_GRAPHQL_ENDPOINT, headers=headers, json={"query": query, "variables": variables})
+    response = post(MainConst.GITHUB_API_GRAPHQL_ENDPOINT, headers=headers, json={"query": query, "variables": variables})
     return response.json()
 
 
