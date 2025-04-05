@@ -11,7 +11,6 @@ def longest_common_prefix(strs):
 
     return prefix
 
-
 user_input = input("Введите строки через пробел: ")
 strings_list = list(map(str, user_input.split()))
 print(longest_common_prefix(strings_list))
