@@ -270,7 +270,6 @@ def show_admin_operations(clients):
         if not 0 <= selected < len(clients):
             print("Неверный номер клиента!")
             return
-        
         if admin.block_card_for_excess(clients[selected]):
             print(f"Карта клиента {clients[selected].name} была заблокирована!")
         else:
