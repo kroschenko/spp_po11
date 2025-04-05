@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime
 
 
@@ -208,7 +209,7 @@ def main():
         "4": lambda: return_book(readers, books),
         "5": lambda: manage_blacklist(readers, admin),
         "6": lambda: show_info(readers, books),
-        "7": lambda: exit(print("Программа завершена.")),
+        "7": lambda: sys.exit("Программа завершена."),
     }
 
     while True:
