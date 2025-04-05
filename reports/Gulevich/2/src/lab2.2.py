@@ -1,173 +1,130 @@
 class Driver:
-    def __init__(self, name: str):
+    def __init__(self, name):
         self.name = name
-        self.assigned_trips = []
-        self.is_active = True
-
-    def assign_trip(self, trip):
-        if self.is_active:
-            self.assigned_trips.append(trip)
-            trip.assign_driver(self)
-        else:
-            print(f"Водитель {self.name} отстранён и не может быть назначен на рейс.")
-
-    def report_trip_completion(self, trip, vehicle_condition: str):
-        if trip in self.assigned_trips:
-            trip.complete_trip(vehicle_condition)
-        else:
-            print("Рейс не найден среди назначенных.")
-
-    def request_repair(self, dispatcher, vehicle, reason: str):
-        dispatcher.create_repair_request(vehicle, self, reason)
+        self.suspended = False
 
     def __str__(self):
-        return f"Водитель: {self.name}, Статус: {'Активен' if self.is_active else 'Отстранён'}"
+        return f"Водитель: {self.name}{' (отстранён)' if self.suspended else ''}"
+
+    def request_repair(self, dispatcher, vehicle, reason):
+        dispatcher.repair_requests.append((self, vehicle, reason))
+
+    def report_trip_completion(self, trip, vehicle_condition):
+        trip.completed = True
+        trip.vehicle.condition = vehicle_condition
 
 
 class Vehicle:
-    def __init__(self, model: str):
+    def __init__(self, model):
         self.model = model
-        self.is_available = True
+        self.condition = "Хорошее"
 
     def __str__(self):
-        return f"Автомобиль: {self.model}, Статус: {'Доступен' if self.is_available else 'Недоступен'}"
+        return f"Автомобиль: {self.model}, состояние: {self.condition}"
 
 
 class Trip:
-    def __init__(self, destination: str):
+    def __init__(self, destination):
         self.destination = destination
         self.driver = None
         self.vehicle = None
         self.completed = False
-        self.vehicle_condition = None
-
-    def assign_driver(self, driver):
-        self.driver = driver
-
-    def assign_vehicle(self, vehicle):
-        self.vehicle = vehicle
-        vehicle.is_available = False
-
-    def complete_trip(self, condition: str):
-        self.completed = True
-        self.vehicle_condition = condition
-        self.vehicle.is_available = True
 
     def __str__(self):
-        status = "Завершен" if self.completed else "В процессе"
-        return f"Рейс в {self.destination}, Статус: {status}"
-
-
-class RepairRequest:
-    def __init__(self, vehicle, driver, reason: str):
-        self.vehicle = vehicle
-        self.driver = driver
-        self.reason = reason
-
-    def __str__(self):
-        return f"Заявка на ремонт: {self.vehicle.model} от {self.driver.name}, причина: {self.reason}"
+        status = "выполнен" if self.completed else "не выполнен"
+        return f"Рейс в {self.destination} ({status})"
 
 
 class Dispatcher:
-    def __init__(self, name: str):
-        self.name = name
+    def __init__(self):
         self.repair_requests = []
 
     def assign_trip(self, driver, vehicle, trip):
-        if driver.is_active and vehicle.is_available:
-            driver.assign_trip(trip)
-            trip.assign_vehicle(vehicle)
-            print(f"Рейс в {trip.destination} назначен водителю {driver.name} на автомобиле {vehicle.model}")
-        else:
-            print("Невозможно назначить рейс. Проверьте статус водителя и автомобиля.")
-
-    def create_repair_request(self, vehicle, driver, reason: str):
-        request = RepairRequest(vehicle, driver, reason)
-        self.repair_requests.append(request)
-        print(f"Создана заявка на ремонт: {request}")
+        if driver.suspended:
+            print("Нельзя назначить отстранённого водителя.")
+            return
+        trip.driver = driver
+        trip.vehicle = vehicle
+        print(f"Назначен рейс: {driver.name} в {trip.destination} на {vehicle.model}.")
 
     def suspend_driver(self, driver):
-        driver.is_active = False
-        print(f"Водитель {driver.name} отстранён от работы.")
+        driver.suspended = True
+        print(f"Водитель {driver.name} отстранён.")
 
-    def __str__(self):
-        return f"Диспетчер: {self.name}"
+    def show_repair_requests(self):
+        if not self.repair_requests:
+            print("Заявки на ремонт отсутствуют.")
+            return
+        print("Заявки на ремонт:")
+        for d, v, r in self.repair_requests:
+            print(f"Водитель: {d.name}, Автомобиль: {v.model}, Причина: {r}")
 
 
-def autobase_system():
-    dispatcher = Dispatcher(input("Введите имя диспетчера: "))
+def select_from_list(prompt, items):
+    for i, item in enumerate(items):
+        print(f"{i + 1}. {item}")
+    index = int(input(prompt)) - 1
+    return items[index] if 0 <= index < len(items) else None
 
-    drivers = []
-    vehicles = []
-    trips = []
+
+def main():
+    dispatcher = Dispatcher()
+    drivers, vehicles, trips = [], [], []
+
+    def input_loop(label, collection, cls):
+        while True:
+            value = input(f"Введите {label} (или 'стоп'): ")
+            if value.lower() == "стоп":
+                break
+            collection.append(cls(value))
+
+    input_loop("имя водителя", drivers, Driver)
+    input_loop("модель автомобиля", vehicles, Vehicle)
+    input_loop("пункт назначения рейса", trips, Trip)
+
+    actions = {
+        "1": "Назначить рейс",
+        "2": "Заявка на ремонт",
+        "3": "Отстранить водителя",
+        "4": "Завершить рейс",
+        "5": "Показать заявки на ремонт",
+        "0": "Выход"
+    }
 
     while True:
-        name = input("Введите имя водителя (или 'стоп'): ")
-        if name.lower() == "стоп":
+        print("\nВыберите действие:")
+        for k, v in actions.items():
+            print(f"{k}. {v}")
+        choice = input("Введите номер действия: ")
+
+        if choice == "0":
             break
-        drivers.append(Driver(name))
-
-    while True:
-        model = input("Введите модель автомобиля (или 'стоп'): ")
-        if model.lower() == "стоп":
-            break
-        vehicles.append(Vehicle(model))
-
-    while True:
-        dest = input("Введите пункт назначения рейса (или 'стоп'): ")
-        if dest.lower() == "стоп":
-            break
-        trips.append(Trip(dest))
-
-    while True:
-        print(
-            "\n1. Назначить рейс\n2. Заявка на ремонт\n3. Отстранить водителя\n4. Завершить рейс\n5. Показать заявки на ремонт\n0. Выход"
-        )
-        choice = input("Выберите действие: ")
-
-        if choice == "1":
-            for i, d in enumerate(drivers):
-                print(f"{i+1}. {d}")
-            driver = drivers[int(input("Выберите водителя: ")) - 1]
-            for i, v in enumerate(vehicles):
-                print(f"{i+1}. {v}")
-            vehicle = vehicles[int(input("Выберите автомобиль: ")) - 1]
-            for i, t in enumerate(trips):
-                print(f"{i+1}. {t}")
-            trip = trips[int(input("Выберите рейс: ")) - 1]
-            dispatcher.assign_trip(driver, vehicle, trip)
-
+        elif choice == "1":
+            driver = select_from_list("Выберите водителя: ", drivers)
+            vehicle = select_from_list("Выберите автомобиль: ", vehicles)
+            trip = select_from_list("Выберите рейс: ", trips)
+            if driver and vehicle and trip:
+                dispatcher.assign_trip(driver, vehicle, trip)
         elif choice == "2":
-            for i, d in enumerate(drivers):
-                print(f"{i+1}. {d}")
-            driver = drivers[int(input("Выберите водителя: ")) - 1]
-            for i, v in enumerate(vehicles):
-                print(f"{i+1}. {v}")
-            vehicle = vehicles[int(input("Выберите автомобиль: ")) - 1]
-            reason = input("Причина ремонта: ")
-            driver.request_repair(dispatcher, vehicle, reason)
-
+            driver = select_from_list("Выберите водителя: ", drivers)
+            vehicle = select_from_list("Выберите автомобиль: ", vehicles)
+            if driver and vehicle:
+                reason = input("Причина ремонта: ")
+                driver.request_repair(dispatcher, vehicle, reason)
         elif choice == "3":
-            for i, d in enumerate(drivers):
-                print(f"{i+1}. {d}")
-            driver = drivers[int(input("Выберите водителя: ")) - 1]
-            dispatcher.suspend_driver(driver)
-
+            driver = select_from_list("Выберите водителя: ", drivers)
+            if driver:
+                dispatcher.suspend_driver(driver)
         elif choice == "4":
-            for i, t in enumerate(trips):
-                print(f"{i+1}. {t}")
-            trip = trips[int(input("Выберите завершённый рейс: ")) - 1]
-            condition = input("Состояние автомобиля после рейса: ")
-            trip.driver.report_trip_completion(trip, condition)
-
+            trip = select_from_list("Выберите завершённый рейс: ", trips)
+            if trip:
+                condition = input("Состояние автомобиля после рейса: ")
+                trip.driver.report_trip_completion(trip, condition)
         elif choice == "5":
-            print("Заявки на ремонт:")
-            for r in dispatcher.repair_requests:
-                print(r)
-
-        elif choice == "0":
-            break
+            dispatcher.show_repair_requests()
+        else:
+            print("Некорректный ввод. Попробуйте снова.")
 
 
 if __name__ == "__main__":
-    autobase_system()
+    main()
