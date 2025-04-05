@@ -16,16 +16,20 @@ matplotlib.use("Agg")
 try:
     plt.rcParams["font.family"] = "DejaVu Sans"
     plt.rcParams["axes.unicode_minus"] = False
-except:
+except Exception: 
     pass
 
 
 def get_trending_repos(language, days, min_stars=None):
-
-    since_date = (datetime.now() - timedelta(days=args.days)).strftime("%Y-%m-%d")
+    since_date = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%d")
 
     url = "https://api.github.com/search/repositories"
-    params = {"q": f"language:{language} created:>={since_date}", "sort": "stars", "order": "desc", "per_page": 50}
+    params = {
+        "q": f"language:{language} created:>={since_date}",
+        "sort": "stars",
+        "order": "desc",
+        "per_page": 50
+    }
 
     if min_stars:
         params["q"] += f" stars:>={min_stars}"
@@ -37,12 +41,11 @@ def get_trending_repos(language, days, min_stars=None):
         response.raise_for_status()
         return response.json()["items"]
     except Exception as e:
-        raise Exception(f"Ошибка GitHub API: {str(e)}")
+        raise Exception(f"Ошибка GitHub API: {str(e)}") from e
 
 
-def process_repo_data(repos, since_date):
+def process_repo_data(repos):
     repo_data = []
-    headers = {"Accept": "application/vnd.github.v3+json"}
 
     for repo in repos:
         try:
@@ -63,8 +66,8 @@ def process_repo_data(repos, since_date):
                     "url": repo["html_url"],
                 }
             )
-        except Exception as e:
-            print(f"Пропускаем репозиторий {repo['name']} из-за ошибки: {str(e)}")
+        except KeyError as e:
+            print(f"Пропускаем репозиторий из-за ошибки: {str(e)}")
 
     return sorted(repo_data, key=lambda x: x["new_stars"], reverse=True)
 
@@ -99,11 +102,13 @@ def visualize_trends(repos, language, days, filename=None):
             va="center",
             ha="left",
             fontsize=10,
-            bbox=dict(facecolor="white", alpha=0.7, edgecolor="none"),
+            bbox={"facecolor": "white", "alpha": 0.7, "edgecolor": "none"},
         )
 
     plt.title(
-        f"Топ-{len(top_repos)} популярных репозиториев на {language}\n" f"за последние {days} дней", fontsize=14, pad=20
+        f"Топ-{len(top_repos)} популярных репозиториев на {language}\n" f"за последние {days} дней",
+        fontsize=14,
+        pad=20,
     )
     plt.xlabel("")
     plt.ylabel("")
@@ -113,7 +118,7 @@ def visualize_trends(repos, language, days, filename=None):
         plt.tight_layout()
         plt.savefig(filename, dpi=300, bbox_inches="tight", facecolor="white")
         print(f"График успешно сохранён: {filename}")
-    except Exception as e:
+    except OSError as e:
         print(f"Ошибка при сохранении: {str(e)}")
     finally:
         plt.close()
@@ -142,8 +147,7 @@ def main():
             print("\nНе найдено репозиториев по заданным критериям.")
             return
 
-        since_date = (datetime.now() - timedelta(days=args.days)).strftime("%Y-%m-%d")
-        processed_data = process_repo_data(repos, since_date)
+        processed_data = process_repo_data(repos)
 
         print("\nТОП-5 самых быстрорастущих проектов:")
         for i, repo in enumerate(processed_data[:5], 1):
@@ -155,9 +159,12 @@ def main():
 
         visualize_trends(processed_data, args.language, args.days)
 
-    except Exception as e:
+    except requests.exceptions.RequestException as e:
+        print(f"\nОшибка сети: {str(e)}")
+    except Exception as e: 
         print(f"\nПроизошла ошибка: {str(e)}")
 
 
 if __name__ == "__main__":
     main()
+    
