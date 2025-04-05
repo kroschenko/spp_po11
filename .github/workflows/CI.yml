@@ -63,11 +63,10 @@ jobs:
         run: |
           python3 -m venv venv
           source venv/bin/activate
-          pip install isort black pylint
+          pip install black pylint
         
       - name: Checking quality of the Python code
         run: |
           source venv/bin/activate
-          python -m isort -c --profile black reports
           python -m black --diff --color --line-length 120 reports
           python -m pylint reports
