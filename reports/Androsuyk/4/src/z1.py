@@ -16,7 +16,7 @@ matplotlib.use("Agg")
 try:
     plt.rcParams["font.family"] = "DejaVu Sans"
     plt.rcParams["axes.unicode_minus"] = False
-except Exception: 
+except (ImportError, KeyError):
     pass
 
 
@@ -35,8 +35,8 @@ def get_trending_repos(language, days, min_stars=None):
         response = requests.get(url, params=params, headers=headers, timeout=10)
         response.raise_for_status()
         return response.json()["items"]
-    except Exception as e:
-        raise Exception(f"Ошибка GitHub API: {str(e)}") from e
+    except requests.exceptions.RequestException as e:
+        raise RuntimeError(f"Ошибка GitHub API: {str(e)}") from e
 
 
 def process_repo_data(repos):
@@ -86,13 +86,13 @@ def visualize_trends(repos, language, days, filename=None):
 
     colors = sns.color_palette("husl", len(top_repos))
 
-    bars = plt.barh(y=names, width=new_stars, color=colors, edgecolor="black", linewidth=0.7, alpha=0.8)
+    bar_plot = plt.barh(y=names, width=new_stars, color=colors, edgecolor="black", linewidth=0.7, alpha=0.8)
 
-    for bar, total in zip(bars, total_stars):
-        width = bar.get_width()
+    for bar_item, total in zip(bar_plot, total_stars):
+        width = bar_item.get_width()
         plt.text(
             width + max(new_stars) * 0.01,
-            bar.get_y() + bar.get_height() / 2,
+            bar_item.get_y() + bar_item.get_height() / 2,
             f"Всего: {total:,}",
             va="center",
             ha="left",
@@ -156,9 +156,10 @@ def main():
 
     except requests.exceptions.RequestException as e:
         print(f"\nОшибка сети: {str(e)}")
-    except Exception as e: 
+    except RuntimeError as e:
         print(f"\nПроизошла ошибка: {str(e)}")
 
 
 if __name__ == "__main__":
     main()
+    
