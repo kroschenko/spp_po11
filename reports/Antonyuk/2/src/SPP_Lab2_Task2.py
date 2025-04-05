@@ -1,30 +1,31 @@
 import sys
 
+
 class BankAccount:
     def __init__(self, account_number, balance=0.0):
         self._account_number = account_number
         self._balance = balance
         self._is_active = True
-    
+
     @property
     def account_number(self):
         return self._account_number
-    
+
     @property
     def balance(self):
         return self._balance
-    
+
     @property
     def is_active(self):
         return self._is_active
-    
+
     def deposit(self, amount):
         if amount <= 0:
             raise ValueError("Сумма должна быть положительной")
         if not self._is_active:
             raise ValueError("Счет не активен")
         self._balance += amount
-    
+
     def withdraw(self, amount):
         if amount <= 0:
             raise ValueError("Сумма должна быть положительной")
@@ -33,11 +34,11 @@ class BankAccount:
         if amount > self._balance:
             raise ValueError("Недостаточно средств")
         self._balance -= amount
-    
+
     def close_account(self):
         self._is_active = False
         self._balance = 0
-    
+
     def __str__(self):
         status = "активен" if self._is_active else "неактивен"
         return f"Счет №{self._account_number}, баланс: {self._balance:.2f}, статус: {status}"
@@ -49,23 +50,23 @@ class CreditCard:
         self._credit_limit = credit_limit
         self._current_credit = 0.0
         self._is_blocked = False
-    
+
     @property
     def card_number(self):
         return self._card_number
-    
+
     @property
     def credit_limit(self):
         return self._credit_limit
-    
+
     @property
     def current_credit(self):
         return self._current_credit
-    
+
     @property
     def is_blocked(self):
         return self._is_blocked
-    
+
     def make_payment(self, amount):
         if amount <= 0:
             raise ValueError("Сумма должна быть положительной")
@@ -74,24 +75,24 @@ class CreditCard:
         if amount > (self._credit_limit - self._current_credit):
             raise ValueError("Превышен кредитный лимит")
         self._current_credit += amount
-    
+
     def repay_credit(self, amount):
+        amount = min(amount, self._current_credit)
         if amount <= 0:
             raise ValueError("Сумма должна быть положительной")
-        if amount > self._current_credit:
-            amount = self._current_credit
         self._current_credit -= amount
-    
+
     def block_card(self):
         self._is_blocked = True
-    
+
     def unblock_card(self):
         if self._current_credit <= 0:
             self._is_blocked = False
-    
+
     def __str__(self):
         status = "заблокирована" if self._is_blocked else "активна"
-        return f"Карта №{self._card_number}, лимит: {self._credit_limit:.2f}, кредит: {self._current_credit:.2f}, статус: {status}"
+        return (f"Карта №{self._card_number}, лимит: {self._credit_limit:.2f}, "
+                f"кредит: {self._current_credit:.2f}, статус: {status}")
 
 
 class Client:
@@ -99,20 +100,13 @@ class Client:
         self._name = name
         self._account = account
         self._credit_card = credit_card
-    
+
     @property
     def name(self):
         return self._name
-    
-    @property
-    def account(self):
-        return self._account
-    
-    @property
-    def credit_card(self):
-        return self._credit_card
-    
+
     def pay_order(self, merchant_name, amount, use_credit=False):
+        """Оплатить заказ"""
         if use_credit:
             try:
                 self._credit_card.make_payment(amount)
@@ -125,29 +119,27 @@ class Client:
                 print(f"Оплачено {amount:.2f} со счета для {merchant_name}")
             except ValueError as e:
                 print(f"Ошибка оплаты: {e}")
-    
+
     def transfer_to_account(self, target_account_number, amount):
+        """Перевести деньги на другой счет"""
         try:
-            target_account = None
-            
-            # В реальной системе здесь был бы поиск счета в базе данных
-            # Для демонстрации просто создаем новый счет
             target_account = BankAccount(target_account_number)
-            
             self._account.withdraw(amount)
             target_account.deposit(amount)
             print(f"Переведено {amount:.2f} на счет {target_account_number}")
         except ValueError as e:
             print(f"Ошибка перевода: {e}")
-    
+
     def block_credit_card(self):
+        """Заблокировать кредитную карту"""
         self._credit_card.block_card()
         print("Кредитная карта заблокирована клиентом")
-    
+
     def close_account(self):
+        """Аннулировать счет"""
         self._account.close_account()
         print("Счет аннулирован")
-    
+
     def __str__(self):
         return f"Клиент: {self._name}\n{self._account}\n{self._credit_card}"
 
@@ -155,14 +147,16 @@ class Client:
 class Administrator:
     @staticmethod
     def block_card_for_excess(client):
-        if client.credit_card.current_credit > client.credit_card.credit_limit:
-            client.credit_card.block_card()
+        """Блокировка карты за превышение лимита"""
+        if client._credit_card.current_credit > client._credit_card.credit_limit:
+            client._credit_card.block_card()
             print("\n[АДМИНИСТРАТОР] Карта заблокирована за превышение кредитного лимита!")
             return True
         return False
 
 
 def input_float(prompt):
+    """Ввод числа с плавающей точкой"""
     while True:
         try:
             value = float(input(prompt))
@@ -175,6 +169,7 @@ def input_float(prompt):
 
 
 def input_int(prompt):
+    """Ввод целого числа"""
     while True:
         try:
             return int(input(prompt))
@@ -183,6 +178,7 @@ def input_int(prompt):
 
 
 def create_client():
+    """Создание нового клиента"""
     print("\n=== СОЗДАНИЕ НОВОГО КЛИЕНТА ===")
     name = input("Введите имя клиента: ")
     account_num = input("Введите номер счета (цифры): ")
@@ -195,7 +191,8 @@ def create_client():
     return Client(name, account, card)
 
 
-def client_operations(client):
+def show_client_menu(client, admin):
+    """Меню операций с клиентом"""
     while True:
         print("\n=== ОПЕРАЦИИ С КЛИЕНТОМ ===")
         print("1. Оплатить заказ")
@@ -213,34 +210,51 @@ def client_operations(client):
             amount = input_float("Введите сумму оплаты: ")
             use_credit = input("Использовать кредитную карту? (y/n): ").lower() == 'y'
             client.pay_order(merchant, amount, use_credit)
-        
         elif choice == '2':
             target = input("Введите номер целевого счета: ")
             amount = input_float("Введите сумму перевода: ")
             client.transfer_to_account(target, amount)
-        
         elif choice == '3':
             client.block_credit_card()
-        
         elif choice == '4':
             confirm = input("Вы уверены? Счет будет аннулирован! (y/n): ").lower() == 'y'
             if confirm:
                 client.close_account()
-                return  # Возврат в меню после аннулирования
-        
+                return
         elif choice == '5':
             print("\n=== ИНФОРМАЦИЯ О КЛИЕНТЕ ===")
             print(client)
-        
         elif choice == '6':
             return
-        
         elif choice == '7':
             print("\nВыход из системы...")
             sys.exit()
 
+        admin.block_card_for_excess(client)
+
+
+def show_admin_menu(clients):
+    """Меню администратора"""
+    admin = Administrator()
+    print("\n=== АДМИНИСТРАТИВНЫЕ ФУНКЦИИ ===")
+    for i, client in enumerate(clients, 1):
+        print(f"{i}. {client.name}")
+
+    try:
+        selected = int(input("Выберите клиента для проверки (номер): ")) - 1
+        if 0 <= selected < len(clients):
+            if admin.block_card_for_excess(clients[selected]):
+                print(f"Карта клиента {clients[selected].name} была заблокирована!")
+            else:
+                print(f"Кредитный лимит клиента {clients[selected].name} не превышен")
+        else:
+            print("Неверный номер клиента!")
+    except ValueError:
+        print("Пожалуйста, введите число!")
+
 
 def main():
+    """Главная функция программы"""
     print("\n=== БАНКОВСКАЯ СИСТЕМА 'ПЛАТЕЖИ' ===")
     clients = []
     admin = Administrator()
@@ -258,7 +272,6 @@ def main():
             clients.append(create_client())
             print("\nКлиент успешно создан!")
             print(clients[-1])
-        
         elif choice == '2':
             if not clients:
                 print("Нет зарегистрированных клиентов!")
@@ -271,36 +284,16 @@ def main():
             try:
                 selected = int(input("Выберите клиента (номер): ")) - 1
                 if 0 <= selected < len(clients):
-                    client_operations(clients[selected])
-                
-                    # Проверка на превышение лимита после каждой операции
-                    admin.block_card_for_excess(clients[selected])
+                    show_client_menu(clients[selected], admin)
                 else:
                     print("Неверный номер клиента!")
             except ValueError:
                 print("Пожалуйста, введите число!")
-        
         elif choice == '3':
             if not clients:
                 print("Нет зарегистрированных клиентов!")
                 continue
-            
-            print("\n=== АДМИНИСТРАТИВНЫЕ ФУНКЦИИ ===")
-            for i, client in enumerate(clients, 1):
-                print(f"{i}. {client.name}")
-            
-            try:
-                selected = int(input("Выберите клиента для проверки (номер): ")) - 1
-                if 0 <= selected < len(clients):
-                    if admin.block_card_for_excess(clients[selected]):
-                        print(f"Карта клиента {clients[selected].name} была заблокирована!")
-                    else:
-                        print(f"Кредитный лимит клиента {clients[selected].name} не превышен")
-                else:
-                    print("Неверный номер клиента!")
-            except ValueError:
-                print("Пожалуйста, введите число!")
-        
+            show_admin_menu(clients)
         elif choice == '4':
             print("\nВыход из системы...")
             sys.exit()
