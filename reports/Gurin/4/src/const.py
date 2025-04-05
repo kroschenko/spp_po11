@@ -1,6 +1,7 @@
 import os
 from dataclasses import dataclass
 
+
 @dataclass
 class MainConst:
     GITHUB_TOKEN: str = os.getenv("GITHUB_TOKEN")
