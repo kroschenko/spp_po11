@@ -103,50 +103,59 @@ def autobase_system():
 
     while True:
         name = input("Введите имя водителя (или 'стоп'): ")
-        if name.lower() == 'стоп':
+        if name.lower() == "стоп":
             break
         drivers.append(Driver(name))
 
     while True:
         model = input("Введите модель автомобиля (или 'стоп'): ")
-        if model.lower() == 'стоп':
+        if model.lower() == "стоп":
             break
         vehicles.append(Vehicle(model))
 
     while True:
         dest = input("Введите пункт назначения рейса (или 'стоп'): ")
-        if dest.lower() == 'стоп':
+        if dest.lower() == "стоп":
             break
         trips.append(Trip(dest))
 
     while True:
-        print("\n1. Назначить рейс\n2. Заявка на ремонт\n3. Отстранить водителя\n4. Завершить рейс\n5. Показать заявки на ремонт\n0. Выход")
+        print(
+            "\n1. Назначить рейс\n2. Заявка на ремонт\n3. Отстранить водителя\n4. Завершить рейс\n5. Показать заявки на ремонт\n0. Выход"
+        )
         choice = input("Выберите действие: ")
 
         if choice == "1":
-            for i, d in enumerate(drivers): print(f"{i+1}. {d}")
+            for i, d in enumerate(drivers):
+                print(f"{i+1}. {d}")
             driver = drivers[int(input("Выберите водителя: ")) - 1]
-            for i, v in enumerate(vehicles): print(f"{i+1}. {v}")
+            for i, v in enumerate(vehicles):
+                print(f"{i+1}. {v}")
             vehicle = vehicles[int(input("Выберите автомобиль: ")) - 1]
-            for i, t in enumerate(trips): print(f"{i+1}. {t}")
+            for i, t in enumerate(trips):
+                print(f"{i+1}. {t}")
             trip = trips[int(input("Выберите рейс: ")) - 1]
             dispatcher.assign_trip(driver, vehicle, trip)
 
         elif choice == "2":
-            for i, d in enumerate(drivers): print(f"{i+1}. {d}")
+            for i, d in enumerate(drivers):
+                print(f"{i+1}. {d}")
             driver = drivers[int(input("Выберите водителя: ")) - 1]
-            for i, v in enumerate(vehicles): print(f"{i+1}. {v}")
+            for i, v in enumerate(vehicles):
+                print(f"{i+1}. {v}")
             vehicle = vehicles[int(input("Выберите автомобиль: ")) - 1]
             reason = input("Причина ремонта: ")
             driver.request_repair(dispatcher, vehicle, reason)
 
         elif choice == "3":
-            for i, d in enumerate(drivers): print(f"{i+1}. {d}")
+            for i, d in enumerate(drivers):
+                print(f"{i+1}. {d}")
             driver = drivers[int(input("Выберите водителя: ")) - 1]
             dispatcher.suspend_driver(driver)
 
         elif choice == "4":
-            for i, t in enumerate(trips): print(f"{i+1}. {t}")
+            for i, t in enumerate(trips):
+                print(f"{i+1}. {t}")
             trip = trips[int(input("Выберите завершённый рейс: ")) - 1]
             condition = input("Состояние автомобиля после рейса: ")
             trip.driver.report_trip_completion(trip, condition)

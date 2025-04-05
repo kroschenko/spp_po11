@@ -103,7 +103,7 @@ def main():
             cap2 = int(input("Введите мощность второго множества: "))
             init2 = input("Введите символы второго множества: ")
             other_set = LimitedCharSet(cap2, list(init2))
-            print("Множества равны?" , my_set == other_set)
+            print("Множества равны?", my_set == other_set)
 
         elif choice == "7":
             print("Выход из программы.")
