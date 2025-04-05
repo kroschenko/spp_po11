@@ -77,7 +77,7 @@ def query_github_api(username, token):
 
 
 # Функция для сбора взаимодействий
-def collect_interactions(data, username):
+def collect_interactions(data):
     interactions = set()
 
     # Коммиты
@@ -123,7 +123,7 @@ def main():
     token = input("Введите токен GitHub: ")
 
     data = query_github_api(username, token)
-    interactions = collect_interactions(data, username)
+    interactions = collect_interactions(data)
 
     print(f"Анализируем взаимодействия пользователя {username}...")
     print(f"Найдено {len(interactions)} связанных разработчиков.")
