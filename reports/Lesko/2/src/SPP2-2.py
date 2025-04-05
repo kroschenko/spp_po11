@@ -79,7 +79,6 @@ class Archive:
         for grade in cls._grades:
             grade.display_info()
 
-
 def create_teacher():
     name = input("Введите имя преподавателя: ")
     teacher_id = int(input("Введите ID преподавателя: "))
@@ -150,7 +149,6 @@ def display_courses(courses):
             course.display_info()
     else:
         print("Нет доступных курсов.")
-
 
 def handle_create_teacher(teacher):
     teacher = create_teacher()
