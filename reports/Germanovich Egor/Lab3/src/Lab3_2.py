@@ -61,6 +61,22 @@ def create_directory():
     return Directory(name)
 
 
+def add_component_to_directory(current, component):
+    while True:
+        print(f"\nТекущая директория: {current.name}")
+        print("Доступные поддиректории:")
+        for i, child in enumerate(current.children):
+            if isinstance(child, Directory):
+                print(f"{i + 1}. 📁 {child.name}")
+        print(f"{len(current.children) + 1}. Добавить в текущую директорию")
+        dir_choice = input("Выберите директорию или добавьте в текущую: ")
+        if dir_choice.isdigit() and 1 <= int(dir_choice) <= len(current.children):
+            current = current.children[int(dir_choice) - 1]
+        else:
+            current.add(component)
+            break
+
+
 def main():
     root = Directory("Root")
     while True:
@@ -73,36 +89,10 @@ def main():
 
         if choice == "1":
             file = create_file()
-            current = root
-            while True:
-                print(f"\nТекущая директория: {current.name}")
-                print("Доступные поддиректории:")
-                for i, child in enumerate(current.children):
-                    if isinstance(child, Directory):
-                        print(f"{i + 1}. 📁 {child.name}")
-                print(f"{len(current.children) + 1}. Добавить в текущую директорию")
-                dir_choice = input("Выберите директорию или добавьте в текущую: ")
-                if dir_choice.isdigit() and 1 <= int(dir_choice) <= len(current.children):
-                    current = current.children[int(dir_choice) - 1]
-                else:
-                    current.add(file)
-                    break
+            add_component_to_directory(root, file)
         elif choice == "2":
             directory = create_directory()
-            current = root
-            while True:
-                print(f"\nТекущая директория: {current.name}")
-                print("Доступные поддиректории:")
-                for i, child in enumerate(current.children):
-                    if isinstance(child, Directory):
-                        print(f"{i + 1}. 📁 {child.name}")
-                print(f"{len(current.children) + 1}. Добавить в текущую директорию")
-                dir_choice = input("Выберите директорию или добавьте в текущую: ")
-                if dir_choice.isdigit() and 1 <= int(dir_choice) <= len(current.children):
-                    current = current.children[int(dir_choice) - 1]
-                else:
-                    current.add(directory)
-                    break
+            add_component_to_directory(root, directory)
         elif choice == "3":
             print("\nСтруктура файловой системы:")
             print(root.display())
