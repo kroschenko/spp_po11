@@ -1,18 +1,14 @@
 def isPalindrome(x):
-    if str(x) == str(x)[::-1]:
-        return True
-    else:
-        return False
+    return str(x) == str(x)[::-1]
 
 
 def main():
     try:
         num = int(input("Введите число: "))
         print(isPalindrome(num))
-    except:
+    except ValueError:
         print(False)
 
 
 if __name__ == "__main__":
     main()
-    
