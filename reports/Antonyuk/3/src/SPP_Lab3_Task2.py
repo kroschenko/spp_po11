@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import date
-from typing import List, Dict, Type
+from typing import Dict
+
 
 class CardComponent(ABC):
     @abstractmethod
@@ -14,6 +15,7 @@ class CardComponent(ABC):
     @abstractmethod
     def edit(self):
         pass
+
 
 class PassportComponent(CardComponent):
     def __init__(self):
@@ -53,6 +55,7 @@ class PassportComponent(CardComponent):
             except ValueError:
                 print("Неверный формат даты. Используйте ГГГГ-ММ-ДД")
 
+
 class InsuranceComponent(CardComponent):
     def __init__(self):
         self.policy_number = ""
@@ -84,6 +87,7 @@ class InsuranceComponent(CardComponent):
                 return date.fromisoformat(date_str)
             except ValueError:
                 print("Неверный формат даты. Используйте ГГГГ-ММ-ДД")
+
 
 class BankCardComponent(CardComponent):
     def __init__(self):
@@ -129,6 +133,7 @@ class BankCardComponent(CardComponent):
             except ValueError:
                 print("Неверный формат суммы. Используйте число (например 1000.50)")
 
+
 class UniversalElectronicCard:
     def __init__(self):
         self.components: Dict[str, CardComponent] = {
@@ -158,6 +163,7 @@ class UniversalElectronicCard:
     def is_valid(self) -> bool:
         return all(component.is_valid() for component in self.components.values())
 
+
 def main():
     card = UniversalElectronicCard()
     
@@ -184,6 +190,7 @@ def main():
             break
         else:
             print("Неверный выбор, попробуйте снова")
+
 
 if __name__ == "__main__":
     main()

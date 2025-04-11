@@ -1,25 +1,27 @@
 from abc import ABC, abstractmethod
 
-# Базовый класс для печати
+
 class PrintStrategy(ABC):
     @abstractmethod
     def print(self, text: str):
         pass
 
-# Конкретные типы печати
+
 class LaserPrint(PrintStrategy):
     def print(self, text: str):
         print(f"[Лазерная печать] {text}")
+
 
 class InkjetPrint(PrintStrategy):
     def print(self, text: str):
         print(f"[Струйная печать] {text}")
 
+
 class MatrixPrint(PrintStrategy):
     def print(self, text: str):
         print(f"[Матричная печать] {text}")
 
-# Класс принтера
+
 class Printer:
     def __init__(self, name: str):
         self.name = name
@@ -35,16 +37,14 @@ class Printer:
         else:
             print("Ошибка: не выбран тип печати!")
 
-# Главное меню
+
 def main():
-    # Создаем список принтеров
     printers = [
         Printer("Офисный HP"),
         Printer("Домашний Canon"),
         Printer("Магазинный Epson")
     ]
     
-    # Создаем типы печати
     print_types = {
         1: LaserPrint(),
         2: InkjetPrint(),
@@ -71,7 +71,7 @@ def main():
                 num = int(input("Номер принтера: ")) - 1
                 current_printer = printers[num]
                 print(f"Выбран: {current_printer.name}")
-            except:
+            except (ValueError, IndexError):
                 print("Ошибка выбора!")
         
         elif choice == "2":
@@ -88,7 +88,7 @@ def main():
                 num = int(input("Номер типа печати: "))
                 current_printer.set_print_type(print_types[num])
                 print("Тип печати установлен")
-            except:
+            except (ValueError, KeyError):
                 print("Ошибка выбора!")
         
         elif choice == "3":
@@ -105,6 +105,7 @@ def main():
         
         else:
             print("Неверный ввод!")
+
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
 
+
 class Car(ABC):
     def __init__(self, brand, model, year):
         self.brand = brand
@@ -21,17 +22,21 @@ class Car(ABC):
         else:
             return f"{age} лет"
 
+
 class Sedan(Car):
     def get_info(self):
         return f"Седан {self.brand} {self.model} {self.year} года ({self.calculate_age()})"
+
 
 class SUV(Car):
     def get_info(self):
         return f"Внедорожник {self.brand} {self.model} {self.year} года ({self.calculate_age()})"
 
+
 class Truck(Car):
     def get_info(self):
         return f"Грузовик {self.brand} {self.model} {self.year} года ({self.calculate_age()})"
+
 
 class CarFactory(ABC):
     def __init__(self, brand):
@@ -49,6 +54,7 @@ class CarFactory(ABC):
     def create_truck(self, model, year) -> Truck:
         pass
 
+
 class ToyotaFactory(CarFactory):
     def __init__(self):
         super().__init__("Toyota")
@@ -61,6 +67,7 @@ class ToyotaFactory(CarFactory):
     
     def create_truck(self, model, year) -> Truck:
         return Truck(self.brand, model if model else "Hilux", year)
+
 
 class FordFactory(CarFactory):
     def __init__(self):
@@ -75,6 +82,7 @@ class FordFactory(CarFactory):
     def create_truck(self, model, year) -> Truck:
         return Truck(self.brand, model if model else "F-150", year)
 
+
 class VolkswagenFactory(CarFactory):
     def __init__(self):
         super().__init__("Volkswagen")
@@ -88,6 +96,7 @@ class VolkswagenFactory(CarFactory):
     def create_truck(self, model, year) -> Truck:
         return Truck(self.brand, model if model else "Amarok", year)
 
+
 def get_user_choice(options, prompt):
     print(prompt)
     for key, value in options.items():
@@ -99,6 +108,7 @@ def get_user_choice(options, prompt):
             return choice
         print("Некорректный ввод. Попробуйте снова.")
 
+
 def get_valid_year():
     current_year = datetime.now().year
     while True:
@@ -109,6 +119,7 @@ def get_valid_year():
             print(f"Год должен быть между 1886 и {current_year}")
         except ValueError:
             print("Пожалуйста, введите число.")
+
 
 def main():
     factories = {
@@ -154,6 +165,7 @@ def main():
         if input("\nСоздать еще один автомобиль? (да/нет): ").lower() != 'да':
             print("\nСпасибо за использование системы!")
             break
+
 
 if __name__ == "__main__":
     main()
