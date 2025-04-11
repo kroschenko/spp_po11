@@ -7,7 +7,7 @@ class Car(ABC):
         self.brand = brand
         self.model = model
         self.year = year
-    
+
     @abstractmethod
     def get_info(self):
         pass
@@ -40,15 +40,15 @@ class Truck(Car):
 class CarFactory(ABC):
     def __init__(self, brand):
         self.brand = brand
-    
+
     @abstractmethod
     def create_sedan(self, model, year) -> Sedan:
         pass
-    
+
     @abstractmethod
     def create_suv(self, model, year) -> SUV:
         pass
-    
+
     @abstractmethod
     def create_truck(self, model, year) -> Truck:
         pass
@@ -57,13 +57,13 @@ class CarFactory(ABC):
 class ToyotaFactory(CarFactory):
     def __init__(self):
         super().__init__("Toyota")
-    
+
     def create_sedan(self, model, year) -> Sedan:
         return Sedan(self.brand, model if model else "Camry", year)
-    
+
     def create_suv(self, model, year) -> SUV:
         return SUV(self.brand, model if model else "RAV4", year)
-    
+
     def create_truck(self, model, year) -> Truck:
         return Truck(self.brand, model if model else "Hilux", year)
 
@@ -71,13 +71,13 @@ class ToyotaFactory(CarFactory):
 class FordFactory(CarFactory):
     def __init__(self):
         super().__init__("Ford")
-    
+
     def create_sedan(self, model, year) -> Sedan:
         return Sedan(self.brand, model if model else "Focus", year)
-    
+
     def create_suv(self, model, year) -> SUV:
         return SUV(self.brand, model if model else "Explorer", year)
-    
+
     def create_truck(self, model, year) -> Truck:
         return Truck(self.brand, model if model else "F-150", year)
 
@@ -85,13 +85,13 @@ class FordFactory(CarFactory):
 class VolkswagenFactory(CarFactory):
     def __init__(self):
         super().__init__("Volkswagen")
-    
+
     def create_sedan(self, model, year) -> Sedan:
         return Sedan(self.brand, model if model else "Passat", year)
-    
+
     def create_suv(self, model, year) -> SUV:
         return SUV(self.brand, model if model else "Tiguan", year)
-    
+
     def create_truck(self, model, year) -> Truck:
         return Truck(self.brand, model if model else "Amarok", year)
 
@@ -100,7 +100,7 @@ def get_user_choice(options, prompt):
     print(prompt)
     for key, value in options.items():
         print(f"{key}. {value}")
-    
+
     while True:
         choice = input("Ваш выбор: ")
         if choice in options:
@@ -126,41 +126,34 @@ def main():
         '2': FordFactory(),
         '3': VolkswagenFactory()
     }
-    
+
     car_types = {
         '1': ('Седан', 'create_sedan'),
         '2': ('Внедорожник', 'create_suv'),
         '3': ('Грузовик', 'create_truck')
     }
-    
+
     print("\nСистема создания автомобилей с полными характеристиками")
-    
+
     while True:
-        # Выбор марки
         factory_options = {k: v.brand for k, v in factories.items()}
         factory_choice = get_user_choice(factory_options, "\nВыберите марку автомобиля:")
         factory = factories[factory_choice]
-        
-        # Выбор типа
+
         type_choice = get_user_choice(
             {k: v[0] for k, v in car_types.items()},
             "\nВыберите тип автомобиля:"
         )
         _, create_method = car_types[type_choice]
-        
-        # Ввод модели
+
         model = input(f"\nВведите модель {factory.brand} (или нажмите Enter для модели по умолчанию): ").strip()
-        
-        # Ввод года
+
         year = get_valid_year()
-        
-        # Создание автомобиля
+
         car = getattr(factory, create_method)(model, year)
-        
-        # Вывод результата
+
         print(f"\nСоздан автомобиль: {car.get_info()}")
-        
-        # Повтор
+
         if input("\nСоздать еще один автомобиль? (да/нет): ").lower() != 'да':
             print("\nСпасибо за использование системы!")
             break
