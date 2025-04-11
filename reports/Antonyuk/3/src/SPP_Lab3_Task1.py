@@ -17,10 +17,9 @@ class Car(ABC):
         age = current_year - self.year
         if age == 1:
             return f"{age} год"
-        elif 2 <= age <= 4:
+        if 2 <= age <= 4:
             return f"{age} года"
-        else:
-            return f"{age} лет"
+        return f"{age} лет"
 
 
 class Sedan(Car):
@@ -144,10 +143,10 @@ def main():
         
         # Выбор типа
         type_choice = get_user_choice(
-            {k: v[0] for k, v in car_types.items()}, 
+            {k: v[0] for k, v in car_types.items()},
             "\nВыберите тип автомобиля:"
         )
-        car_type, create_method = car_types[type_choice]
+        _, create_method = car_types[type_choice]
         
         # Ввод модели
         model = input(f"\nВведите модель {factory.brand} (или нажмите Enter для модели по умолчанию): ").strip()

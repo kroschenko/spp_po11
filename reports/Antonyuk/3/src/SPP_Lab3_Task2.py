@@ -144,7 +144,7 @@ class UniversalElectronicCard:
 
     def show_info(self):
         print("\n=== Универсальная электронная карта ===")
-        for name, component in self.components.items():
+        for _, component in self.components.items():
             component.show_info()
 
     def edit_component(self):
@@ -153,7 +153,7 @@ class UniversalElectronicCard:
         print("2. Страховой полис")
         print("3. Банковская карта")
         print("0. Назад")
-        
+
         choice = input("Ваш выбор: ")
         if choice in self.components:
             self.components[choice].edit()
@@ -166,16 +166,16 @@ class UniversalElectronicCard:
 
 def main():
     card = UniversalElectronicCard()
-    
+
     while True:
         print("\n=== Меню управления электронной картой ===")
         print("1. Просмотреть данные карты")
         print("2. Редактировать данные")
         print("3. Проверить валидность карты")
         print("0. Выход")
-        
+
         choice = input("Ваш выбор: ")
-        
+
         if choice == "1":
             card.show_info()
         elif choice == "2":
