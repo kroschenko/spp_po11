@@ -1,0 +1,205 @@
+# Test your FastAPI endpoints
+
+# Courses
+POST http://127.0.0.1:8000/courses/
+Accept: application/json
+Content-Type: application/json
+
+{
+    "title": "Test Course",
+    "description": "A test course description"
+}
+
+###
+
+GET http://127.0.0.1:8000/courses/
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/courses/1
+Accept: application/json
+
+###
+
+PUT http://127.0.0.1:8000/courses/1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "title": "Updated Course Title",
+    "description": "Updated course description"
+}
+
+###
+
+DELETE http://127.0.0.1:8000/courses/1
+Accept: application/json
+
+###
+
+# Teachers
+POST http://127.0.0.1:8000/teachers/
+Accept: application/json
+Content-Type: application/json
+
+{
+    "first_name": "Name",
+    "last_name": "LastName",
+    "email": "name@example.com",
+    "phone_number": "1234567890"
+}
+
+###
+
+GET http://127.0.0.1:8000/teachers/
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/teachers/1
+Accept: application/json
+
+###
+
+PUT http://127.0.0.1:8000/teachers/1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "first_name": "Name",
+    "last_name": "LastName",
+    "email": "name@example.com",
+    "phone_number": "0987654321"
+}
+
+###
+
+DELETE http://127.0.0.1:8000/teachers/1
+Accept: application/json
+
+###
+
+# Classrooms
+POST http://127.0.0.1:8000/classrooms/
+Accept: application/json
+Content-Type: application/json
+
+{
+    "room_number": "101",
+    "building": "1",
+    "capacity": 30
+}
+
+###
+
+GET http://127.0.0.1:8000/classrooms/
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/classrooms/1
+Accept: application/json
+
+###
+
+PUT http://127.0.0.1:8000/classrooms/1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "room_number": "404",
+    "building": "2",
+    "capacity": 40
+}
+
+###
+
+DELETE http://127.0.0.1:8000/classrooms/1
+Accept: application/json
+
+###
+
+# Student Groups
+POST http://127.0.0.1:8000/student_groups/
+Accept: application/json
+Content-Type: application/json
+
+{
+    "group_name": "Group A"
+}
+
+###
+
+GET http://127.0.0.1:8000/student_groups/
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/student_groups/1
+Accept: application/json
+
+###
+
+PUT http://127.0.0.1:8000/student_groups/1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "group_name": "Updated Group A"
+}
+
+###
+
+DELETE http://127.0.0.1:8000/student_groups/1
+Accept: application/json
+
+###
+
+# Schedules
+POST http://127.0.0.1:8000/schedules/
+Accept: application/json
+Content-Type: application/json
+
+{
+    "course_id": 1,
+    "teacher_id": 1,
+    "classroom_id": 1,
+    "group_id": 1,
+    "day_of_week": "Monday",
+    "start_time": "09:00:00",
+    "end_time": "10:30:00"
+}
+
+###
+
+GET http://127.0.0.1:8000/schedules/
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/schedules/1
+Accept: application/json
+
+###
+
+PUT http://127.0.0.1:8000/schedules/1
+Accept: application/json
+Content-Type: application/json
+
+{
+    "day_of_week": "Tuesday",
+    "start_time": "10:00:00",
+    "end_time": "11:30:00"
+}
+
+###
+
+DELETE http://127.0.0.1:8000/schedules/1
+Accept: application/json
+
+###
+
+# Populate Test Data
+POST http://127.0.0.1:8000/populate_test_data/
+Accept: application/json
