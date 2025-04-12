@@ -1,9 +1,10 @@
-import requests
-import matplotlib.pyplot as plt
-import seaborn as sns
 from datetime import datetime
-import pandas as pd
 from typing import Dict, List, Tuple
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import requests
+
 
 class GitHubAnalyzer:
     def __init__(self, token: str):
@@ -19,7 +20,7 @@ class GitHubAnalyzer:
         response = requests.get(url, headers=self.headers)
         if response.status_code == 200:
             return response.json()
-        raise Exception(f"Ошибка при получении контрибьюторов: {response.status_code}")
+        raise RuntimeError(f"Ошибка при получении контрибьюторов: {response.status_code}")
 
     def get_user_activity(self, owner: str, repo: str, username: str) -> Dict:
         # Получаем коммиты
@@ -133,8 +134,9 @@ def main():
         analyzer.plot_contributor_activity(contributor_stats, repo_input)
         print(f"\nГрафики активности сохранены в \"{repo_input.replace('/', '_')}_contributors.png\"")
         
-    except Exception as e:
+    except (RuntimeError, ValueError) as e:
         print(f"Произошла ошибка: {str(e)}")
+
 
 if __name__ == "__main__":
     main()
