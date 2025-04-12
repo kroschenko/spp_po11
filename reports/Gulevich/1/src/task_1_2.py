@@ -7,6 +7,7 @@ def plus_one(digit_list):
         digit_list[i] = 0
     return [1] + digit_list  # Если все цифры были 9, добавляем 1 в начало
 
+
 # Пример использования
 example_digit_list = list(map(int, input("Введите цифры числа через пробел: ").split()))
 print("Результат:", plus_one(example_digit_list))

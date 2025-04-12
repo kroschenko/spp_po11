@@ -40,9 +40,11 @@ class BankAccount:
         self._balance = 0
 
     def __str__(self):
-        return (f"Счет №{self._account_number}, "
-                f"баланс: {self._balance:.2f}, "
-                f"статус: {'активен' if self._is_active else 'неактивен'}")
+        return (
+            f"Счет №{self._account_number}, "
+            f"баланс: {self._balance:.2f}, "
+            f"статус: {'активен' if self._is_active else 'неактивен'}"
+        )
 
 
 class CreditCard:
@@ -91,10 +93,12 @@ class CreditCard:
             self._is_blocked = False
 
     def __str__(self):
-        return (f"Карта №{self._card_number}, "
-                f"лимит: {self._credit_limit:.2f}, "
-                f"кредит: {self._current_credit:.2f}, "
-                f"статус: {'заблокирована' if self._is_blocked else 'активна'}")
+        return (
+            f"Карта №{self._card_number}, "
+            f"лимит: {self._credit_limit:.2f}, "
+            f"кредит: {self._current_credit:.2f}, "
+            f"статус: {'заблокирована' if self._is_blocked else 'активна'}"
+        )
 
 
 class Client:
@@ -110,9 +114,9 @@ class Client:
     @property
     def credit_card_info(self):
         return {
-            'current_credit': self._credit_card.current_credit,
-            'credit_limit': self._credit_card.credit_limit,
-            'card': self._credit_card
+            "current_credit": self._credit_card.current_credit,
+            "credit_limit": self._credit_card.credit_limit,
+            "card": self._credit_card,
         }
 
     def pay_order(self, merchant_name, amount, use_credit=False):
@@ -154,8 +158,7 @@ class Administrator:
     @staticmethod
     def get_excess_status(client):
         card_info = client.credit_card_info
-        return (card_info['current_credit'] > card_info['credit_limit'],
-                card_info['card'])
+        return (card_info["current_credit"] > card_info["credit_limit"], card_info["card"])
 
     @staticmethod
     def block_card_for_excess(client):
@@ -203,7 +206,7 @@ def create_client():
 def execute_payment(client):
     merchant = input("Введите название магазина/услуги: ")
     amount = input_float("Введите сумму оплаты: ")
-    use_credit = input("Использовать кредитную карту? (y/n): ").lower() == 'y'
+    use_credit = input("Использовать кредитную карту? (y/n): ").lower() == "y"
     client.pay_order(merchant, amount, use_credit)
 
 
@@ -219,7 +222,7 @@ def show_client_information(client):
 
 
 def handle_account_closing(client):
-    confirm = input("Вы уверены? Счет будет аннулирован! (y/n): ").lower() == 'y'
+    confirm = input("Вы уверены? Счет будет аннулирован! (y/n): ").lower() == "y"
     if confirm:
         client.close_account()
         return True
@@ -239,21 +242,21 @@ def show_client_operations(client, admin):
 
         choice = input("Выберите действие (1-7): ")
 
-        if choice == '6':
+        if choice == "6":
             return
-        if choice == '7':
+        if choice == "7":
             print("\nВыход из системы...")
             sys.exit()
-        if choice == '4':
+        if choice == "4":
             if handle_account_closing(client):
                 return
-        elif choice == '1':
+        elif choice == "1":
             execute_payment(client)
-        elif choice == '2':
+        elif choice == "2":
             execute_transfer(client)
-        elif choice == '3':
+        elif choice == "3":
             client.block_credit_card()
-        elif choice == '5':
+        elif choice == "5":
             show_client_information(client)
 
         admin.block_card_for_excess(client)
@@ -314,18 +317,18 @@ def main():
     while True:
         choice = display_main_menu()
 
-        if choice == '1':
+        if choice == "1":
             clients.append(create_client())
             print("\nКлиент успешно создан!")
             print(clients[-1])
-        elif choice == '2':
+        elif choice == "2":
             handle_client_selection(clients, admin)
-        elif choice == '3':
+        elif choice == "3":
             if not clients:
                 print("Нет зарегистрированных клиентов!")
                 continue
             show_admin_operations(clients)
-        elif choice == '4':
+        elif choice == "4":
             print("\nВыход из системы...")
             sys.exit()
 

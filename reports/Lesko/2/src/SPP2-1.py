@@ -54,9 +54,7 @@ class Triangle:
         Проверка, соответствует ли треугольник неравенству треугольника
         Для равностороннего треугольника всегда True если стороны положительные
         """
-        return (self._a + self._b > self._c and
-                self._a + self._c > self._b and
-                self._b + self._c > self._a)
+        return self._a + self._b > self._c and self._a + self._c > self._b and self._b + self._c > self._a
 
     def __str__(self):
         """Строковое представление объекта"""
@@ -70,9 +68,7 @@ class Triangle:
         """
         if not isinstance(other, Triangle):
             return False
-        return (math.isclose(self._a, other._a) and
-                math.isclose(self._b, other._b) and
-                math.isclose(self._c, other._c))
+        return math.isclose(self._a, other._a) and math.isclose(self._b, other._b) and math.isclose(self._c, other._c)
 
 
 def validate_input(prompt):
