@@ -1,9 +1,7 @@
 from datetime import date
 from typing import List
 from fastapi import FastAPI, HTTPException
-from sqlalchemy import (
-    Boolean, Column, Date, Float, ForeignKey, Integer, String, create_engine
-)
+from sqlalchemy import Boolean, Column, Date, Float, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
@@ -68,6 +66,7 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -85,10 +84,12 @@ def create_student(student: dict):
     db.refresh(db_student)
     return db_student
 
+
 @app.get("/students/")
 def get_students():
     db = SessionLocal()
     return db.query(Student).all()
+
 
 @app.put("/students/{student_id}")
 def update_student(student_id: int, student: dict):
@@ -101,6 +102,7 @@ def update_student(student_id: int, student: dict):
     db.commit()
     return db_student
 
+
 @app.delete("/students/{student_id}")
 def delete_student(student_id: int):
     db = SessionLocal()
@@ -111,6 +113,7 @@ def delete_student(student_id: int):
     db.commit()
     return {"message": "Student deleted"}
 
+
 @app.post("/teachers/")
 def create_teacher(teacher: dict):
     db = SessionLocal()
@@ -120,10 +123,12 @@ def create_teacher(teacher: dict):
     db.refresh(db_teacher)
     return db_teacher
 
+
 @app.get("/teachers/")
 def get_teachers():
     db = SessionLocal()
     return db.query(Teacher).all()
+
 
 @app.put("/teachers/{teacher_id}")
 def update_teacher(teacher_id: int, teacher: dict):
@@ -136,6 +141,7 @@ def update_teacher(teacher_id: int, teacher: dict):
     db.commit()
     return db_teacher
 
+
 @app.delete("/teachers/{teacher_id}")
 def delete_teacher(teacher_id: int):
     db = SessionLocal()
@@ -146,6 +152,7 @@ def delete_teacher(teacher_id: int):
     db.commit()
     return {"message": "Teacher deleted"}
 
+
 @app.post("/courses/")
 def create_course(course: dict):
     db = SessionLocal()
@@ -155,10 +162,12 @@ def create_course(course: dict):
     db.refresh(db_course)
     return db_course
 
+
 @app.get("/courses/")
 def get_courses():
     db = SessionLocal()
     return db.query(Course).all()
+
 
 @app.put("/courses/{course_id}")
 def update_course(course_id: int, course: dict):
@@ -171,6 +180,7 @@ def update_course(course_id: int, course: dict):
     db.commit()
     return db_course
 
+
 @app.delete("/courses/{course_id}")
 def delete_course(course_id: int):
     db = SessionLocal()
@@ -181,6 +191,7 @@ def delete_course(course_id: int):
     db.commit()
     return {"message": "Course deleted"}
 
+
 @app.post("/departments/")
 def create_department(department: dict):
     db = SessionLocal()
@@ -190,10 +201,12 @@ def create_department(department: dict):
     db.refresh(db_department)
     return db_department
 
+
 @app.get("/departments/")
 def get_departments():
     db = SessionLocal()
     return db.query(Department).all()
+
 
 @app.put("/departments/{department_id}")
 def update_department(department_id: int, department: dict):
@@ -206,6 +219,7 @@ def update_department(department_id: int, department: dict):
     db.commit()
     return db_department
 
+
 @app.delete("/departments/{department_id}")
 def delete_department(department_id: int):
     db = SessionLocal()
@@ -216,6 +230,7 @@ def delete_department(department_id: int):
     db.commit()
     return {"message": "Department deleted"}
 
+
 @app.post("/enrollments/")
 def create_enrollment(enrollment: dict):
     db = SessionLocal()
@@ -225,10 +240,12 @@ def create_enrollment(enrollment: dict):
     db.refresh(db_enrollment)
     return db_enrollment
 
+
 @app.get("/enrollments/")
 def get_enrollments():
     db = SessionLocal()
     return db.query(Enrollment).all()
+
 
 @app.put("/enrollments/{enrollment_id}")
 def update_enrollment(enrollment_id: int, enrollment: dict):
@@ -241,6 +258,7 @@ def update_enrollment(enrollment_id: int, enrollment: dict):
     db.commit()
     return db_enrollment
 
+
 @app.delete("/enrollments/{enrollment_id}")
 def delete_enrollment(enrollment_id: int):
     db = SessionLocal()
@@ -251,27 +269,17 @@ def delete_enrollment(enrollment_id: int):
     db.commit()
     return {"message": "Enrollment deleted"}
 
+
 @app.post("/fill_test_data/")
 def fill_test_data():
     db = SessionLocal()
-
 
     physics_department = Department(name="Physics")
     math_department = Department(name="Mathematics")
     db.add_all([physics_department, math_department])
 
-    teacher1 = Teacher(
-        first_name="Ivan",
-        last_name="Petrov",
-        specialization="Mathematics",
-        department=math_department
-    )
-    teacher2 = Teacher(
-        first_name="Anna",
-        last_name="Ivanova",
-        specialization="Physics",
-        department=physics_department
-    )
+    teacher1 = Teacher(first_name="Ivan", last_name="Petrov", specialization="Mathematics", department=math_department)
+    teacher2 = Teacher(first_name="Anna", last_name="Ivanova", specialization="Physics", department=physics_department)
     db.add_all([teacher1, teacher2])
 
     course1 = Course(name="Linear Algebra", teacher=teacher1)
@@ -280,16 +288,10 @@ def fill_test_data():
 
 
     student1 = Student(
-        first_name="Mikhail",
-        last_name="Si   rov",
-        date_of_birth=date(2000, 5, 14),
-        department=math_department
+        first_name="Mikhail", last_name="Si   rov", date_of_birth=date(2000, 5, 14), department=math_department
     )
     student2 = Student(
-        first_name="Elena",
-        last_name="Smirnova",
-        date_of_birth=date(2001, 7, 22),
-        department=physics_department
+         first_name="Elena", last_name="Smirnova", date_of_birth=date(2001, 7, 22), department=physics_department
     )
     db.add_all([student1, student2])
 
@@ -300,6 +302,7 @@ def fill_test_data():
 
     db.commit()
     return {"message": "Test data added successfully"}
+
 
 if __name__ == "__main__":
     import uvicorn
