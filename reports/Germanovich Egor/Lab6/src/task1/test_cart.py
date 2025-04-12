@@ -5,97 +5,97 @@ from shopping import ShoppingCart
 
 
 @pytest.fixture
-def cart():
+def test_cart():
     return ShoppingCart()
 
 
 @pytest.fixture
-def filled_cart():
+def test_filled_cart():
     cart = ShoppingCart()
     cart.add_item("apple", 1.0)
     cart.add_item("banana", 0.5)
     return cart
 
 
-def test_add_item(cart):
+def test_add_item(test_cart):
     """Тест добавления товара в корзину"""
-    cart.add_item("apple", 1.0)
-    assert len(cart.items) == 1
-    assert cart.items[0]["name"] == "apple"
-    assert cart.items[0]["price"] == 1.0
+    test_cart.add_item("apple", 1.0)
+    assert len(test_cart.items) == 1
+    assert test_cart.items[0]["name"] == "apple"
+    assert test_cart.items[0]["price"] == 1.0
 
 
-def test_add_item_with_quantity(cart):
+def test_add_item_with_quantity(test_cart):
     """Тест добавления товара с указанием количества"""
-    cart.add_item("apple", 1.0)
-    cart.add_item("apple", 1.0)
-    assert len(cart.items) == 2
-    assert cart.items[0]["name"] == "apple"
-    assert cart.items[0]["price"] == 1.0
-    assert cart.items[1]["name"] == "apple"
-    assert cart.items[1]["price"] == 1.0
+    test_cart.add_item("apple", 1.0)
+    test_cart.add_item("apple", 1.0)
+    assert len(test_cart.items) == 2
+    assert test_cart.items[0]["name"] == "apple"
+    assert test_cart.items[0]["price"] == 1.0
+    assert test_cart.items[1]["name"] == "apple"
+    assert test_cart.items[1]["price"] == 1.0
 
 
-def test_add_existing_item(filled_cart):
+def test_add_existing_item(test_filled_cart):
     """Тест добавления существующего товара"""
-    filled_cart.add_item("apple", 1.0)
-    assert len(filled_cart.items) == 3
-    assert filled_cart.items[0]["name"] == "apple"
-    assert filled_cart.items[0]["price"] == 1.0
+    test_filled_cart.add_item("apple", 1.0)
+    assert len(test_filled_cart.items) == 3
+    assert test_filled_cart.items[0]["name"] == "apple"
+    assert test_filled_cart.items[0]["price"] == 1.0
 
 
-def test_remove_item(filled_cart):
+def test_remove_item(test_filled_cart):
     """Тест удаления товара из корзины"""
-    filled_cart.remove_item("apple")
-    assert len(filled_cart.items) == 1
-    assert filled_cart.items[0]["name"] == "banana"
+    test_filled_cart.remove_item("apple")
+    assert len(test_filled_cart.items) == 1
+    assert test_filled_cart.items[0]["name"] == "banana"
 
 
-def test_remove_nonexistent_item(filled_cart):
+def test_remove_nonexistent_item(test_filled_cart):
     """Тест удаления несуществующего товара"""
     with pytest.raises(ValueError):
-        filled_cart.remove_item("orange")
+        test_filled_cart.remove_item("orange")
 
 
-def test_remove_item_with_empty_name(filled_cart):
+def test_remove_item_with_empty_name(test_filled_cart):
     """Тест удаления товара с пустым именем"""
     with pytest.raises(ValueError):
-        filled_cart.remove_item("")
+        test_filled_cart.remove_item("")
 
 
-def test_get_total(filled_cart):
+def test_get_total(test_filled_cart):
     """Тест расчета общей стоимости"""
-    assert filled_cart.total() == 1.5
+    assert test_filled_cart.total() == 1.5
 
 
-def test_apply_discount(filled_cart):
+def test_apply_discount(test_filled_cart):
     """Тест применения скидки"""
-    filled_cart.apply_discount(10)
-    assert filled_cart.total() == 1.35
+    test_filled_cart.apply_discount(10)
+    assert test_filled_cart.total() == 1.35
 
 
-def test_apply_invalid_discount(filled_cart):
+def test_apply_invalid_discount(test_filled_cart):
     """Тест применения недопустимой скидки"""
     with pytest.raises(ValueError):
-        filled_cart.apply_discount(110)
+        test_filled_cart.apply_discount(110)
 
 
 @patch("requests.post")
-def test_log_purchase(mock_post, cart):
+def test_log_purchase(mock_post, test_cart):
     item = {"name": "Apple", "price": 10.0}
-    cart.log_purchase(item)
+    test_cart.log_purchase(item)
     mock_post.assert_called_once_with("https://example.com/log", json=item)
 
 
-def test_apply_coupon_valid(cart):
+def test_apply_coupon_valid(test_cart):
     """Тест применения валидного купона"""
-    cart.add_item("Item", 100.0)
-    cart.apply_coupon("SAVE10")
-    assert cart.total() == 90.0
+    test_cart.add_item("Item", 100.0)
+    test_cart.apply_coupon("SAVE10")
+    assert test_cart.total() == 90.0
 
 
-def test_apply_coupon_invalid(cart):
+def test_apply_coupon_invalid(test_cart):
     """Тест применения невалидного купона"""
-    cart.add_item("Item", 100.0)
+    test_cart.add_item("Item", 100.0)
     with pytest.raises(ValueError, match="Invalid coupon"):
-        cart.apply_coupon("INVALID")
+        test_cart.apply_coupon("INVALID")
