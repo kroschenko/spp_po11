@@ -6,31 +6,30 @@ class CardComponent(ABC):
     """Базовый интерфейс компонента карты"""
     @abstractmethod
     def show_info(self):
-        pass
+        """Отобразить информацию о компоненте"""
 
     @abstractmethod
     def is_valid(self) -> bool:
-        pass
+        """Проверить валидность компонента"""
 
     @abstractmethod
     def edit(self):
-        pass
+        """Редактировать данные компонента"""
+
 
 class BaseCardComponent(CardComponent):
-    """Реализация базового компонента карты"""
+    """Базовый компонент карты с общей логикой"""
     def __init__(self):
         self.expiry_date = None
 
     def show_info(self):
-        """Базовая реализация показа информации"""
-        pass
+        """Базовая реализация (может быть пустой)"""
 
     def is_valid(self) -> bool:
         return self.expiry_date and date.today() <= self.expiry_date
 
     def edit(self):
         """Базовая реализация редактирования"""
-        pass
 
     def _input_date(self, prompt, current_value=None):
         """Общий метод для ввода даты"""
@@ -42,6 +41,7 @@ class BaseCardComponent(CardComponent):
                 return date.fromisoformat(date_str)
             except ValueError:
                 print("Неверный формат даты. Используйте ГГГГ-ММ-ДД")
+
 
 class CardDecorator(CardComponent):
     """Базовый декоратор для компонентов карты"""
@@ -61,8 +61,9 @@ class CardDecorator(CardComponent):
     def edit(self):
         return self._component.edit()
 
+
 class PassportDecorator(CardDecorator):
-    """Декоратор для паспортных данных"""
+    """Декоратор паспортных данных"""
     def __init__(self, component: CardComponent):
         super().__init__(component)
         self.full_name = ""
@@ -89,8 +90,9 @@ class PassportDecorator(CardDecorator):
         self.issue_date = self._input_date("Дата выдачи (ГГГГ-ММ-ДД): ", self.issue_date)
         self.expiry_date = self._input_date("Срок действия (ГГГГ-ММ-ДД): ", self.expiry_date)
 
+
 class InsuranceDecorator(CardDecorator):
-    """Декоратор для страхового полиса"""
+    """Декоратор страхового полиса"""
     def __init__(self, component: CardComponent):
         super().__init__(component)
         self.policy_number = ""
@@ -111,8 +113,9 @@ class InsuranceDecorator(CardDecorator):
         self.insurance_company = input("Страховая компания: ") or self.insurance_company
         self.expiry_date = self._input_date("Срок действия (ГГГГ-ММ-ДД): ", self.expiry_date)
 
+
 class BankCardDecorator(CardDecorator):
-    """Декоратор для банковской карты"""
+    """Декоратор банковской карты"""
     def __init__(self, component: CardComponent):
         super().__init__(component)
         self.card_number = ""
@@ -145,10 +148,10 @@ class BankCardDecorator(CardDecorator):
             except ValueError:
                 print("Неверный формат суммы. Используйте число (например 1000.50)")
 
+
 class UniversalElectronicCard:
-    """Класс универсальной электронной карты с декораторами"""
+    """Универсальная электронная карта"""
     def __init__(self):
-        self.base_component = BaseCardComponent()
         self.components: Dict[str, CardComponent] = {
             "1": PassportDecorator(BaseCardComponent()),
             "2": InsuranceDecorator(BaseCardComponent()),
@@ -176,6 +179,7 @@ class UniversalElectronicCard:
     def is_valid(self) -> bool:
         return all(component.is_valid() for component in self.components.values())
 
+
 def main():
     card = UniversalElectronicCard()
 
@@ -202,6 +206,7 @@ def main():
             break
         else:
             print("Неверный выбор, попробуйте снова")
+
 
 if __name__ == "__main__":
     main()
