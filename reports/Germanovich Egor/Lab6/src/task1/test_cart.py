@@ -5,86 +5,97 @@ from shopping import ShoppingCart
 
 
 @pytest.fixture
-def empty_cart():
+def cart():
     return ShoppingCart()
 
 
 @pytest.fixture
-def cart_with_items():
+def filled_cart():
     cart = ShoppingCart()
     cart.add_item("apple", 1.0)
     cart.add_item("banana", 0.5)
     return cart
 
 
-def test_add_item(empty_cart):
+def test_add_item(cart):
     """Тест добавления товара в корзину"""
-    empty_cart.add_item("apple", 1.0)
-    assert "apple" in empty_cart.items
-    assert empty_cart.items["apple"] == 1.0
+    cart.add_item("apple", 1.0)
+    assert len(cart.items) == 1
+    assert cart.items[0]["name"] == "apple"
+    assert cart.items[0]["price"] == 1.0
 
 
-def test_add_item_with_quantity(empty_cart):
+def test_add_item_with_quantity(cart):
     """Тест добавления товара с указанием количества"""
-    empty_cart.add_item("apple", 1.0, 2)
-    assert empty_cart.items["apple"] == 2.0
+    cart.add_item("apple", 1.0)
+    cart.add_item("apple", 1.0)
+    assert len(cart.items) == 2
+    assert cart.items[0]["name"] == "apple"
+    assert cart.items[0]["price"] == 1.0
+    assert cart.items[1]["name"] == "apple"
+    assert cart.items[1]["price"] == 1.0
 
 
-def test_add_existing_item(cart_with_items):
+def test_add_existing_item(filled_cart):
     """Тест добавления существующего товара"""
-    cart_with_items.add_item("apple", 1.0)
-    assert cart_with_items.items["apple"] == 2.0
+    filled_cart.add_item("apple", 1.0)
+    assert len(filled_cart.items) == 3
+    assert filled_cart.items[0]["name"] == "apple"
+    assert filled_cart.items[0]["price"] == 1.0
 
 
-def test_remove_item(cart_with_items):
+def test_remove_item(filled_cart):
     """Тест удаления товара из корзины"""
-    cart_with_items.remove_item("apple")
-    assert "apple" not in cart_with_items.items
+    filled_cart.remove_item("apple")
+    assert len(filled_cart.items) == 1
+    assert filled_cart.items[0]["name"] == "banana"
 
 
-def test_remove_nonexistent_item(cart_with_items):
+def test_remove_nonexistent_item(filled_cart):
     """Тест удаления несуществующего товара"""
     with pytest.raises(ValueError):
-        cart_with_items.remove_item("orange")
+        filled_cart.remove_item("orange")
 
 
-def test_remove_item_with_empty_name(cart_with_items):
+def test_remove_item_with_empty_name(filled_cart):
     """Тест удаления товара с пустым именем"""
     with pytest.raises(ValueError):
-        cart_with_items.remove_item("")
+        filled_cart.remove_item("")
 
 
-def test_get_total(cart_with_items):
+def test_get_total(filled_cart):
     """Тест расчета общей стоимости"""
-    assert cart_with_items.get_total() == 1.5
+    assert filled_cart.total() == 1.5
 
 
-def test_apply_discount(cart_with_items):
+def test_apply_discount(filled_cart):
     """Тест применения скидки"""
-    cart_with_items.apply_discount(10)
-    assert cart_with_items.get_total() == 1.35
+    filled_cart.apply_discount(10)
+    assert filled_cart.total() == 1.35
 
 
-def test_apply_invalid_discount(cart_with_items):
+def test_apply_invalid_discount(filled_cart):
     """Тест применения недопустимой скидки"""
     with pytest.raises(ValueError):
-        cart_with_items.apply_discount(110)
+        filled_cart.apply_discount(110)
 
 
 @patch("requests.post")
-def test_log_purchase(mock_post, empty_cart):
+def test_log_purchase(mock_post, cart):
     item = {"name": "Apple", "price": 10.0}
-    empty_cart.log_purchase(item)
+    cart.log_purchase(item)
     mock_post.assert_called_once_with("https://example.com/log", json=item)
 
 
-def test_apply_coupon_valid(empty_cart):
-    empty_cart.add_item("Item", 100.0)
-    empty_cart.apply_coupon("SAVE10")
-    assert empty_cart.total() == 90.0
+def test_apply_coupon_valid(cart):
+    """Тест применения валидного купона"""
+    cart.add_item("Item", 100.0)
+    cart.apply_coupon("SAVE10")
+    assert cart.total() == 90.0
 
 
-def test_apply_coupon_invalid(empty_cart):
-    empty_cart.add_item("Item", 100.0)
+def test_apply_coupon_invalid(cart):
+    """Тест применения невалидного купона"""
+    cart.add_item("Item", 100.0)
     with pytest.raises(ValueError, match="Invalid coupon"):
-        empty_cart.apply_coupon("INVALID")
+        cart.apply_coupon("INVALID")
