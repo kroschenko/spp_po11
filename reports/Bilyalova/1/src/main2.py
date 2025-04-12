@@ -1,13 +1,11 @@
-def find_first_occurrence(haystack, needle):
-    return haystack.find(needle)
+def find_first_occurrence(haystack_str, needle_str):
+    return haystack_str.find(needle_str)
 
-
-haystack = input("Введите строку haystack: ")
-needle = input("Введите строку needle: ")
-
-index = find_first_occurrence(haystack, needle)
+input_haystack = input("Введите строку haystack: ")
+input_needle = input("Введите строку needle: ")
+index = find_first_occurrence(input_haystack, input_needle)
 
 if index != -1:
     print(f"Индекс первого вхождения: {index}")
 else:
-    print(f"Индекс первого вхождения: {index}")
+    print("Подстрока не найдена")
