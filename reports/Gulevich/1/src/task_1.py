@@ -7,5 +7,6 @@ def find_median(numbers):
     mid1, mid2 = numbers[n // 2 - 1], numbers[n // 2]
     return (mid1 + mid2) / 2  # Возвращаем среднее двух средних элементов
 
+
 sequence = list(map(int, input("Введите последовательность чисел через пробел: ").split()))
 print("Медиана:", find_median(sequence))
