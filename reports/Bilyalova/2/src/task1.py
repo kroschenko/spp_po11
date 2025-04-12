@@ -1,5 +1,6 @@
 import math
 
+
 class RightTriangle:
     def __init__(self, a, b, c):
         self.a = a
@@ -38,7 +39,7 @@ class RightTriangle:
 
     def is_valid(self):
         sides = sorted([self.a, self.b, self.c])
-        return math.isclose(sides[0]**2 + sides[1]**2, sides[2]**2, rel_tol=1e-9)
+        return math.isclose(sides[0] ** 2 + sides[1] ** 2, sides[2] ** 2, rel_tol=1e-9)
 
     def area(self):
         if not self.is_valid():
@@ -59,6 +60,7 @@ class RightTriangle:
         # Сравниваем стороны, учитывая порядок
         return sorted([self.a, self.b, self.c]) == sorted([other.a, other.b, other.c])
 
+
 def input_triangle():
     try:
         a = float(input("Введите длину стороны a: "))
@@ -69,13 +71,14 @@ def input_triangle():
         print(f"Ошибка: {e}")
         return None
 
+
 if __name__ == "__main__":
     print("Введите данные для первого треугольника:")
     triangle1 = input_triangle()
 
     if triangle1:
         print("\nПервый треугольник:")
-        print(triangle1) 
+        print(triangle1)
         if triangle1.is_valid():
             print("Площадь:", triangle1.area())
             print("Периметр:", triangle1.perimeter())
@@ -87,7 +90,7 @@ if __name__ == "__main__":
 
     if triangle2:
         print("\nВторой треугольник:")
-        print(triangle2) 
+        print(triangle2)
         if triangle2.is_valid():
             print("Площадь:", triangle2.area())
             print("Периметр:", triangle2.perimeter())

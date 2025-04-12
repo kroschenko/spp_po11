@@ -1,5 +1,6 @@
 from typing import List
 
+
 class Person:
     def __init__(self, name: str, age: int):
         self.name = name
@@ -7,6 +8,7 @@ class Person:
 
     def __str__(self):
         return f"{self.name}, {self.age} лет"
+
 
 class Patient(Person):
     def __init__(self, name: str, age: int, patient_id: str):
@@ -27,6 +29,7 @@ class Patient(Person):
     def __str__(self):
         return f"Пациент: {self.name}, ID: {self.patient_id}, Статус: {self.status}"
 
+
 class Doctor(Person):
     def __init__(self, name: str, age: int, doctor_id: str, specialization: str):
         super().__init__(name, age)
@@ -40,6 +43,7 @@ class Doctor(Person):
 
     def __str__(self):
         return f"Врач: {self.name}, Специализация: {self.specialization}"
+
 
 class Nurse(Person):
     def __init__(self, name: str, age: int, nurse_id: str):
@@ -56,6 +60,7 @@ class Nurse(Person):
     def __str__(self):
         return f"Медсестра: {self.name}, ID: {self.nurse_id}"
 
+
 class Treatment:
     def __init__(self, treatment_type: str, description: str):
         self.treatment_type = treatment_type
@@ -63,6 +68,7 @@ class Treatment:
 
     def __str__(self):
         return f"{self.treatment_type}: {self.description}"
+
 
 class Hospital:
     def __init__(self):
@@ -85,6 +91,7 @@ class Hospital:
     def assign_doctor_to_patient(self, patient: Patient, doctor: Doctor):
         patient.assign_doctor(doctor)
         print(f"Врач {doctor.name} назначен пациенту {patient.name}.")
+
 
 if __name__ == "__main__":
     # Создаем больницу

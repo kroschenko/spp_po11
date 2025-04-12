@@ -1,5 +1,6 @@
 from typing import List
 
+
 class Employee:
     def __init__(self, name: str, department: str, position: str, salary: float):
         self.name = name
@@ -13,38 +14,43 @@ class Employee:
     def remove_subordinate(self, employee):
         raise NotImplementedError("Этот метод должен быть переопределен в подклассе")
 
-    def get_subordinates(self) -> List['Employee']:
+    def get_subordinates(self) -> List["Employee"]:
         raise NotImplementedError("Этот метод должен быть переопределен в подклассе")
 
     def __str__(self):
-        return (f"Сотрудник: {self.name}, "
-                f"Отдел: {self.department}, "
-                f"Должность: {self.position}, "
-                f"Зарплата: ${self.salary}")
+        return (
+            f"Сотрудник: {self.name}, "
+            f"Отдел: {self.department}, "
+            f"Должность: {self.position}, "
+            f"Зарплата: ${self.salary}"
+        )
+
 
 class Manager(Employee):
     def __init__(self, name: str, department: str, position: str, salary: float):
         super().__init__(name, department, position, salary)
         self.subordinates: List[Employee] = []
 
-    def add_subordinate(self, employee: 'Employee'):
+    def add_subordinate(self, employee: "Employee"):
         self.subordinates.append(employee)
         print(f"{employee.name} теперь подчиняется {self.name}")
 
-    def remove_subordinate(self, employee: 'Employee'):
+    def remove_subordinate(self, employee: "Employee"):
         if employee in self.subordinates:
             self.subordinates.remove(employee)
             print(f"{employee.name} больше не подчиняется {self.name}")
         else:
             print(f"{employee.name} не найден в подчинении у {self.name}")
 
-    def get_subordinates(self) -> List['Employee']:
+    def get_subordinates(self) -> List["Employee"]:
         return self.subordinates
 
     def __str__(self):
         subordinates_info = "\n  ".join([str(sub) for sub in self.subordinates])
-        return (f"{super().__str__()}\n"
-                f"Подчиненные:\n  {subordinates_info if subordinates_info else 'Нет подчиненных'}")
+        return (
+            f"{super().__str__()}\n" f"Подчиненные:\n  {subordinates_info if subordinates_info else 'Нет подчиненных'}"
+        )
+
 
 class RegularEmployee(Employee):
     def __init__(self, name: str, department: str, position: str, salary: float):
@@ -52,6 +58,7 @@ class RegularEmployee(Employee):
 
     def __str__(self):
         return super().__str__()
+
 
 if __name__ == "__main__":
     # Создаем сотрудников

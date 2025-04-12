@@ -14,4 +14,4 @@ class Cart:
         if not (0 <= discount_percent <= 100):
             raise ValueError("Invalid discount percent")
         for item in self.items:
-            item["price"] *= (1 - discount_percent / 100)
+            item["price"] *= 1 - discount_percent / 100

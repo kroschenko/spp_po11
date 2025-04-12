@@ -1,9 +1,8 @@
 from datetime import time
 
-from fastapi import FastAPI, HTTPException
-
 from const import Const
 from database import SessionLocal
+from fastapi import FastAPI, HTTPException
 from models import Classroom, Course, Schedule, StudentGroup, Teacher
 
 DATABASE_URL = Const.DATABASE_URL

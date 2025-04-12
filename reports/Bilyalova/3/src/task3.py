@@ -1,5 +1,6 @@
 from typing import List
 
+
 class Employee:
     def __init__(self, name: str, department: str, position: str, salary: float):
         self.name = name
@@ -10,18 +11,20 @@ class Employee:
     def accept(self, visitor):
         raise NotImplementedError("Этот метод должен быть переопределен в подклассе")
 
+
 class Manager(Employee):
     def __init__(self, name: str, department: str, position: str, salary: float):
         super().__init__(name, department, position, salary)
         self.subordinates: List[Employee] = []
 
-    def add_subordinate(self, employee: 'Employee'):
+    def add_subordinate(self, employee: "Employee"):
         self.subordinates.append(employee)
 
     def accept(self, visitor):
         visitor.visit_manager(self)
         for subordinate in self.subordinates:
             subordinate.accept(visitor)
+
 
 class RegularEmployee(Employee):
     def __init__(self, name: str, department: str, position: str, salary: float):
@@ -30,24 +33,30 @@ class RegularEmployee(Employee):
     def accept(self, visitor):
         visitor.visit_regular_employee(self)
 
+
 class SalaryReportVisitor:
     def __init__(self):
         self.report = []
 
     def visit_manager(self, manager: Manager):
-        self.report.append(f"Руководитель: {manager.name}, "
-                           f"Отдел: {manager.department}, "
-                           f"Должность: {manager.position}, "
-                           f"Зарплата: ${manager.salary}")
+        self.report.append(
+            f"Руководитель: {manager.name}, "
+            f"Отдел: {manager.department}, "
+            f"Должность: {manager.position}, "
+            f"Зарплата: ${manager.salary}"
+        )
 
     def visit_regular_employee(self, employee: RegularEmployee):
-        self.report.append(f"Сотрудник: {employee.name}, "
-                           f"Отдел: {employee.department}, "
-                           f"Должность: {employee.position}, "
-                           f"Зарплата: ${employee.salary}")
+        self.report.append(
+            f"Сотрудник: {employee.name}, "
+            f"Отдел: {employee.department}, "
+            f"Должность: {employee.position}, "
+            f"Зарплата: ${employee.salary}"
+        )
 
     def generate_report(self) -> str:
         return "\n".join(self.report)
+
 
 if __name__ == "__main__":
     # Создаем сотрудников

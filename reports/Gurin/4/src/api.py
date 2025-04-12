@@ -1,6 +1,5 @@
-from requests import post
-
 from const import MainConst
+from requests import post
 
 
 def get_github_data(username: str) -> str:
