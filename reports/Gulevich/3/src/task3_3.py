@@ -3,7 +3,7 @@ from enum import Enum
 from typing import List
 
 
-class PizzaType(Enum):
+class PizzaType(Enum): #vvv
     MARGHERITA = "Маргарита"
     PEPPERONI = "Пепперони"
     BBQ = "Барбекю"
@@ -184,4 +184,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
