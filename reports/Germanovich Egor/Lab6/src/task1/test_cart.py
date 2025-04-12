@@ -1,45 +1,74 @@
 from unittest.mock import patch
 
 import pytest
-import requests
-from shopping import Cart
+from shopping import ShoppingCart
 
 
 @pytest.fixture
 def empty_cart():
-    return Cart()
+    return ShoppingCart()
+
+
+@pytest.fixture
+def cart_with_items():
+    cart = ShoppingCart()
+    cart.add_item("apple", 1.0)
+    cart.add_item("banana", 0.5)
+    return cart
 
 
 def test_add_item(empty_cart):
-    empty_cart.add_item("Apple", 10.0)
-    assert len(empty_cart.items) == 1
-    assert empty_cart.items[0]["name"] == "Apple"
-    assert empty_cart.items[0]["price"] == 10.0
+    """Тест добавления товара в корзину"""
+    empty_cart.add_item("apple", 1.0)
+    assert "apple" in empty_cart.items
+    assert empty_cart.items["apple"] == 1.0
 
 
-def test_add_item_negative_price(empty_cart):
-    with pytest.raises(ValueError, match="Price cannot be negative"):
-        empty_cart.add_item("Apple", -10.0)
+def test_add_item_with_quantity(empty_cart):
+    """Тест добавления товара с указанием количества"""
+    empty_cart.add_item("apple", 1.0, 2)
+    assert empty_cart.items["apple"] == 2.0
 
 
-def test_total(empty_cart):
-    empty_cart.add_item("Apple", 10.0)
-    empty_cart.add_item("Banana", 5.0)
-    assert empty_cart.total() == 15.0
+def test_add_existing_item(cart_with_items):
+    """Тест добавления существующего товара"""
+    cart_with_items.add_item("apple", 1.0)
+    assert cart_with_items.items["apple"] == 2.0
 
 
-@pytest.mark.parametrize("discount,expected_total", [(0, 100.0), (50, 50.0), (100, 0.0)])
-def test_apply_discount_valid(empty_cart, discount, expected_total):
-    empty_cart.add_item("Item", 100.0)
-    empty_cart.apply_discount(discount)
-    assert empty_cart.total() == expected_total
+def test_remove_item(cart_with_items):
+    """Тест удаления товара из корзины"""
+    cart_with_items.remove_item("apple")
+    assert "apple" not in cart_with_items.items
 
 
-@pytest.mark.parametrize("invalid_discount", [-10, 110])
-def test_apply_discount_invalid(empty_cart, invalid_discount):
-    empty_cart.add_item("Item", 100.0)
-    with pytest.raises(ValueError, match="Invalid discount percent"):
-        empty_cart.apply_discount(invalid_discount)
+def test_remove_nonexistent_item(cart_with_items):
+    """Тест удаления несуществующего товара"""
+    with pytest.raises(ValueError):
+        cart_with_items.remove_item("orange")
+
+
+def test_remove_item_with_empty_name(cart_with_items):
+    """Тест удаления товара с пустым именем"""
+    with pytest.raises(ValueError):
+        cart_with_items.remove_item("")
+
+
+def test_get_total(cart_with_items):
+    """Тест расчета общей стоимости"""
+    assert cart_with_items.get_total() == 1.5
+
+
+def test_apply_discount(cart_with_items):
+    """Тест применения скидки"""
+    cart_with_items.apply_discount(10)
+    assert cart_with_items.get_total() == 1.35
+
+
+def test_apply_invalid_discount(cart_with_items):
+    """Тест применения недопустимой скидки"""
+    with pytest.raises(ValueError):
+        cart_with_items.apply_discount(110)
 
 
 @patch("requests.post")

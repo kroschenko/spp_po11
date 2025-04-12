@@ -28,3 +28,11 @@ class Cart:
             self.apply_discount(coupons[coupon_code])
         else:
             raise ValueError("Invalid coupon")
+
+    def remove_item(self, item_name: str) -> None:
+        """Удаляет товар из корзины по имени"""
+        if not item_name:
+            raise ValueError("Имя товара не может быть пустым")
+        if item_name not in self.items:
+            raise ValueError(f"Товар {item_name} не найден в корзине")
+        del self.items[item_name]
