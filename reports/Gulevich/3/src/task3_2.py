@@ -89,32 +89,31 @@ def create_remote():
 
         if choice == "1":
             return BasicRemote()
-        elif choice == "2":
+        if choice == "2":
             return AdvancedRemote()
-        else:
-            print("Неверный ввод. Попробуйте снова.")
+        print("Неверный ввод. Попробуйте снова.")
 
 
 def create_car():
     print("\nСоздание нового автомобиля")
-
     brand = input("Введите марку автомобиля: ")
     model = input("Введите модель автомобиля: ")
-
     remote = create_remote()
-
     return Car(brand, model, remote)
+
+
+def car_control_menu():
+    print("\n1. Включить/выключить двигатель")
+    print("2. Открыть/закрыть двери")
+    print("3. Активировать сигнализацию")
+    print("4. Показать состояние")
+    print("5. Вернуться в меню")
 
 
 def car_control(car):
     while True:
         print(f"\nУправление автомобилем {car.get_info()}")
-        print("1. Включить/выключить двигатель")
-        print("2. Открыть/закрыть двери")
-        print("3. Активировать сигнализацию")
-        print("4. Показать состояние")
-        print("5. Вернуться в меню")
-
+        car_control_menu()
         choice = input("Выберите действие (1-5): ")
 
         if choice == "1":
@@ -131,15 +130,33 @@ def car_control(car):
             print("Неверный ввод. Попробуйте снова.")
 
 
+def select_car(cars):
+    print("\nСписок автомобилей:")
+    for i, car in enumerate(cars, 1):
+        print(f"{i}. {car.get_info()}")
+
+    while True:
+        try:
+            car_num = int(input("Выберите номер автомобиля: ")) - 1
+            if 0 <= car_num < len(cars):
+                return car_num
+            print("Неверный номер. Попробуйте снова.")
+        except ValueError:
+            print("Введите число!")
+
+
+def main_menu():
+    print("\nГлавное меню:")
+    print("1. Добавить автомобиль")
+    print("2. Управлять автомобилем")
+    print("3. Выйти из программы")
+
+
 def main():
     cars = []
 
     while True:
-        print("\nГлавное меню:")
-        print("1. Добавить автомобиль")
-        print("2. Управлять автомобилем")
-        print("3. Выйти из программы")
-
+        main_menu()
         choice = input("Выберите действие (1-3): ")
 
         if choice == "1":
@@ -151,20 +168,8 @@ def main():
                 print("Нет доступных автомобилей!")
                 continue
 
-            print("\nСписок автомобилей:")
-            for i, car in enumerate(cars, 1):
-                print(f"{i}. {car.get_info()}")
-
-            while True:
-                try:
-                    car_num = int(input("Выберите номер автомобиля: ")) - 1
-                    if 0 <= car_num < len(cars):
-                        car_control(cars[car_num])
-                        break
-                    else:
-                        print("Неверный номер. Попробуйте снова.")
-                except ValueError:
-                    print("Введите число!")
+            car_num = select_car(cars)
+            car_control(cars[car_num])
         elif choice == "3":
             print("Выход из программы.")
             break
