@@ -67,6 +67,50 @@ def select_from_list(prompt, items):
     return items[index] if 0 <= index < len(items) else None
 
 
+def handle_assignment(dispatcher, drivers, vehicles, trips):
+    driver = select_from_list("Выберите водителя: ", drivers)
+    vehicle = select_from_list("Выберите автомобиль: ", vehicles)
+    trip = select_from_list("Выберите рейс: ", trips)
+    if driver and vehicle and trip:
+        dispatcher.assign_trip(driver, vehicle, trip)
+
+
+def handle_repair_request(dispatcher, drivers, vehicles):
+    driver = select_from_list("Выберите водителя: ", drivers)
+    vehicle = select_from_list("Выберите автомобиль: ", vehicles)
+    if driver and vehicle:
+        reason = input("Причина ремонта: ")
+        driver.request_repair(dispatcher, vehicle, reason)
+
+
+def handle_suspend_driver(dispatcher, drivers):
+    driver = select_from_list("Выберите водителя: ", drivers)
+    if driver:
+        dispatcher.suspend_driver(driver)
+
+
+def handle_trip_completion(trips):
+    trip = select_from_list("Выберите завершённый рейс: ", trips)
+    if trip and trip.driver:
+        condition = input("Состояние автомобиля после рейса: ")
+        trip.driver.report_trip_completion(trip, condition)
+
+
+def main_menu():
+    print("\nВыберите действие:")
+    actions = {
+        "1": "Назначить рейс",
+        "2": "Заявка на ремонт",
+        "3": "Отстранить водителя",
+        "4": "Завершить рейс",
+        "5": "Показать заявки на ремонт",
+        "0": "Выход"
+    }
+    for k, v in actions.items():
+        print(f"{k}. {v}")
+    return input("Введите номер действия: ")
+
+
 def main():
     dispatcher = Dispatcher()
     drivers, vehicles, trips = [], [], []
@@ -82,44 +126,19 @@ def main():
     input_loop("модель автомобиля", vehicles, Vehicle)
     input_loop("пункт назначения рейса", trips, Trip)
 
-    actions = {
-        "1": "Назначить рейс",
-        "2": "Заявка на ремонт",
-        "3": "Отстранить водителя",
-        "4": "Завершить рейс",
-        "5": "Показать заявки на ремонт",
-        "0": "Выход"
-    }
-
     while True:
-        print("\nВыберите действие:")
-        for k, v in actions.items():
-            print(f"{k}. {v}")
-        choice = input("Введите номер действия: ")
+        choice = main_menu()
 
         if choice == "0":
             break
-        elif choice == "1":
-            driver = select_from_list("Выберите водителя: ", drivers)
-            vehicle = select_from_list("Выберите автомобиль: ", vehicles)
-            trip = select_from_list("Выберите рейс: ", trips)
-            if driver and vehicle and trip:
-                dispatcher.assign_trip(driver, vehicle, trip)
+        if choice == "1":
+            handle_assignment(dispatcher, drivers, vehicles, trips)
         elif choice == "2":
-            driver = select_from_list("Выберите водителя: ", drivers)
-            vehicle = select_from_list("Выберите автомобиль: ", vehicles)
-            if driver and vehicle:
-                reason = input("Причина ремонта: ")
-                driver.request_repair(dispatcher, vehicle, reason)
+            handle_repair_request(dispatcher, drivers, vehicles)
         elif choice == "3":
-            driver = select_from_list("Выберите водителя: ", drivers)
-            if driver:
-                dispatcher.suspend_driver(driver)
+            handle_suspend_driver(dispatcher, drivers)
         elif choice == "4":
-            trip = select_from_list("Выберите завершённый рейс: ", trips)
-            if trip:
-                condition = input("Состояние автомобиля после рейса: ")
-                trip.driver.report_trip_completion(trip, condition)
+            handle_trip_completion(trips)
         elif choice == "5":
             dispatcher.show_repair_requests()
         else:
@@ -128,3 +147,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

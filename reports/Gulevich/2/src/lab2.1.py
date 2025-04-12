@@ -29,7 +29,7 @@ class LimitedCharSet:
     def __eq__(self, other):
         if not isinstance(other, LimitedCharSet):
             return False
-        return sorted(self._elements) == sorted(other._elements)
+        return sorted(self._elements) == sorted(other.get_elements())
 
     def union(self, other):
         if not isinstance(other, LimitedCharSet):
@@ -38,13 +38,12 @@ class LimitedCharSet:
         new_capacity = max(self.capacity, other.capacity)
         new_set = LimitedCharSet(new_capacity)
 
-        for char in self._elements + other._elements:
+        for char in self.get_elements() + other.get_elements():
             new_set.add(char)
 
         return new_set
 
-    @property
-    def elements(self):
+    def get_elements(self):
         return list(self._elements)
 
     @property
@@ -56,6 +55,34 @@ class LimitedCharSet:
         return self.capacity
 
 
+def display_menu():
+    print("\nМеню:")
+    print("1. Добавить символ")
+    print("2. Удалить символ")
+    print("3. Проверить наличие символа")
+    print("4. Вывести множество")
+    print("5. Создать второе множество и объединить")
+    print("6. Проверить равенство с другим множеством")
+    print("7. Завершить")
+
+
+def handle_union(my_set):
+    print("== Создание второго множества для объединения ==")
+    cap2 = int(input("Введите мощность второго множества: "))
+    init2 = input("Введите символы второго множества: ")
+    other_set = LimitedCharSet(cap2, list(init2))
+    combined = my_set.union(other_set)
+    print("Результат объединения:", combined)
+
+
+def handle_equality(my_set):
+    print("== Создание второго множества для сравнения ==")
+    cap2 = int(input("Введите мощность второго множества: "))
+    init2 = input("Введите символы второго множества: ")
+    other_set = LimitedCharSet(cap2, list(init2))
+    print("Множества равны?", my_set == other_set)
+
+
 def main():
     print("== Работа с ограниченным множеством символов ==")
     capacity = int(input("Введите мощность множества: "))
@@ -64,51 +91,27 @@ def main():
     my_set = LimitedCharSet(capacity, list(initial))
 
     while True:
-        print("\nМеню:")
-        print("1. Добавить символ")
-        print("2. Удалить символ")
-        print("3. Проверить наличие символа")
-        print("4. Вывести множество")
-        print("5. Создать второе множество и объединить")
-        print("6. Проверить равенство с другим множеством")
-        print("7. Завершить")
-
+        display_menu()
         choice = input("Выберите действие: ")
 
         if choice == "1":
             ch = input("Введите символ для добавления: ")
             my_set.add(ch)
-
         elif choice == "2":
             ch = input("Введите символ для удаления: ")
             my_set.remove(ch)
-
         elif choice == "3":
             ch = input("Введите символ для проверки: ")
             print(f"'{ch}' в множестве? ->", my_set.contains(ch))
-
         elif choice == "4":
             print("Текущее множество:", my_set)
-
         elif choice == "5":
-            print("== Создание второго множества для объединения ==")
-            cap2 = int(input("Введите мощность второго множества: "))
-            init2 = input("Введите символы второго множества: ")
-            other_set = LimitedCharSet(cap2, list(init2))
-            combined = my_set.union(other_set)
-            print("Результат объединения:", combined)
-
+            handle_union(my_set)
         elif choice == "6":
-            print("== Создание второго множества для сравнения ==")
-            cap2 = int(input("Введите мощность второго множества: "))
-            init2 = input("Введите символы второго множества: ")
-            other_set = LimitedCharSet(cap2, list(init2))
-            print("Множества равны?", my_set == other_set)
-
+            handle_equality(my_set)
         elif choice == "7":
             print("Выход из программы.")
             break
-
         else:
             print("Неверный выбор. Попробуйте снова.")
 
