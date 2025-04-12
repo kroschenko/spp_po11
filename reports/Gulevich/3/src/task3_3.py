@@ -50,7 +50,7 @@ class Order:
 
 class Pizzeria:
     def __init__(self):
-        self.orders: Dict[int, Order] = {}
+        self.orders = {}
         self.next_order_id = 1
         self.price_list = {
             PizzaSize.SMALL: 8.99,
@@ -186,4 +186,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

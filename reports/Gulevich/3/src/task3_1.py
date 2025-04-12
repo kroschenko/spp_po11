@@ -1,6 +1,3 @@
-from abc import ABC, abstractmethod
-
-
 class Student:
     def __init__(self, name):
         self.name = name
@@ -66,6 +63,15 @@ def create_students():
     return students
 
 
+def handle_lab_check(teacher, students):
+    print("\nСписок студентов:")
+    for idx, student in enumerate(students, 1):
+        print(f"{idx}. {student.name}")
+    stud_idx = int(input("Выберите студента (номер): ")) - 1
+    lab = input("Введите название работы: ")
+    teacher.check_lab_work(students[stud_idx], lab)
+
+
 def handle_teacher_actions(teacher, students):
     while True:
         print("\n--- Меню ---")
@@ -94,15 +100,6 @@ def handle_teacher_actions(teacher, students):
             print("Ошибка: выберите 1-5.")
 
 
-def handle_lab_check(teacher, students):
-    print("\nСписок студентов:")
-    for idx, student in enumerate(students, 1):
-        print(f"{idx}. {student.name}")
-    stud_idx = int(input("Выберите студента (номер): ")) - 1
-    lab = input("Введите название работы: ")
-    teacher.check_lab_work(students[stud_idx], lab)
-
-
 def main():
     teacher = Teacher()
     students = create_students()
@@ -115,4 +112,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
