@@ -290,7 +290,7 @@ def fill_test_data():
         first_name="Mikhail", last_name="Si   rov", date_of_birth=date(2000, 5, 14), department=math_department
     )
     student2 = Student(
-         first_name="Elena", last_name="Smirnova", date_of_birth=date(2001, 7, 22), department=physics_department
+        irst_name="Elena", last_name="Smirnova", date_of_birth=date(2001, 7, 22), department=physics_department
     )
     db.add_all([student1, student2])
 
@@ -305,3 +305,4 @@ def fill_test_data():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+    
