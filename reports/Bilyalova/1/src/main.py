@@ -21,7 +21,7 @@ try:
     modes = find_modes(sequence)
     
     if modes is None:
-        print("В последовательности нет моды.")
+        print("В последовательности нет моды")
     else:
         print("Мода последовательности:", ", ".join(map(str, modes)))
 except ValueError:
