@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import List, Dict
+from typing import List
 
 
 class PizzaType(Enum):
@@ -78,7 +78,6 @@ class Pizzeria:
         original = self.get_order(order_id)
         if not original:
             return None
-
         new_order = self.create_order()
         for pizza in original.pizzas:
             new_order.add_pizza(Pizza(pizza.type, pizza.size, pizza.price))
@@ -143,14 +142,14 @@ def handle_order_cancellation(pizzeria):
     if pizzeria.cancel_order(order_id):
         print(f"Заказ #{order_id} отменен")
     else:
-        print("Не удалось отменить заказ (не найден или уже отменен)")
+        print("Не удалось отменить заказ")
 
 
 def handle_reorder(pizzeria):
     order_id = int(input("Введите номер заказа для повторения: "))
     new_order = pizzeria.reorder(order_id)
     if new_order:
-        print(f"\nНовый заказ #{new_order.order_id} создан (копия #{order_id}):")
+        print(f"\nНовый заказ #{new_order.order_id} создан:")
         print(new_order)
     else:
         print("Заказ не найден")
@@ -158,7 +157,6 @@ def handle_reorder(pizzeria):
 
 def main():
     pizzeria = Pizzeria()
-
     while True:
         print("\nГлавное меню:")
         print("1. Создать новый заказ")
@@ -181,8 +179,9 @@ def main():
             print("До свидания!")
             break
         else:
-            print("Неверный ввод. Пожалуйста, попробуйте снова.")
+            print("Неверный ввод. Попробуйте снова.")
 
 
 if __name__ == "__main__":
     main()
+    
