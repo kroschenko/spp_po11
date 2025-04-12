@@ -54,10 +54,29 @@ class Manager(Employee):
 
 class RegularEmployee(Employee):
     def __init__(self, name: str, department: str, position: str, salary: float):
-        super().__init__(name, department, position, salary)
+        # Убрали избыточный вызов super().__init__()
+        self.name = name
+        self.department = department
+        self.position = position
+        self.salary = salary
+
+    def add_subordinate(self, employee):
+        print("Обычные сотрудники не могут иметь подчиненных")
+
+    def remove_subordinate(self, employee):
+        print("Обычные сотрудники не могут иметь подчиненных")
+
+    def get_subordinates(self) -> List["Employee"]:
+        return []
 
     def __str__(self):
-        return super().__str__()
+        # Убрали избыточный вызов super().__str__()
+        return (
+            f"Сотрудник: {self.name}, "
+            f"Отдел: {self.department}, "
+            f"Должность: {self.position}, "
+            f"Зарплата: ${self.salary}"
+        )
 
 
 if __name__ == "__main__":
