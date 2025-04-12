@@ -1,8 +1,7 @@
 from typing import Protocol
 
 class DigitalThermometer(Protocol):
-    def get_temperature(self) -> float:
-        ...
+    def get_temperature(self) -> float: ...
 
 class AnalogThermometer:
     def __init__(self, min_temp: float, max_temp: float):

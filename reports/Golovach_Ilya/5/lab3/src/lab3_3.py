@@ -2,40 +2,40 @@ from abc import ABC, abstractmethod
 
 class ATMState(ABC):
     @abstractmethod
-    def insert_card(self, atm: 'ATM') -> None:
+    def insert_card(self, atm: "ATM") -> None:
         pass
 
     @abstractmethod
-    def enter_pin(self, atm: 'ATM', pin: str) -> None:
+    def enter_pin(self, atm: "ATM", pin: str) -> None:
         pass
 
     @abstractmethod
-    def withdraw(self, atm: 'ATM', amount: float) -> None:
+    def withdraw(self, atm: "ATM", amount: float) -> None:
         pass
 
     @abstractmethod
-    def eject_card(self, atm: 'ATM') -> None:
+    def eject_card(self, atm: "ATM") -> None:
         pass
 
     @abstractmethod
-    def display_menu(self, atm: 'ATM') -> None:
+    def display_menu(self, atm: "ATM") -> None:
         pass
 
 class IdleState(ATMState):
-    def insert_card(self, atm: 'ATM') -> None:
+    def insert_card(self, atm: "ATM") -> None:
         print("\nКарта вставлена. Введите PIN.")
         atm.set_state(AuthenticationState())
 
-    def enter_pin(self, atm: 'ATM', pin: str) -> None:
+    def enter_pin(self, atm: "ATM", pin: str) -> None:
         print("\nОшибка: Сначала вставьте карту.")
 
-    def withdraw(self, atm: 'ATM', amount: float) -> None:
+    def withdraw(self, atm: "ATM", amount: float) -> None:
         print("\nОшибка: Сначала вставьте карту и введите PIN.")
 
-    def eject_card(self, atm: 'ATM') -> None:
+    def eject_card(self, atm: "ATM") -> None:
         print("\nОшибка: Карта не вставлена.")
 
-    def display_menu(self, atm: 'ATM') -> None:
+    def display_menu(self, atm: "ATM") -> None:
         print("\n=== Меню ===")
         print("1. Вставить карту")
         print("2. Проверить баланс банкомата")
@@ -52,24 +52,24 @@ class IdleState(ATMState):
             print("Неверный ввод. Попробуйте ещё раз.")
 
 class AuthenticationState(ATMState):
-    def insert_card(self, atm: 'ATM') -> None:
+    def insert_card(self, atm: "ATM") -> None:
         print("\nОшибка: Карта уже вставлена.")
 
-    def enter_pin(self, atm: 'ATM', pin: str) -> None:
+    def enter_pin(self, atm: "ATM", pin: str) -> None:
         if pin == "1234":  # Пример правильного PIN
             print("\nPIN верный. Выберите операцию.")
             atm.set_state(OperationState())
         else:
             print("\nНеверный PIN. Попробуйте ещё раз.")
 
-    def withdraw(self, atm: 'ATM', amount: float) -> None:
+    def withdraw(self, atm: "ATM", amount: float) -> None:
         print("\nОшибка: Сначала введите PIN.")
 
-    def eject_card(self, atm: 'ATM') -> None:
+    def eject_card(self, atm: "ATM") -> None:
         print("\nКарта извлечена.")
         atm.set_state(IdleState())
 
-    def display_menu(self, atm: 'ATM') -> None:
+    def display_menu(self, atm: "ATM") -> None:
         print("\n=== Меню ===")
         print("1. Ввести PIN")
         print("2. Извлечь карту")
@@ -90,13 +90,13 @@ class AuthenticationState(ATMState):
             print("Неверный ввод. Попробуйте ещё раз.")
 
 class OperationState(ATMState):
-    def insert_card(self, atm: 'ATM') -> None:
+    def insert_card(self, atm: "ATM") -> None:
         print("\nОшибка: Карта уже вставлена.")
 
-    def enter_pin(self, atm: 'ATM', pin: str) -> None:
+    def enter_pin(self, atm: "ATM", pin: str) -> None:
         print("\nОшибка: PIN уже введён.")
 
-    def withdraw(self, atm: 'ATM', amount: float) -> None:
+    def withdraw(self, atm: "ATM", amount: float) -> None:
         if amount <= atm.total_cash:
             print(f"\nВыдано {amount} рублей.")
             atm.total_cash -= amount
@@ -106,11 +106,11 @@ class OperationState(ATMState):
             print("\nНедостаточно средств. Банкомат заблокирован.")
             atm.set_state(BlockedState())
 
-    def eject_card(self, atm: 'ATM') -> None:
+    def eject_card(self, atm: "ATM") -> None:
         print("\nКарта извлечена.")
         atm.set_state(IdleState())
 
-    def display_menu(self, atm: 'ATM') -> None:
+    def display_menu(self, atm: "ATM") -> None:
         print("\n=== Меню ===")
         print("1. Снять деньги")
         print("2. Проверить баланс банкомата")
@@ -134,20 +134,20 @@ class OperationState(ATMState):
             print("Неверный ввод. Попробуйте ещё раз.")
 
 class BlockedState(ATMState):
-    def insert_card(self, atm: 'ATM') -> None:
+    def insert_card(self, atm: "ATM") -> None:
         print("\nОшибка: Банкомат заблокирован. Обратитесь в банк.")
 
-    def enter_pin(self, atm: 'ATM', pin: str) -> None:
+    def enter_pin(self, atm: "ATM", pin: str) -> None:
         print("\nОшибка: Банкомат заблокирован. Обратитесь в банк.")
 
-    def withdraw(self, atm: 'ATM', amount: float) -> None:
+    def withdraw(self, atm: "ATM", amount: float) -> None:
         print("\nОшибка: Банкомат заблокирован. Обратитесь в банк.")
 
-    def eject_card(self, atm: 'ATM') -> None:
+    def eject_card(self, atm: "ATM") -> None:
         print("\nКарта извлечена. Банкомат остаётся заблокированным.")
         atm.set_state(IdleState())
 
-    def display_menu(self, atm: 'ATM') -> None:
+    def display_menu(self, atm: "ATM") -> None:
         print("\n=== Меню ===")
         print("1. Извлечь карту")
         print("2. Проверить баланс банкомата")

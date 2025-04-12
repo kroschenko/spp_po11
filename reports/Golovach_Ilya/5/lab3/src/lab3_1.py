@@ -9,15 +9,15 @@ class Smartphone:
 
 class IPhone(Smartphone):
     def __init__(self):
-        super().__init__("iPhone 15 Pro | A17 Pro | 6.1\" OLED | 48MP")
+        super().__init__('iPhone 15 Pro | A17 Pro | 6.1" OLED | 48MP')
 
 class Galaxy(Smartphone):
     def __init__(self):
-        super().__init__("Galaxy S23 Ultra | Snapdragon 8 Gen 2 | 6.8\" AMOLED | 200MP")
+        super().__init__('Galaxy S23 Ultra | Snapdragon 8 Gen 2 | 6.8" AMOLED | 200MP')
 
 class Pixel(Smartphone):
     def __init__(self):
-        super().__init__("Pixel 8 Pro | Tensor G3 | 6.7\" OLED | 50MP")
+        super().__init__('Pixel 8 Pro | Tensor G3 | 6.7" OLED | 50MP')
 
 class SmartphoneFactory:
     _models: Dict[str, Type[Smartphone]] = {
