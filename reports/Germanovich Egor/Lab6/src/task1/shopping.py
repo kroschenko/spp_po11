@@ -1,7 +1,7 @@
 import requests
 
 
-class Cart:
+class ShoppingCart:
     def __init__(self):
         self.items = []
 
@@ -14,7 +14,7 @@ class Cart:
         return sum(item["price"] for item in self.items)
 
     def apply_discount(self, discount_percent):
-        if not (0 <= discount_percent <= 100):
+        if not 0 <= discount_percent <= 100:
             raise ValueError("Invalid discount percent")
         for item in self.items:
             item["price"] *= 1 - discount_percent / 100
