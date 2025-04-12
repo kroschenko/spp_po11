@@ -1,15 +1,12 @@
 import os
 import sys
-
 import pytest
+from Lab1_2 import is_valid
 
 # Добавляем путь к директории с исходными файлами в sys.path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 lab1_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(current_dir))), "Lab1", "src")
 sys.path.append(lab1_dir)
-
-from Lab1_2 import is_valid
-
 
 # Тесты для проверки корректных последовательностей скобок
 @pytest.mark.parametrize(
@@ -54,30 +51,30 @@ def test_invalid_brackets_sequences(brackets, expected):
 # Тесты на граничные случаи
 def test_empty_string():
     """Тест на пустую строку"""
-    assert is_valid("") == True
+    assert is_valid("")
 
 
 def test_single_opening_bracket():
     """Тест на одну открывающую скобку"""
-    assert is_valid("(") == False
+    assert not is_valid("(")
 
 
 def test_single_closing_bracket():
     """Тест на одну закрывающую скобку"""
-    assert is_valid(")") == False
+    assert not is_valid(")")
 
 
 # Тесты на длинные последовательности
 def test_long_sequence():
     """Тест на длинную последовательность скобок"""
     brackets = "(" * 1000 + ")" * 1000
-    assert is_valid(brackets) == True
+    assert is_valid(brackets)
 
 
 def test_mixed_long_sequence():
     """Тест на длинную смешанную последовательность скобок"""
     brackets = "([{" * 100 + "}])" * 100
-    assert is_valid(brackets) == True
+    assert is_valid(brackets)
 
 
 # Тесты на недопустимые символы
@@ -95,11 +92,11 @@ def test_mixed_long_sequence():
 )
 def test_invalid_characters(invalid_input):
     """Тест на наличие недопустимых символов"""
-    assert is_valid(invalid_input) == False
+    assert not is_valid(invalid_input)
 
 
 # Тест на производительность
 def test_performance():
     """Тест на производительность с очень длинной последовательностью"""
     brackets = "([{" * 10000 + "}])" * 10000
-    assert is_valid(brackets) == True
+    assert is_valid(brackets)
