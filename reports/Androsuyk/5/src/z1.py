@@ -286,7 +286,6 @@ def fill_test_data():
     course2 = Course(name="Quantum Mechanics", teacher=teacher2)
     db.add_all([course1, course2])
 
-
     student1 = Student(
         first_name="Mikhail", last_name="Si   rov", date_of_birth=date(2000, 5, 14), department=math_department
     )
@@ -294,7 +293,6 @@ def fill_test_data():
          first_name="Elena", last_name="Smirnova", date_of_birth=date(2001, 7, 22), department=physics_department
     )
     db.add_all([student1, student2])
-
 
     enrollment1 = Enrollment(student=student1, course=course1, grade=4.5)
     enrollment2 = Enrollment(student=student2, course=course2, grade=3.8)
