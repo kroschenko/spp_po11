@@ -1,5 +1,4 @@
-import os
-from datetime import date, time
+from datetime import date
 from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException
@@ -12,7 +11,6 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
-    Time,
     create_engine,
 )
 from sqlalchemy.ext.declarative import declarative_base
