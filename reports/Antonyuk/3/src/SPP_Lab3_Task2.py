@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from datetime import date
 from typing import Dict
 
-
 class CardComponent(ABC):
+    """Базовый интерфейс компонента карты"""
     @abstractmethod
     def show_info(self):
         pass
@@ -16,9 +16,55 @@ class CardComponent(ABC):
     def edit(self):
         pass
 
-
-class PassportComponent(CardComponent):
+class BaseCardComponent(CardComponent):
+    """Реализация базового компонента карты"""
     def __init__(self):
+        self.expiry_date = None
+
+    def show_info(self):
+        """Базовая реализация показа информации"""
+        pass
+
+    def is_valid(self) -> bool:
+        return self.expiry_date and date.today() <= self.expiry_date
+
+    def edit(self):
+        """Базовая реализация редактирования"""
+        pass
+
+    def _input_date(self, prompt, current_value=None):
+        """Общий метод для ввода даты"""
+        while True:
+            date_str = input(prompt) or (str(current_value) if current_value else "")
+            if not date_str:
+                return current_value
+            try:
+                return date.fromisoformat(date_str)
+            except ValueError:
+                print("Неверный формат даты. Используйте ГГГГ-ММ-ДД")
+
+class CardDecorator(CardComponent):
+    """Базовый декоратор для компонентов карты"""
+    def __init__(self, component: CardComponent):
+        self._component = component
+
+    @property
+    def component(self):
+        return self._component
+
+    def show_info(self):
+        return self._component.show_info()
+
+    def is_valid(self) -> bool:
+        return self._component.is_valid()
+
+    def edit(self):
+        return self._component.edit()
+
+class PassportDecorator(CardDecorator):
+    """Декоратор для паспортных данных"""
+    def __init__(self, component: CardComponent):
+        super().__init__(component)
         self.full_name = ""
         self.birth_date = None
         self.passport_number = ""
@@ -26,6 +72,7 @@ class PassportComponent(CardComponent):
         self.expiry_date = None
 
     def show_info(self):
+        self.component.show_info()
         print("\n=== Паспортные данные ===")
         print(f"1. ФИО: {self.full_name}")
         print(f"2. Дата рождения: {self.birth_date}")
@@ -33,9 +80,6 @@ class PassportComponent(CardComponent):
         print(f"4. Дата выдачи: {self.issue_date}")
         print(f"5. Срок действия: {self.expiry_date}")
         print(f"Действителен: {'Да' if self.is_valid() else 'Нет'}")
-
-    def is_valid(self) -> bool:
-        return self.expiry_date and date.today() <= self.expiry_date
 
     def edit(self):
         print("\nРедактирование паспортных данных:")
@@ -45,32 +89,21 @@ class PassportComponent(CardComponent):
         self.issue_date = self._input_date("Дата выдачи (ГГГГ-ММ-ДД): ", self.issue_date)
         self.expiry_date = self._input_date("Срок действия (ГГГГ-ММ-ДД): ", self.expiry_date)
 
-    def _input_date(self, prompt, current_value=None):
-        while True:
-            date_str = input(prompt) or (str(current_value) if current_value else "")
-            if not date_str:
-                return current_value
-            try:
-                return date.fromisoformat(date_str)
-            except ValueError:
-                print("Неверный формат даты. Используйте ГГГГ-ММ-ДД")
-
-
-class InsuranceComponent(CardComponent):
-    def __init__(self):
+class InsuranceDecorator(CardDecorator):
+    """Декоратор для страхового полиса"""
+    def __init__(self, component: CardComponent):
+        super().__init__(component)
         self.policy_number = ""
         self.insurance_company = ""
         self.expiry_date = None
 
     def show_info(self):
+        self.component.show_info()
         print("\n=== Страховой полис ===")
         print(f"1. Номер полиса: {self.policy_number}")
         print(f"2. Страховая компания: {self.insurance_company}")
         print(f"3. Срок действия: {self.expiry_date}")
         print(f"Действителен: {'Да' if self.is_valid() else 'Нет'}")
-
-    def is_valid(self) -> bool:
-        return self.expiry_date and date.today() <= self.expiry_date
 
     def edit(self):
         print("\nРедактирование страхового полиса:")
@@ -78,25 +111,17 @@ class InsuranceComponent(CardComponent):
         self.insurance_company = input("Страховая компания: ") or self.insurance_company
         self.expiry_date = self._input_date("Срок действия (ГГГГ-ММ-ДД): ", self.expiry_date)
 
-    def _input_date(self, prompt, current_value=None):
-        while True:
-            date_str = input(prompt) or (str(current_value) if current_value else "")
-            if not date_str:
-                return current_value
-            try:
-                return date.fromisoformat(date_str)
-            except ValueError:
-                print("Неверный формат даты. Используйте ГГГГ-ММ-ДД")
-
-
-class BankCardComponent(CardComponent):
-    def __init__(self):
+class BankCardDecorator(CardDecorator):
+    """Декоратор для банковской карты"""
+    def __init__(self, component: CardComponent):
+        super().__init__(component)
         self.card_number = ""
         self.bank_name = ""
         self.expiry_date = None
         self.balance = 0.0
 
     def show_info(self):
+        self.component.show_info()
         print("\n=== Банковская карта ===")
         print(f"1. Номер карты: **** **** **** {self.card_number[-4:] if self.card_number else '****'}")
         print(f"2. Банк: {self.bank_name}")
@@ -104,25 +129,12 @@ class BankCardComponent(CardComponent):
         print(f"4. Баланс: {self.balance:.2f} руб.")
         print(f"Действительна: {'Да' if self.is_valid() else 'Нет'}")
 
-    def is_valid(self) -> bool:
-        return self.expiry_date and date.today() <= self.expiry_date
-
     def edit(self):
         print("\nРедактирование банковской карты:")
         self.card_number = input("Номер карты (16 цифр): ") or self.card_number
         self.bank_name = input("Название банка: ") or self.bank_name
         self.expiry_date = self._input_date("Срок действия (ГГГГ-ММ-ДД): ", self.expiry_date)
         self._input_balance()
-
-    def _input_date(self, prompt, current_value=None):
-        while True:
-            date_str = input(prompt) or (str(current_value) if current_value else "")
-            if not date_str:
-                return current_value
-            try:
-                return date.fromisoformat(date_str)
-            except ValueError:
-                print("Неверный формат даты. Используйте ГГГГ-ММ-ДД")
 
     def _input_balance(self):
         while True:
@@ -133,13 +145,14 @@ class BankCardComponent(CardComponent):
             except ValueError:
                 print("Неверный формат суммы. Используйте число (например 1000.50)")
 
-
 class UniversalElectronicCard:
+    """Класс универсальной электронной карты с декораторами"""
     def __init__(self):
+        self.base_component = BaseCardComponent()
         self.components: Dict[str, CardComponent] = {
-            "1": PassportComponent(),
-            "2": InsuranceComponent(),
-            "3": BankCardComponent()
+            "1": PassportDecorator(BaseCardComponent()),
+            "2": InsuranceDecorator(BaseCardComponent()),
+            "3": BankCardDecorator(BaseCardComponent())
         }
 
     def show_info(self):
@@ -162,7 +175,6 @@ class UniversalElectronicCard:
 
     def is_valid(self) -> bool:
         return all(component.is_valid() for component in self.components.values())
-
 
 def main():
     card = UniversalElectronicCard()
@@ -190,7 +202,6 @@ def main():
             break
         else:
             print("Неверный выбор, попробуйте снова")
-
 
 if __name__ == "__main__":
     main()
