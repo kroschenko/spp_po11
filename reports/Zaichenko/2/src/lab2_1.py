@@ -19,7 +19,7 @@ class SymbolSet:
         return value in self._elements
 
     def intersect(self, other):
-        intersection = [val for val in self._elements if val in other._elements]
+        intersection = [val for val in self._elements if val in other.elements]
         return SymbolSet(intersection)
 
     def __str__(self):
