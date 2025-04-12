@@ -28,7 +28,11 @@ class Manager(Employee):
 
 class RegularEmployee(Employee):
     def __init__(self, name: str, department: str, position: str, salary: float):
-        super().__init__(name, department, position, salary)
+        # Убрали избыточный вызов super().__init__()
+        self.name = name
+        self.department = department
+        self.position = position
+        self.salary = salary
 
     def accept(self, visitor):
         visitor.visit_regular_employee(self)
