@@ -9,7 +9,7 @@ class Employee:
         self.salary = salary
 
     def add_subordinate(self, employee):
-        raise NotImplementedError("Этот метод должен быть переопределен в подклассе")
+        raise NotImplementedError("Этот метод должен быть переопределен в подклассе ")
 
     def remove_subordinate(self, employee):
         raise NotImplementedError("Этот метод должен быть переопределен в подклассе")
