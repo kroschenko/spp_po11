@@ -1,7 +1,6 @@
 from datetime import date
-from typing import List
 from fastapi import FastAPI, HTTPException
-from sqlalchemy import Boolean, Column, Date, Float, ForeignKey, Integer, String, create_engine
+from sqlalchemy import Column, Date, Float, ForeignKey, Integer, String, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
