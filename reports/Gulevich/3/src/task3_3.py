@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Dict, List
+from typing import List, Dict
 
 
 class PizzaType(Enum):
@@ -41,24 +41,31 @@ class Order:
 
     def __str__(self):
         status = "Отменен" if self.is_cancelled else "Активен"
-        pizzas = "\n".join(f"  - {pizza.size.value} {pizza.type.value}: ${pizza.price:.2f}" for pizza in self.pizzas)
-        return f"Заказ #{self.order_id} ({status})\n" f"{pizzas}\n" f"Итого: ${self.get_total():.2f}"
+        pizzas = "\n".join(f"  - {pizza.size.value} {pizza.type.value}: ${pizza.price:.2f}"
+                           for pizza in self.pizzas)
+        return (f"Заказ #{self.order_id} ({status})\n"
+                f"{pizzas}\n"
+                f"Итого: ${self.get_total():.2f}")
 
 
 class Pizzeria:
     def __init__(self):
-        self._orders: Dict[int, Order] = {}
-        self._next_order_id = 1
-        self._price_list = {PizzaSize.SMALL: 8.99, PizzaSize.MEDIUM: 12.99, PizzaSize.LARGE: 16.99}
+        self.orders: Dict[int, Order] = {}
+        self.next_order_id = 1
+        self.price_list = {
+            PizzaSize.SMALL: 8.99,
+            PizzaSize.MEDIUM: 12.99,
+            PizzaSize.LARGE: 16.99
+        }
 
     def create_order(self) -> Order:
-        order = Order(self._next_order_id)
-        self._orders[self._next_order_id] = order
-        self._next_order_id += 1
+        order = Order(self.next_order_id)
+        self.orders[self.next_order_id] = order
+        self.next_order_id += 1
         return order
 
     def get_order(self, order_id: int) -> Order:
-        return self._orders.get(order_id)
+        return self.orders.get(order_id)
 
     def cancel_order(self, order_id: int) -> bool:
         order = self.get_order(order_id)
@@ -81,7 +88,7 @@ class Pizzeria:
         print("\nМеню пиццерии:")
         print("Размеры:")
         for size in PizzaSize:
-            print(f"  {size.value}: ${self._price_list[size]:.2f}")
+            print(f"  {size.value}: ${self.price_list[size]:.2f}")
         print("\nВиды пицц:")
         for pizza_type in PizzaType:
             print(f"  {pizza_type.value}")
@@ -101,8 +108,52 @@ class Pizzeria:
         size_choice = int(input("Ваш выбор (1-3): ")) - 1
         pizza_size = list(PizzaSize)[size_choice]
 
-        price = self._price_list[pizza_size]
+        price = self.price_list[pizza_size]
         return Pizza(pizza_type, pizza_size, price)
+
+
+def handle_order_creation(pizzeria):
+    order = pizzeria.create_order()
+    pizzeria.show_menu()
+
+    while True:
+        pizza = pizzeria.create_pizza()
+        order.add_pizza(pizza)
+        print(f"\nПицца добавлена в заказ #{order.order_id}")
+
+        more = input("Добавить еще пиццу? (да/нет): ").lower()
+        if more != "да":
+            break
+
+    print(f"\nЗаказ #{order.order_id} создан:")
+    print(order)
+    return order
+
+
+def show_active_orders(pizzeria):
+    print("\nАктивные заказы:")
+    for order in pizzeria.orders.values():
+        if not order.is_cancelled:
+            print(order)
+            print("-" * 30)
+
+
+def handle_order_cancellation(pizzeria):
+    order_id = int(input("Введите номер заказа для отмены: "))
+    if pizzeria.cancel_order(order_id):
+        print(f"Заказ #{order_id} отменен")
+    else:
+        print("Не удалось отменить заказ (не найден или уже отменен)")
+
+
+def handle_reorder(pizzeria):
+    order_id = int(input("Введите номер заказа для повторения: "))
+    new_order = pizzeria.reorder(order_id)
+    if new_order:
+        print(f"\nНовый заказ #{new_order.order_id} создан (копия #{order_id}):")
+        print(new_order)
+    else:
+        print("Заказ не найден")
 
 
 def main():
@@ -119,51 +170,20 @@ def main():
         choice = input("Выберите действие (1-5): ")
 
         if choice == "1":
-            order = pizzeria.create_order()
-            pizzeria.show_menu()
-
-            while True:
-                pizza = pizzeria.create_pizza()
-                order.add_pizza(pizza)
-                print(f"\nПицца добавлена в заказ #{order.order_id}")
-
-                more = input("Добавить еще пиццу? (да/нет): ").lower()
-                if more != "да":
-                    break
-
-            print(f"\nЗаказ #{order.order_id} создан:")
-            print(order)
-
+            handle_order_creation(pizzeria)
         elif choice == "2":
-            print("\nАктивные заказы:")
-            for order in pizzeria._orders.values():
-                if not order.is_cancelled:
-                    print(order)
-                    print("-" * 30)
-
+            show_active_orders(pizzeria)
         elif choice == "3":
-            order_id = int(input("Введите номер заказа для отмены: "))
-            if pizzeria.cancel_order(order_id):
-                print(f"Заказ #{order_id} отменен")
-            else:
-                print("Не удалось отменить заказ (не найден или уже отменен)")
-
+            handle_order_cancellation(pizzeria)
         elif choice == "4":
-            order_id = int(input("Введите номер заказа для повторения: "))
-            new_order = pizzeria.reorder(order_id)
-            if new_order:
-                print(f"\nНовый заказ #{new_order.order_id} создан (копия #{order_id}):")
-                print(new_order)
-            else:
-                print("Заказ не найден")
-
+            handle_reorder(pizzeria)
         elif choice == "5":
             print("До свидания!")
             break
-
         else:
             print("Неверный ввод. Пожалуйста, попробуйте снова.")
 
 
 if __name__ == "__main__":
     main()
+

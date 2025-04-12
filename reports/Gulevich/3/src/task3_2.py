@@ -21,30 +21,32 @@ class RemoteControl(ABC):
 
 class BasicRemote(RemoteControl):
     def activate_alarm(self):
-        print("Сигнализация активирована")
+        print("Сигнализация активирована (Basic)")
 
     def lock_doors(self, lock: bool):
-        print(f"Двери {'закрыты' if lock else 'открыты'}")
+        action = "закрыты" if lock else "открыты"
+        print(f"Двери {action} (Basic)")
 
     def start_engine(self):
-        print("Двигатель запущен")
+        print("Двигатель запущен (Basic)")
 
     def get_remote_type(self):
-        return "Базовый"
+        return "Базовый пульт"
 
 
 class AdvancedRemote(RemoteControl):
     def activate_alarm(self):
-        print("Сигнализация активирована с GPS отслеживанием")
+        print("Сигнализация активирована с GPS-отслеживанием (Advanced)")
 
     def lock_doors(self, lock: bool):
-        print(f"Двери {'закрыты' if lock else 'открыты'} с автоматическим доводчиком")
+        action = "закрыты" if lock else "открыты"
+        print(f"Двери {action} с автоматическим доводчиком (Advanced)")
 
     def start_engine(self):
-        print("Двигатель запущен с автоматическим прогревом")
+        print("Двигатель запущен с прогревом (Advanced)")
 
     def get_remote_type(self):
-        return "Продвинутый"
+        return "Продвинутый пульт"
 
 
 class Car:
@@ -55,16 +57,17 @@ class Car:
         self.engine_on = False
         self.doors_locked = True
 
-    def get_info(self):
-        return f"{self.brand} {self.model} ({self.remote.get_remote_type()} ДУ)"
+    def get_full_info(self):
+        return f"{self.brand} {self.model} ({self.remote.get_remote_type()})"
 
     def toggle_engine(self):
         if self.engine_on:
             print("Двигатель заглушен")
             self.engine_on = False
-        else:
-            self.remote.start_engine()
-            self.engine_on = True
+            return
+
+        self.remote.start_engine()
+        self.engine_on = True
 
     def toggle_doors(self):
         self.doors_locked = not self.doors_locked
@@ -74,41 +77,41 @@ class Car:
         self.remote.activate_alarm()
 
     def get_status(self):
-        print(
-            f"Состояние: двигатель {'включен' if self.engine_on else 'выключен'}, "
-            f"двери {'закрыты' if self.doors_locked else 'открыты'}"
-        )
+        return {
+            "Двигатель": "включен" if self.engine_on else "выключен",
+            "Двери": "закрыты" if self.doors_locked else "открыты"
+        }
 
 
-def create_remote():
-    while True:
-        print("\nВыберите тип пульта ДУ:")
-        print("1. Базовый")
-        print("2. Продвинутый")
-        choice = input("Ваш выбор (1-2): ")
-
-        if choice == "1":
-            return BasicRemote()
-        elif choice == "2":
-            return AdvancedRemote()
-        else:
-            print("Неверный ввод. Попробуйте снова.")
+def create_remote(choice: str) -> RemoteControl:
+    if choice == "1":
+        return BasicRemote()
+    return AdvancedRemote()
 
 
 def create_car():
     print("\nСоздание нового автомобиля")
-
     brand = input("Введите марку автомобиля: ")
     model = input("Введите модель автомобиля: ")
 
-    remote = create_remote()
+    print("\nВыберите тип пульта ДУ:")
+    print("1. Базовый")
+    print("2. Продвинутый")
+    remote_choice = input("Ваш выбор (1-2): ")
 
+    remote = create_remote(remote_choice)
     return Car(brand, model, remote)
 
 
-def car_control(car):
+def show_car_status(car):
+    status = car.get_status()
+    for key, value in status.items():
+        print(f"{key}: {value}")
+
+
+def handle_car_control(car):
     while True:
-        print(f"\nУправление автомобилем {car.get_info()}")
+        print(f"\nУправление автомобилем {car.get_full_info()}")
         print("1. Включить/выключить двигатель")
         print("2. Открыть/закрыть двери")
         print("3. Активировать сигнализацию")
@@ -124,7 +127,7 @@ def car_control(car):
         elif choice == "3":
             car.activate_alarm()
         elif choice == "4":
-            car.get_status()
+            show_car_status(car)
         elif choice == "5":
             break
         else:
@@ -145,31 +148,30 @@ def main():
         if choice == "1":
             car = create_car()
             cars.append(car)
-            print(f"\nАвтомобиль {car.get_info()} успешно добавлен!")
-        elif choice == "2":
+            print(f"\nАвтомобиль {car.get_full_info()} успешно добавлен!")
+            continue
+
+        if choice == "2":
             if not cars:
                 print("Нет доступных автомобилей!")
                 continue
 
             print("\nСписок автомобилей:")
             for i, car in enumerate(cars, 1):
-                print(f"{i}. {car.get_info()}")
+                print(f"{i}. {car.get_full_info()}")
 
-            while True:
-                try:
-                    car_num = int(input("Выберите номер автомобиля: ")) - 1
-                    if 0 <= car_num < len(cars):
-                        car_control(cars[car_num])
-                        break
-                    else:
-                        print("Неверный номер. Попробуйте снова.")
-                except ValueError:
-                    print("Введите число!")
-        elif choice == "3":
+            car_num = int(input("Выберите номер автомобиля: ")) - 1
+            if 0 <= car_num < len(cars):
+                handle_car_control(cars[car_num])
+            else:
+                print("Неверный номер. Попробуйте снова.")
+            continue
+
+        if choice == "3":
             print("Выход из программы.")
             break
-        else:
-            print("Неверный ввод. Попробуйте снова.")
+
+        print("Неверный ввод. Попробуйте снова.")
 
 
 if __name__ == "__main__":
