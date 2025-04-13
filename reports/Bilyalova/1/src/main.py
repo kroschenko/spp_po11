@@ -1,5 +1,6 @@
 from collections import Counter
 
+
 def find_modes(sequence):
     counts = Counter(sequence)
     max_count = max(counts.values())
@@ -7,9 +8,10 @@ def find_modes(sequence):
     if max_count == 1:
         return None
     
-    modes = [num for num, count in counts.items() if count == max_count]
+    modes_list = [num for num, count in counts.items() if count == max_count]
     
-    return modes
+    return modes_list
+
 
 try:
     n = int(input("Введите количество чисел в последовательности: "))
