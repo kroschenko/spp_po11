@@ -48,10 +48,28 @@ class Manager(Employee):
 
 class RegularEmployee(Employee):
     def __init__(self, name: str, department: str, position: str, salary: float):
-        super().__init__(name, department, position, salary)
+        # Removed useless super() delegation and directly assign attributes
+        self.name = name
+        self.department = department
+        self.position = position
+        self.salary = salary
 
+    # Implement abstract methods with empty implementations for regular employees
+    def add_subordinate(self, employee):
+        print("Обычные сотрудники не могут иметь подчиненных")
+
+    def remove_subordinate(self, employee):
+        print("Обычные сотрудники не могут иметь подчиненных")
+
+    def get_subordinates(self) -> List['Employee']:
+        return []
+
+    # Removed useless super() delegation in __str__
     def __str__(self):
-        return super().__str__()
+        return (f"Сотрудник: {self.name}, "
+                f"Отдел: {self.department}, "
+                f"Должность: {self.position}, "
+                f"Зарплата: ${self.salary}")
 
 if __name__ == "__main__":
     # Создаем сотрудников
