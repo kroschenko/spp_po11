@@ -10,4 +10,4 @@ index = find_first_occurrence(haystack, needle)
 if index != -1:
     print(f"Индекс первого вхождения: {index}")
 else:
-    print(f"Подстрока не найдена")
+    print("Подстрока не найдена") 

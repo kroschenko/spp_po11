@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     if triangle1:
         print("\nПервый треугольник:")
-        print(triangle1) 
+        print(triangle1)
         if triangle1.is_valid():
             print("Площадь:", triangle1.area())
             print("Периметр:", triangle1.perimeter())
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
     if triangle2:
         print("\nВторой треугольник:")
-        print(triangle2) 
+        print(triangle2)
         if triangle2.is_valid():
             print("Площадь:", triangle2.area())
             print("Периметр:", triangle2.perimeter())

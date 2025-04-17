@@ -1,8 +1,8 @@
 from collections import Counter
 
 
-def find_modes(sequence):
-    counts = Counter(sequence)
+def find_modes(input_sequence):  # Renamed parameter to avoid redefinition
+    counts = Counter(input_sequence)
     max_count = max(counts.values())
     
     if max_count == 1:
