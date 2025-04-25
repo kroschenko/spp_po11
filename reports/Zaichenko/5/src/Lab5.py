@@ -701,6 +701,6 @@ def delete_grade(grade_id: int, db: SessionLocal = Depends(get_db)):
 
 
 if __name__ == "__main__":
-
     print("Запуск FastAPI приложения...")
     uvicorn.run(app, host="0.0.0.0", port=8000)
+    
