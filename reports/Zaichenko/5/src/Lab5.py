@@ -45,9 +45,7 @@ class Student(Base):
     class_id = Column(Integer, ForeignKey("classes.id"), nullable=True)
 
     student_class = relationship("Class", back_populates="students")
-    grades = relationship(
-        "Grade", back_populates="student", cascade="all, delete-orphan"
-    )
+    grades = relationship("Grade", back_populates="student", cascade="all, delete-orphan")
 
 
 class Subject(Base):
@@ -124,9 +122,7 @@ class StudentBase(BaseModel):
     first_name: str = Field(..., description="Имя ученика")
     last_name: str = Field(..., description="Фамилия ученика")
     date_of_birth: Optional[date] = Field(None, description="Дата рождения")
-    class_id: Optional[int] = Field(
-        None, description="ID класса (необязательно при создании)"
-    )
+    class_id: Optional[int] = Field(None, description="ID класса (необязательно при создании)")
 
 
 class StudentCreate(StudentBase):
@@ -177,9 +173,7 @@ class TeacherResponse(TeacherBase):
 class ClassBase(BaseModel):
     name: str = Field(..., description="Название класса (e.g., '9B')")
     year: int = Field(..., description="Учебный год")
-    homeroom_teacher_id: Optional[int] = Field(
-        None, description="ID классного руководителя"
-    )
+    homeroom_teacher_id: Optional[int] = Field(None, description="ID классного руководителя")
 
 
 class ClassCreate(ClassBase):
@@ -197,9 +191,7 @@ class GradeBase(BaseModel):
     student_id: int = Field(..., description="ID ученика")
     subject_id: int = Field(..., description="ID предмета")
     teacher_id: int = Field(..., description="ID учителя")
-    grade_value: int = Field(
-        ..., ge=1, le=5, description="Оценка (например, от 1 до 5)"
-    )
+    grade_value: int = Field(..., ge=1, le=5, description="Оценка (например, от 1 до 5)")
     grade_date: date = Field(default_factory=date.today, description="Дата оценки")
 
 
@@ -233,9 +225,7 @@ def create_student(student: StudentCreate, db: SessionLocal = Depends(get_db)):
     if student.class_id:
         db_class = db.query(Class).filter(Class.id == student.class_id).first()
         if not db_class:
-            raise HTTPException(
-                status_code=404, detail=f"Класс с ID {student.class_id} не найден."
-            )
+            raise HTTPException(status_code=404, detail=f"Класс с ID {student.class_id} не найден.")
     db.add(db_student)
     db.commit()
     db.refresh(db_student)
@@ -272,9 +262,7 @@ def get_student(student_id: int, db: SessionLocal = Depends(get_db)):
     tags=["Students"],
     summary="Обновить информацию об ученике",
 )
-def update_student(
-    student_id: int, student: StudentCreate, db: SessionLocal = Depends(get_db)
-):
+def update_student(student_id: int, student: StudentCreate, db: SessionLocal = Depends(get_db)):
     db_student = db.query(Student).filter(Student.id == student_id).first()
     if db_student is None:
         raise HTTPException(status_code=404, detail="Ученик не найден")
@@ -282,9 +270,7 @@ def update_student(
     if student.class_id and student.class_id != db_student.class_id:
         db_class = db.query(Class).filter(Class.id == student.class_id).first()
         if not db_class:
-            raise HTTPException(
-                status_code=404, detail=f"Класс с ID {student.class_id} не найден."
-            )
+            raise HTTPException(status_code=404, detail=f"Класс с ID {student.class_id} не найден.")
 
     update_data = student.model_dump(exclude_unset=True)
     for key, value in update_data.items():
@@ -355,17 +341,13 @@ def get_subject(subject_id: int, db: SessionLocal = Depends(get_db)):
     tags=["Subjects"],
     summary="Обновить информацию о предмете",
 )
-def update_subject(
-    subject_id: int, subject: SubjectCreate, db: SessionLocal = Depends(get_db)
-):
+def update_subject(subject_id: int, subject: SubjectCreate, db: SessionLocal = Depends(get_db)):
     db_subject = db.query(Subject).filter(Subject.id == subject_id).first()
     if db_subject is None:
         raise HTTPException(status_code=404, detail="Предмет не найден")
 
     if subject.name != db_subject.name:
-        existing_subject = (
-            db.query(Subject).filter(Subject.name == subject.name).first()
-        )
+        existing_subject = db.query(Subject).filter(Subject.name == subject.name).first()
         if existing_subject:
             raise HTTPException(
                 status_code=400,
@@ -442,9 +424,7 @@ def get_teacher(teacher_id: int, db: SessionLocal = Depends(get_db)):
     tags=["Teachers"],
     summary="Обновить информацию об учителе",
 )
-def update_teacher(
-    teacher_id: int, teacher: TeacherCreate, db: SessionLocal = Depends(get_db)
-):
+def update_teacher(teacher_id: int, teacher: TeacherCreate, db: SessionLocal = Depends(get_db)):
     db_teacher = db.query(Teacher).filter(Teacher.id == teacher_id).first()
     if db_teacher is None:
         raise HTTPException(status_code=404, detail="Учитель не найден")
@@ -502,15 +482,11 @@ def link_teacher_to_subject(
     if not db_subject:
         raise HTTPException(status_code=404, detail="Предмет не найден")
     if db_subject in db_teacher.subjects:
-        raise HTTPException(
-            status_code=400, detail="Учитель уже преподает этот предмет"
-        )
+        raise HTTPException(status_code=400, detail="Учитель уже преподает этот предмет")
 
     db_teacher.subjects.append(db_subject)
     db.commit()
-    return {
-        "message": f"Предмет '{db_subject.name}' назначен учителю '{db_teacher.first_name} {db_teacher.last_name}'"
-    }
+    return {"message": f"Предмет '{db_subject.name}' назначен учителю '{db_teacher.first_name} {db_teacher.last_name}'"}
 
 
 @app.delete(
@@ -529,15 +505,11 @@ def unlink_teacher_from_subject(
         raise HTTPException(status_code=404, detail="Предмет не найден")
 
     if db_subject not in db_teacher.subjects:
-        raise HTTPException(
-            status_code=404, detail="Учитель не преподает данный предмет"
-        )
+        raise HTTPException(status_code=404, detail="Учитель не преподает данный предмет")
 
     db_teacher.subjects.remove(db_subject)
     db.commit()
-    return {
-        "message": f"Предмет '{db_subject.name}' убран у учителя '{db_teacher.first_name} {db_teacher.last_name}'"
-    }
+    return {"message": f"Предмет '{db_subject.name}' убран у учителя '{db_teacher.first_name} {db_teacher.last_name}'"}
 
 
 @app.post(
@@ -554,9 +526,7 @@ def create_class(class_in: ClassCreate, db: SessionLocal = Depends(get_db)):
             detail=f"Класс с названием '{class_in.name}' уже существует.",
         )
     if class_in.homeroom_teacher_id:
-        db_teacher = (
-            db.query(Teacher).filter(Teacher.id == class_in.homeroom_teacher_id).first()
-        )
+        db_teacher = db.query(Teacher).filter(Teacher.id == class_in.homeroom_teacher_id).first()
         if not db_teacher:
             raise HTTPException(
                 status_code=404,
@@ -599,9 +569,7 @@ def get_class(class_id: int, db: SessionLocal = Depends(get_db)):
     tags=["Classes"],
     summary="Обновить информацию о классе",
 )
-def update_class(
-    class_id: int, class_in: ClassCreate, db: SessionLocal = Depends(get_db)
-):
+def update_class(class_id: int, class_in: ClassCreate, db: SessionLocal = Depends(get_db)):
     db_class = db.query(Class).filter(Class.id == class_id).first()
     if db_class is None:
         raise HTTPException(status_code=404, detail="Класс не найден")
@@ -614,13 +582,8 @@ def update_class(
                 detail=f"Класс с названием '{class_in.name}' уже существует.",
             )
 
-    if (
-        class_in.homeroom_teacher_id
-        and class_in.homeroom_teacher_id != db_class.homeroom_teacher_id
-    ):
-        db_teacher = (
-            db.query(Teacher).filter(Teacher.id == class_in.homeroom_teacher_id).first()
-        )
+    if class_in.homeroom_teacher_id and class_in.homeroom_teacher_id != db_class.homeroom_teacher_id:
+        db_teacher = db.query(Teacher).filter(Teacher.id == class_in.homeroom_teacher_id).first()
         if not db_teacher:
             raise HTTPException(
                 status_code=404,
@@ -642,9 +605,7 @@ def delete_class(class_id: int, db: SessionLocal = Depends(get_db)):
     if db_class is None:
         raise HTTPException(status_code=404, detail="Класс не найден")
     if db.query(Student).filter(Student.class_id == class_id).count() > 0:
-        db.query(Student).filter(Student.class_id == class_id).update(
-            {Student.class_id: None}
-        )
+        db.query(Student).filter(Student.class_id == class_id).update({Student.class_id: None})
         print(f"Ученики класса ID {class_id} откреплены от класса.")
 
     db.delete(db_class)
@@ -652,22 +613,14 @@ def delete_class(class_id: int, db: SessionLocal = Depends(get_db)):
     return {"message": f"Класс с ID {class_id} успешно удален"}
 
 
-@app.post(
-    "/grades/", response_model=GradeResponse, tags=["Grades"], summary="Добавить оценку"
-)
+@app.post("/grades/", response_model=GradeResponse, tags=["Grades"], summary="Добавить оценку")
 def create_grade(grade: GradeCreate, db: SessionLocal = Depends(get_db)):
     if not db.query(Student).filter(Student.id == grade.student_id).first():
-        raise HTTPException(
-            status_code=404, detail=f"Ученик с ID {grade.student_id} не найден."
-        )
+        raise HTTPException(status_code=404, detail=f"Ученик с ID {grade.student_id} не найден.")
     if not db.query(Subject).filter(Subject.id == grade.subject_id).first():
-        raise HTTPException(
-            status_code=404, detail=f"Предмет с ID {grade.subject_id} не найден."
-        )
+        raise HTTPException(status_code=404, detail=f"Предмет с ID {grade.subject_id} не найден.")
     if not db.query(Teacher).filter(Teacher.id == grade.teacher_id).first():
-        raise HTTPException(
-            status_code=404, detail=f"Учитель с ID {grade.teacher_id} не найден."
-        )
+        raise HTTPException(status_code=404, detail=f"Учитель с ID {grade.teacher_id} не найден.")
 
     db_grade = Grade(**grade.model_dump())
     db.add(db_grade)
@@ -725,27 +678,12 @@ def update_grade(grade_id: int, grade: GradeCreate, db: SessionLocal = Depends(g
     db_grade = db.query(Grade).filter(Grade.id == grade_id).first()
     if db_grade is None:
         raise HTTPException(status_code=404, detail="Оценка не найдена")
-    if (
-        grade.student_id != db_grade.student_id
-        and not db.query(Student).filter(Student.id == grade.student_id).first()
-    ):
-        raise HTTPException(
-            status_code=404, detail=f"Ученик с ID {grade.student_id} не найден."
-        )
-    if (
-        grade.subject_id != db_grade.subject_id
-        and not db.query(Subject).filter(Subject.id == grade.subject_id).first()
-    ):
-        raise HTTPException(
-            status_code=404, detail=f"Предмет с ID {grade.subject_id} не найден."
-        )
-    if (
-        grade.teacher_id != db_grade.teacher_id
-        and not db.query(Teacher).filter(Teacher.id == grade.teacher_id).first()
-    ):
-        raise HTTPException(
-            status_code=404, detail=f"Учитель с ID {grade.teacher_id} не найден."
-        )
+    if grade.student_id != db_grade.student_id and not db.query(Student).filter(Student.id == grade.student_id).first():
+        raise HTTPException(status_code=404, detail=f"Ученик с ID {grade.student_id} не найден.")
+    if grade.subject_id != db_grade.subject_id and not db.query(Subject).filter(Subject.id == grade.subject_id).first():
+        raise HTTPException(status_code=404, detail=f"Предмет с ID {grade.subject_id} не найден.")
+    if grade.teacher_id != db_grade.teacher_id and not db.query(Teacher).filter(Teacher.id == grade.teacher_id).first():
+        raise HTTPException(status_code=404, detail=f"Учитель с ID {grade.teacher_id} не найден.")
 
     update_data = grade.model_dump(exclude_unset=True)
     for key, value in update_data.items():
