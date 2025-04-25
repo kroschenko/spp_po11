@@ -472,9 +472,7 @@ class TeacherSubjectLink(BaseModel):
     tags=["Teachers", "Subjects"],
     summary="Назначить предмет учителю",
 )
-def link_teacher_to_subject(
-    teacher_id: int, link: TeacherSubjectLink, db: SessionLocal = Depends(get_db)
-):
+def link_teacher_to_subject(teacher_id: int, link: TeacherSubjectLink, db: SessionLocal = Depends(get_db)):
     db_teacher = db.query(Teacher).filter(Teacher.id == teacher_id).first()
     if not db_teacher:
         raise HTTPException(status_code=404, detail="Учитель не найден")
@@ -494,9 +492,7 @@ def link_teacher_to_subject(
     tags=["Teachers", "Subjects"],
     summary="Убрать предмет у учителя",
 )
-def unlink_teacher_from_subject(
-    teacher_id: int, subject_id: int, db: SessionLocal = Depends(get_db)
-):
+def unlink_teacher_from_subject(teacher_id: int, subject_id: int, db: SessionLocal = Depends(get_db)):
     db_teacher = db.query(Teacher).filter(Teacher.id == teacher_id).first()
     if not db_teacher:
         raise HTTPException(status_code=404, detail="Учитель не найден")
@@ -705,5 +701,6 @@ def delete_grade(grade_id: int, db: SessionLocal = Depends(get_db)):
 
 
 if __name__ == "__main__":
+
     print("Запуск FastAPI приложения...")
     uvicorn.run(app, host="0.0.0.0", port=8000)
