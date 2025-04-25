@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 
+
 class Sedan(ABC):
     @abstractmethod
     def drive(self):
         pass
+
 
 class SUV(ABC):
     @abstractmethod
@@ -15,6 +17,7 @@ class GermanSedan(Sedan):
     def drive(self):
         print("Немецкий седан")
 
+
 class GermanSUV(SUV):
     def drive(self):
         print("Немецкий внедорожник")
@@ -23,6 +26,7 @@ class GermanSUV(SUV):
 class JapaneseSedan(Sedan):
     def drive(self):
         print("Японский седан")
+
 
 class JapaneseSUV(SUV):
     def drive(self):
@@ -88,7 +92,6 @@ def user_interface():
             car.drive()
         else:
             print("Неверный тип автомобиля. Попробуйте снова.\n")
-
 
 
 if __name__ == "__main__":

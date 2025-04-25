@@ -29,16 +29,20 @@ class ATMState(ABC):
         self.atm = atm
 
     @abstractmethod
-    def insert_card(self): pass
+    def insert_card(self):
+        pass
 
     @abstractmethod
-    def enter_pin(self, pin): pass
+    def enter_pin(self, pin):
+        pass
 
     @abstractmethod
-    def withdraw(self, amount): pass
+    def withdraw(self, amount):
+        pass
 
     @abstractmethod
-    def finish(self): pass
+    def finish(self):
+        pass
 
 
 class WaitingState(ATMState):
@@ -54,6 +58,7 @@ class WaitingState(ATMState):
 
     def finish(self):
         print("Нет активной сессии.")
+
 
 class AuthenticationState(ATMState):
     def insert_card(self):
@@ -72,6 +77,7 @@ class AuthenticationState(ATMState):
 
     def finish(self):
         print("Сначала введите ПИН.")
+
 
 class OperationState(ATMState):
     def insert_card(self):
@@ -93,6 +99,7 @@ class OperationState(ATMState):
     def finish(self):
         print("Сессия завершена.")
         self.atm.set_state(WaitingState(self.atm))
+
 
 class BlockedState(ATMState):
     def insert_card(self):

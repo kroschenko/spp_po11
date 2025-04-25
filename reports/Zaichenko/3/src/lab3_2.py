@@ -26,9 +26,7 @@ class AccountDecorator(Account):
 
 class PremiumAccount(AccountDecorator):
     def get_features(self):
-        return self._wrapped_account.get_features() + [
-            "Бесплатная доставка", "Доступ к премиум-акциям"
-        ]
+        return self._wrapped_account.get_features() + ["Бесплатная доставка", "Доступ к премиум-акциям"]
 
     def get_discount(self):
         return self._wrapped_account.get_discount() + 5
@@ -36,9 +34,7 @@ class PremiumAccount(AccountDecorator):
 
 class VIPAccount(AccountDecorator):
     def get_features(self):
-        return self._wrapped_account.get_features() + [
-            "Личный менеджер", "Эксклюзивные издания"
-        ]
+        return self._wrapped_account.get_features() + ["Личный менеджер", "Эксклюзивные издания"]
 
     def get_discount(self):
         return self._wrapped_account.get_discount() + 10
