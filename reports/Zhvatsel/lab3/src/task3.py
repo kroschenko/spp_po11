@@ -1,141 +1,95 @@
-"""Module for encrypting text files using the Strategy pattern."""
-
-import os
-from abc import ABC, abstractmethod
+"""Module for managing burger orders using the Builder pattern."""
 
 
-class EncryptionStrategy(ABC):
-    """Abstract base class for encryption strategies."""
+class Burger:
+    """Class representing a burger order with type, drink, and packaging."""
 
-    # pylint: disable=too-few-public-methods
+    def __init__(self):
+        self.burger_type = None
+        self.drink = None
+        self.packaging = None
 
-    @abstractmethod
-    def encrypt(self, text):
-        """Encrypt the input text."""
+    def __str__(self):
+        """Return string representation of the burger order."""
+        return f"Burger: {self.burger_type}, Drink: {self.drink}, Packaging: {self.packaging}"
 
-
-class RemoveVowelsStrategy(EncryptionStrategy):
-    """Strategy to encrypt text by removing vowels."""
-
-    # pylint: disable=too-few-public-methods
-
-    def encrypt(self, text):
-        """Remove all vowels from the input text."""
-        vowels = set("aeiouAEIOU")
-        return "".join(char for char in text if char not in vowels)
-
-
-class CaesarCipherStrategy(EncryptionStrategy):
-    """Strategy to encrypt text using Caesar cipher with a shift."""
-
-    # pylint: disable=too-few-public-methods
-
-    def __init__(self, shift=4):
-        self.shift = shift
-
-    def encrypt(self, text):
-        """Apply Caesar cipher with specified shift to the input text."""
-        result = ""
-        for char in text:
-            if char.isalpha():
-                ascii_offset = ord("A") if char.isupper() else ord("a")
-                result += chr((ord(char) - ascii_offset + self.shift) % 26 + ascii_offset)
-            else:
-                result += char
-        return result
+    def cost(self):
+        """Calculate total cost of the burger order."""
+        cost_map = {
+            "vegan": 10,
+            "chicken": 12,
+            "pepsi": 3,
+            "cola": 3,
+            "coffee": 4,
+            "tea": 4,
+            "takeaway": 1,
+            "eat_in": 0,
+        }
+        burger_cost = cost_map.get(self.burger_type, 0)
+        drink_cost = cost_map.get(self.drink, 0)
+        packaging_cost = cost_map.get(self.packaging, 0)
+        return burger_cost + drink_cost + packaging_cost
 
 
-class XORCipherStrategy(EncryptionStrategy):
-    """Strategy to encrypt text using XOR with a key."""
+class BurgerBuilder:
+    """Builder class for constructing a Burger object step-by-step."""
 
-    # pylint: disable=too-few-public-methods
+    def __init__(self):
+        self.burger = Burger()
 
-    def __init__(self, key="secret"):
-        self.key = key
+    def set_burger_type(self, burger_type):
+        """Set the burger type."""
+        self.burger.burger_type = burger_type
+        return self
 
-    def encrypt(self, text):
-        """Apply XOR encryption with the specified key to the input text."""
-        key_bytes = self.key.encode()
-        text_bytes = text.encode()
-        result = bytearray()
-        for i, byte in enumerate(text_bytes):
-            result.append(byte ^ key_bytes[i % len(key_bytes)])
-        return result.decode("latin1")
+    def set_drink(self, drink):
+        """Set the drink type."""
+        self.burger.drink = drink
+        return self
 
+    def set_packaging(self, packaging):
+        """Set the packaging type."""
+        self.burger.packaging = packaging
+        return self
 
-class Encryptor:
-    """Class to manage encryption using a specified strategy."""
-
-    # pylint: disable=too-few-public-methods
-
-    def __init__(self, strategy: EncryptionStrategy):
-        self.strategy = strategy
-
-    def set_strategy(self, strategy: EncryptionStrategy):
-        """Set the encryption strategy."""
-        self.strategy = strategy
-
-    def encrypt(self, text):
-        """Encrypt the text using the current strategy."""
-        return self.strategy.encrypt(text)
+    def build(self):
+        """Return the constructed Burger object."""
+        return self.burger
 
 
-def run_encryption():
-    """Prompt user to encrypt a text file using a chosen strategy."""
+def get_valid_input(prompt, options):
+    """Prompt user for input and validate against provided options."""
+    print(f"Available options: {', '.join(options)}")
     while True:
-        input_file = input("Enter input file name (e.g., input.txt): ")
-        if os.path.isfile(input_file):
-            break
-        print("File does not exist. Try again.")
-
-    try:
-        with open(input_file, "r", encoding="utf-8") as f:
-            text = f.read()
-    except (FileNotFoundError, IOError) as e:
-        print(f"Error reading file: {e}")
-        return
-
-    print("Available encryption methods:")
-    print("1. Remove vowels")
-    print("2. Caesar cipher")
-    print("3. XOR cipher")
-
-    while True:
-        choice = input("Choose method (1-3): ")
-        if choice in ["1", "2", "3"]:
-            break
+        choice = input(prompt).lower()
+        if choice in options:
+            return choice
         print("Invalid choice. Try again.")
 
-    encryptor = Encryptor(RemoveVowelsStrategy())
 
-    if choice == "1":
-        encryptor.set_strategy(RemoveVowelsStrategy())
-    elif choice == "2":
-        while True:
-            try:
-                shift = int(input("Enter shift for Caesar cipher (1-25): "))
-                if 1 <= shift <= 25:
-                    encryptor.set_strategy(CaesarCipherStrategy(shift))
-                    break
-                print("Shift must be between 1 and 25.")
-            except ValueError:
-                print("Invalid input. Enter a number.")
-    elif choice == "3":
-        key = input("Enter key for XOR cipher: ")
-        encryptor.set_strategy(XORCipherStrategy(key if key else "secret"))
+def create_order():
+    """Prompt user to create a burger order interactively."""
+    builder = BurgerBuilder()
 
-    encrypted_text = encryptor.encrypt(text)
+    # Define valid options for each input
+    burger_types = ["vegan", "chicken"]
+    drinks = ["pepsi", "cola", "coffee", "tea"]
+    packagings = ["takeaway", "eat_in"]
 
-    output_file = input("Enter output file name (e.g., output.txt): ")
+    # Collect user inputs using reusable validation function
+    burger_type = get_valid_input("Choose burger type: ", burger_types)
+    builder.set_burger_type(burger_type)
 
-    try:
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write(encrypted_text)
-        print(f"Encrypted text written to {output_file}")
-        print(f"Encrypted text: {encrypted_text}")
-    except (FileNotFoundError, IOError) as e:
-        print(f"Error writing file: {e}")
+    drink = get_valid_input("Choose drink: ", drinks)
+    builder.set_drink(drink)
+
+    packaging = get_valid_input("Choose packaging: ", packagings)
+    builder.set_packaging(packaging)
+
+    return builder.build()
 
 
 if __name__ == "__main__":
-    run_encryption()
+    order = create_order()
+    print(order)
+    print(f"Total cost: ${order.cost()}")
