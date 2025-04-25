@@ -119,7 +119,7 @@ def run_encryption():
                     break
                 print("Shift must be between 1 and 25.")
             except ValueError:
-                print("Invalid input. Enter a number")
+                print("Invalid input. Enter a number.")
     elif choice == "3":
         key = input("Enter key for XOR cipher: ")
         encryptor.set_strategy(XORCipherStrategy(key if key else "secret"))

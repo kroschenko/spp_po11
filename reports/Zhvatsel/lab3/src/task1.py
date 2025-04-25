@@ -67,7 +67,7 @@ def create_order():
         if burger_type in ["vegan", "chicken"]:
             builder.set_burger_type(burger_type)
             break
-        print("Invalid choice. Try again")
+        print("Invalid choice. Try again.")
 
     print("Available drinks: pepsi, cola, coffee, tea")
     while True:

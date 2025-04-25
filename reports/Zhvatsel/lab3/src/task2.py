@@ -61,7 +61,7 @@ def create_clock():
                 break
             print("Angle must be between 0 and 360.")
         except ValueError:
-            print("Invalid input. Enter a number")
+            print("Invalid input. Enter a number.")
 
     return AnalogClock(hour_angle, minute_angle)
 
