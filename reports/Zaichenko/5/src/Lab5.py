@@ -5,18 +5,15 @@ import uvicorn
 from fastapi import Depends, FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy import (
-    Boolean,
     Column,
     Date,
-    Float,
     ForeignKey,
     Integer,
     String,
     Table,
     create_engine,
 )
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 
 DATABASE_FILE = "academic_performance.db"
 DATABASE_URL = f"sqlite:///./{DATABASE_FILE}"
