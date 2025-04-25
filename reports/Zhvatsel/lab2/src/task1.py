@@ -141,7 +141,7 @@ def create_set_interactively(set_name: str) -> RealNumberSet:
 
 
 if __name__ == "__main__":
-    print("=== Задание 1: Работа с множествами ===")
+    print("== Задание 1: Работа с множествами ==")
 
     # Create first set
     set1 = create_set_interactively("первого множества")

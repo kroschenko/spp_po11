@@ -193,7 +193,7 @@ if __name__ == "__main__":
         print("3. Показать все поезда")
         print("4. Показать все заявки")
         print("5. Выход")
-        choice = input("Ваш выбор (1-5): ")
+        choice = input("Ваш выбор(1-5): ")
 
         if choice == "1":
             add_train_interactively(system)
