@@ -25,8 +25,8 @@ class ATM:
 
 
 class ATMState(ABC):
-    def __init__(self, atm: ATM):
-        self.atm = atm
+    def __init__(self, atm_machine: ATM):
+        self.atm = atm_machine
 
     @abstractmethod
     def insert_card(self):
@@ -130,11 +130,11 @@ if __name__ == "__main__":
         if choice == "1":
             atm.insert_card()
         elif choice == "2":
-            user_pin = input("Введите ПИН-код: ")
-            atm.enter_pin(user_pin)
+            pin = input("Введите ПИН-код: ")
+            atm.enter_pin(pin)
         elif choice == "3":
-            withdrawal_amount = int(input("Введите сумму для снятия: "))
-            atm.withdraw(withdrawal_amount)
+            amount = int(input("Введите сумму для снятия: "))
+            atm.withdraw(amount)
         elif choice == "4":
             atm.finish()
         elif choice == "0":
@@ -142,4 +142,3 @@ if __name__ == "__main__":
             break
         else:
             print("Неверный ввод. Попробуйте снова.")
-
