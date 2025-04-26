@@ -1,42 +1,46 @@
 import json
-from datetime import datetime
 
 import requests
+from requests.exceptions import RequestException
 
 
 def get_top_repos(keyword, top_n=10):
+    """Get top repositories by keyword from GitHub API."""
     headers = {"Accept": "application/vnd.github.v3+json"}
     params = {"q": keyword, "sort": "stars", "order": "desc", "per_page": top_n}
 
-    url = "https://api.github.com/search/repositories"
-    response = requests.get(url, headers=headers, params=params)
+    try:
+        url = "https://api.github.com/search/repositories"
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+        response.raise_for_status()
 
-    if response.status_code != 200:
-        raise Exception(f"Ошибка API: {response.status_code}")
+        repos_data = response.json()["items"][:top_n]
+        result = []
 
-    repos_data = response.json()["items"][:top_n]
-    result = []
+        for repo in repos_data:
+            repo_info = {
+                "name": repo["full_name"],
+                "description": repo["description"] or "No description",
+                "stars": repo["stargazers_count"],
+                "forks": repo["forks_count"],
+                "last_commit": repo["pushed_at"][:10] if repo["pushed_at"] else "N/A",
+            }
+            result.append(repo_info)
 
-    for repo in repos_data:
-        last_commit_date = repo["pushed_at"][:10] if repo["pushed_at"] else "N/A"
-        repo_info = {
-            "name": repo["full_name"],
-            "description": repo["description"] or "No description",
-            "stars": repo["stargazers_count"],
-            "forks": repo["forks_count"],
-            "last_commit": last_commit_date,
-        }
-        result.append(repo_info)
+        return result
 
-    return result
+    except RequestException as ex:
+        raise RuntimeError(f"GitHub API request failed: {ex}") from ex
 
 
 def save_to_json(data, filename="github_top_repos.json"):
+    """Save data to JSON file."""
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
 def print_simple_list(repos, keyword):
+    """Print repositories in simple list format."""
     print(f'\nТоп-10 репозиториев по запросу "{keyword}":\n')
     for i, repo in enumerate(repos, 1):
         print(
@@ -47,18 +51,17 @@ def print_simple_list(repos, keyword):
 
 
 def main():
+    """Main function."""
     keyword = input("Введите ключевое слово для поиска репозиториев: ")
     print(f"\nПоиск топ-10 репозиториев по запросу '{keyword}'...")
 
     try:
         top_repos = get_top_repos(keyword)
         print_simple_list(top_repos, keyword)
-
         save_to_json(top_repos)
-        print(f"\nРезультаты сохранены в github_top_repos.json")
-
-    except Exception as e:
-        print(f"Произошла ошибка: {e}")
+        print("\nРезультаты сохранены в github_top_repos.json")
+    except RuntimeError as ex:
+        print(f"Ошибка: {ex}")
 
 
 if __name__ == "__main__":
