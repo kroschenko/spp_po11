@@ -26,15 +26,14 @@ def calculate_mandelbrot(region_params, image_size, max_iterations):
 
 
 if __name__ == "__main__":
-    REGION = (-2.5, 1.5, -2.0, 2.0) 
-    SIZE = (800, 800)  
+    REGION = (-2.5, 1.5, -2.0, 2.0)
+    SIZE = (800, 800)
     MAX_ITER = 300
-
 
     image = calculate_mandelbrot(REGION, SIZE, MAX_ITER)
 
     plt.figure(figsize=(8, 8))
-    plt.imshow(image, cmap='twilight_shifted', 
+    plt.imshow(image, cmap='twilight_shifted',
                extent=[REGION[0], REGION[1], REGION[2], REGION[3]])
     plt.colorbar(label='Количество итераций')
     plt.title("Множество Мандельброта")
