@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import colorchooser
-from PIL import ImageGrab
 import math
+from PIL import ImageGrab
 
 
 class Primitive:
@@ -10,7 +10,7 @@ class Primitive:
 
 
 class Line(Primitive):
-    def __init__(self, x1, y1, x2, y2, color):
+    def __init__(self, x1, y1, x2, y2, *, color):
         self.x1, self.y1, self.x2, self.y2, self.color = x1, y1, x2, y2, color
 
     def draw(self, canvas):
@@ -54,13 +54,19 @@ class Triangle(Primitive):
 
 
 class App:
-    def __init__(self, root):
-        self.root = root
-        self.canvas = tk.Canvas(root, width=600, height=400, bg="white")
+    def __init__(self, tk_root):
+        self.root = tk_root
+        self.canvas = tk.Canvas(self.root, width=600, height=400, bg="white")
         self.canvas.pack()
+        self._create_controls()
+        self.triangle = None
+        self.animating = False
+        self.anim_id = None
+        self.set_default_triangle()
+        self.draw()
 
-        # Элементы управления
-        frame = tk.Frame(root)
+    def _create_controls(self):
+        frame = tk.Frame(self.root)
         frame.pack()
         tk.Label(frame, text="x1, y1").grid(row=0, column=0)
         tk.Label(frame, text="x2, y2").grid(row=1, column=0)
@@ -77,17 +83,14 @@ class App:
         self.y2.grid(row=1, column=2)
         self.x3.grid(row=2, column=1)
         self.y3.grid(row=2, column=2)
-
         tk.Label(frame, text="Цвет").grid(row=0, column=3)
         self.color_btn = tk.Button(frame, text="Выбрать", command=self.choose_color)
         self.color_btn.grid(row=0, column=4)
         self.color = "#000000"
-
         tk.Label(frame, text="Скорость (°/тик)").grid(row=1, column=3)
         self.speed_entry = tk.Entry(frame, width=4)
         self.speed_entry.insert(0, "2")
         self.speed_entry.grid(row=1, column=4)
-
         self.start_btn = tk.Button(frame, text="Старт", command=self.start_anim)
         self.start_btn.grid(row=3, column=0)
         self.stop_btn = tk.Button(frame, text="Стоп", command=self.stop_anim)
@@ -96,13 +99,6 @@ class App:
         self.update_btn.grid(row=3, column=2)
         self.screenshot_btn = tk.Button(frame, text="Скриншот", command=self.screenshot)
         self.screenshot_btn.grid(row=3, column=3)
-
-        # Переменные для анимации
-        self.triangle = None
-        self.animating = False
-        self.anim_id = None
-        self.set_default_triangle()
-        self.draw()
 
     def set_default_triangle(self):
         # Значения по умолчанию
@@ -137,7 +133,7 @@ class App:
             speed = float(self.speed_entry.get())
             self.triangle = Triangle(points, self.color, speed=speed)
             self.draw()
-        except Exception as e:
+        except ValueError as e:
             print("Ошибка параметров:", e)
 
     def draw(self):
@@ -169,6 +165,7 @@ class App:
         ImageGrab.grab().crop((x, y, x1, y1)).save("screenshot.png")
 
 
-root = tk.Tk()
-app = App(root)
-root.mainloop()
+if __name__ == "__main__":
+    tk_root = tk.Tk()
+    app = App(tk_root)
+    tk_root.mainloop()

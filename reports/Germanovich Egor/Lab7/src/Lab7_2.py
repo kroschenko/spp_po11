@@ -4,14 +4,14 @@ from PIL import ImageGrab
 
 
 class SierpinskiCarpetApp:
-    def __init__(self, root):
-        self.root = root
+    def __init__(self, tk_root):
+        self.root = tk_root
         self.root.title("Ковер Серпинского")
         self.canvas_size = 600
-        self.canvas = tk.Canvas(root, width=self.canvas_size, height=self.canvas_size, bg="white")
+        self.canvas = tk.Canvas(self.root, width=self.canvas_size, height=self.canvas_size, bg="white")
         self.canvas.pack()
 
-        frame = tk.Frame(root)
+        frame = tk.Frame(self.root)
         frame.pack()
         tk.Label(frame, text="Глубина:").grid(row=0, column=0)
         self.depth_entry = tk.Entry(frame, width=4)
@@ -39,7 +39,7 @@ class SierpinskiCarpetApp:
             depth = int(self.depth_entry.get())
             self.canvas.delete("all")
             self._draw_carpet(0, 0, self.canvas_size, depth)
-        except Exception as e:
+        except ValueError as e:
             print("Ошибка:", e)
 
     def _draw_carpet(self, x, y, size, depth):
@@ -62,6 +62,6 @@ class SierpinskiCarpetApp:
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = SierpinskiCarpetApp(root)
-    root.mainloop()
+    tk_root = tk.Tk()
+    app = SierpinskiCarpetApp(tk_root)
+    tk_root.mainloop()
