@@ -2,7 +2,6 @@ from typing import List
 
 
 class Employee:
-    """Базовый класс сотрудника"""
     def __init__(self, name: str, department: str, position: str, salary: float):
         self.name = name
         self.department = department
@@ -15,7 +14,7 @@ class Employee:
     def remove_subordinate(self, employee):
         raise NotImplementedError("Этот метод должен быть переопределен в подклассе")
 
-    def get_subordinates(self) -> List['Employee']:
+    def get_subordinates(self) -> List["Employee"]:
         raise NotImplementedError("Этот метод должен быть переопределен в подклассе")
 
     def __str__(self):
@@ -29,8 +28,8 @@ class Employee:
 
 class Manager(Employee):
     def __init__(self, name: str, department: str, position: str, salary: float):
-        self.subordinates: List[Employee] = []
         super().__init__(name, department, position, salary)
+        self.subordinates: List[Employee] = []
 
     def add_subordinate(self, employee: "Employee"):
         self.subordinates.append(employee)
@@ -49,7 +48,8 @@ class Manager(Employee):
     def __str__(self):
         subordinates_info = "\n  ".join([str(sub) for sub in self.subordinates])
         return (
-            f"{super().__str__()}\n" f"Подчиненные:\n  {subordinates_info if subordinates_info else 'Нет подчиненных'}"
+            f"{super().__str__()}\n"
+            f"Подчиненные:\n  {subordinates_info if subordinates_info else 'Нет подчиненных'}"
         )
 
 
@@ -96,4 +96,3 @@ if __name__ == "__main__":
     cto.remove_subordinate(dev1)
     print("\nИнформация о CTO после удаления разработчика:")
     print(cto)
-    

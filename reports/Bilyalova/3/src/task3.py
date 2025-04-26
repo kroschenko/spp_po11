@@ -17,7 +17,7 @@ class Manager(Employee):
         self.subordinates: List[Employee] = []
         super().__init__(name, department, position, salary)
 
-    def add_subordinate(self, employee: "Employee"):
+    def add_subordinate(self, employee: "Employee"):\
         self.subordinates.append(employee)
 
     def accept(self, visitor):
@@ -73,9 +73,7 @@ if __name__ == "__main__":
     hr.add_subordinate(recruiter)
 
     salary_report_visitor = SalaryReportVisitor()
-
     ceo.accept(salary_report_visitor)
 
     print("Отчет по зарплатам:")
     print(salary_report_visitor.generate_report())
-    

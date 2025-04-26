@@ -28,4 +28,3 @@ try:
         print("Мода последовательности:", ", ".join(map(str, modes)))
 except ValueError:
     print("Ошибка: введите целые числа.")
-    
