@@ -116,19 +116,19 @@ class CoffeeMachine:
 
 # Словарь для соответствия выбора пользователя и фабрик
 COFFEE_TYPES = {
-    '1': ('Эспрессо', EspressoFactory()),
-    '2': ('Американо', AmericanoFactory()),
-    '3': ('Капучино', CappuccinoFactory()),
-    '4': ('Латте', LatteFactory()),
-    '5': ('Мокка', MochaFactory())
+    "1": ("Эспрессо", EspressoFactory()),
+    "2": ("Американо", AmericanoFactory()),
+    "3": ("Капучино", CappuccinoFactory()),
+    "4": ("Латте", LatteFactory()),
+    "5": ("Мокка", MochaFactory()),
 }
 
 
 # Функция для отображения меню
 def show_menu():
     print("\n=== Меню кофейни ===")
-    for key, (name, _) in COFFEE_TYPES.items():
-        coffee = COFFEE_TYPES[key][1].create_coffee()
+    for key, (name, factory) in COFFEE_TYPES.items():
+        coffee = factory.create_coffee()
         print(f"{key}. {name} - ${coffee.get_cost()}")
     print("0. Выход")
 
@@ -141,7 +141,7 @@ def main():
         show_menu()
         choice = input("\nВыберите кофе (0-5): ").strip()
 
-        if choice == '0':
+        if choice == "0":
             print("Спасибо за визит!")
             break
 
@@ -149,8 +149,8 @@ def main():
             print("Неверный выбор, попробуйте снова.")
             continue
 
-        coffee_name, factory = COFFEE_TYPES[choice]
-        print(f"\nВы выбрали: {coffee_name}")
+        name, factory = COFFEE_TYPES[choice]
+        print(f"\nВы выбрали: {name}")
         machine.make_coffee(factory)
 
 

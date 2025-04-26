@@ -48,13 +48,13 @@ def main():
         print("\nВведите время для часов (или 'q' для выхода)")
         time_input = input("Формат ЧЧ:ММ (например, 14:45): ").strip()
 
-        if time_input.lower() == 'q':
+        if time_input.lower() == "q":
             print("Выход из программы.")
             break
 
         try:
             # Проверяем формат времени
-            hours, minutes = map(int, time_input.split(':'))
+            hours, minutes = map(int, time_input.split(":"))
             if not (0 <= hours <= 23 and 0 <= minutes <= 59):
                 print("Ошибка: Часы должны быть от 0 до 23, минуты от 0 до 59.")
                 continue
