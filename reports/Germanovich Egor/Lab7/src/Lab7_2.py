@@ -62,6 +62,6 @@ class SierpinskiCarpetApp:
 
 
 if __name__ == "__main__":
-    tk_root = tk.Tk()
-    app = SierpinskiCarpetApp(tk_root)
-    tk_root.mainloop()
+    tk_main = tk.Tk()
+    app = SierpinskiCarpetApp(tk_main)
+    tk_main.mainloop()

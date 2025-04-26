@@ -54,18 +54,20 @@ class Triangle(Primitive):
 
 
 class App:
-    def __init__(self, tk_root):
-        self.root = tk_root
+    def __init__(self, root):
+        self.root = root
+        self.color = "#000000"
         self.canvas = tk.Canvas(self.root, width=600, height=400, bg="white")
         self.canvas.pack()
-        self._create_controls()
+        self._create_coord_controls()
+        self._create_action_controls()
         self.triangle = None
         self.animating = False
         self.anim_id = None
         self.set_default_triangle()
         self.draw()
 
-    def _create_controls(self):
+    def _create_coord_controls(self):
         frame = tk.Frame(self.root)
         frame.pack()
         tk.Label(frame, text="x1, y1").grid(row=0, column=0)
@@ -83,22 +85,25 @@ class App:
         self.y2.grid(row=1, column=2)
         self.x3.grid(row=2, column=1)
         self.y3.grid(row=2, column=2)
-        tk.Label(frame, text="Цвет").grid(row=0, column=3)
+
+    def _create_action_controls(self):
+        frame = tk.Frame(self.root)
+        frame.pack()
+        tk.Label(frame, text="Цвет").grid(row=0, column=0)
         self.color_btn = tk.Button(frame, text="Выбрать", command=self.choose_color)
-        self.color_btn.grid(row=0, column=4)
-        self.color = "#000000"
-        tk.Label(frame, text="Скорость (°/тик)").grid(row=1, column=3)
+        self.color_btn.grid(row=0, column=1)
+        tk.Label(frame, text="Скорость (°/тик)").grid(row=0, column=2)
         self.speed_entry = tk.Entry(frame, width=4)
         self.speed_entry.insert(0, "2")
-        self.speed_entry.grid(row=1, column=4)
+        self.speed_entry.grid(row=0, column=3)
         self.start_btn = tk.Button(frame, text="Старт", command=self.start_anim)
-        self.start_btn.grid(row=3, column=0)
+        self.start_btn.grid(row=0, column=4)
         self.stop_btn = tk.Button(frame, text="Стоп", command=self.stop_anim)
-        self.stop_btn.grid(row=3, column=1)
+        self.stop_btn.grid(row=0, column=5)
         self.update_btn = tk.Button(frame, text="Обновить", command=self.update_triangle)
-        self.update_btn.grid(row=3, column=2)
+        self.update_btn.grid(row=0, column=6)
         self.screenshot_btn = tk.Button(frame, text="Скриншот", command=self.screenshot)
-        self.screenshot_btn.grid(row=3, column=3)
+        self.screenshot_btn.grid(row=0, column=7)
 
     def set_default_triangle(self):
         # Значения по умолчанию
@@ -166,6 +171,6 @@ class App:
 
 
 if __name__ == "__main__":
-    tk_root = tk.Tk()
-    app = App(tk_root)
-    tk_root.mainloop()
+    tk_main = tk.Tk()
+    app = App(tk_main)
+    tk_main.mainloop()
