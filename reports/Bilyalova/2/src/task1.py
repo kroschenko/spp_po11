@@ -38,7 +38,7 @@ class RightTriangle:
 
     def is_valid(self):
         sides = sorted([self.a, self.b, self.c])
-        return math.isclose(sides[0]**2 + sides[1]**2, sides[2]**2, rel_tol=1e-9)
+        return math.isclose(sides[0] ** 2 + sides[1] ** 2, sides[2] ** 2, rel_tol=1e-9)
 
     def area(self):
         if not self.is_valid():

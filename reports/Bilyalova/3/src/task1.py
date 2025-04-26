@@ -73,11 +73,13 @@ class Order:
         return total
 
     def __str__(self):
-        return (f"Заказ:\n"
-                f"  Бургер: {self.burger}\n"
-                f"  Напиток: {self.drink}\n"
-                f"  Упаковка: {self.packaging}\n"
-                f"Итого: ${self.calculate_total()}")
+        return (
+            f"Заказ:\n"
+            f"  Бургер: {self.burger}\n"
+            f"  Напиток: {self.drink}\n"
+            f"  Упаковка: {self.packaging}\n"
+            f"Итого: ${self.calculate_total()}"
+        )
 
 class OrderBuilder:
     def __init__(self):
@@ -99,21 +101,11 @@ class OrderBuilder:
         return self.order
 
 if __name__ == "__main__":
-    # Создаем строителя
     builder = OrderBuilder()
 
-    # Формируем заказ
-    order1 = (builder
-              .add_burger(VeganBurger())
-              .add_drink(ColdDrink())
-              .add_packaging(TakeawayPackaging())
-              .build())
+    order1 = builder.add_burger(VeganBurger()).add_drink(ColdDrink()).add_packaging(TakeawayPackaging()).build()
 
-    order2 = (builder
-              .add_burger(ChickenBurger())
-              .add_drink(HotDrink())
-              .add_packaging(OnSitePackaging())
-              .build())
+    order2 = builder.add_burger(ChickenBurger()).add_drink(HotDrink()).add_packaging(OnSitePackaging()).build()
 
     # Выводим информацию о заказах
     print("Заказ 1:")
