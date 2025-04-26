@@ -17,7 +17,7 @@ class Manager(Employee):
         self.subordinates: List[Employee] = []
         super().__init__(name, department, position, salary)
 
-    def add_subordinate(self, employee: "Employee"):\
+    def add_subordinate(self, employee: "Employee"):
         self.subordinates.append(employee)
 
     def accept(self, visitor):
@@ -28,7 +28,7 @@ class Manager(Employee):
 
 class RegularEmployee(Employee):
     def __init__(self, name: str, department: str, position: str, salary: float):
-        super().__init__(name, department, position, salary)
+        Employee.__init__(self, name, department, position, salary)
 
     def accept(self, visitor):
         visitor.visit_regular_employee(self)

@@ -28,8 +28,8 @@ class Employee:
 
 class Manager(Employee):
     def __init__(self, name: str, department: str, position: str, salary: float):
-        super().__init__(name, department, position, salary)
         self.subordinates: List[Employee] = []
+        super().__init__(name, department, position, salary)
 
     def add_subordinate(self, employee: "Employee"):
         self.subordinates.append(employee)
@@ -67,7 +67,7 @@ class RegularEmployee(Employee):
         return []
 
     def __str__(self):
-        return super().__str__()
+        return Employee.__str__(self)
 
 
 if __name__ == "__main__":
