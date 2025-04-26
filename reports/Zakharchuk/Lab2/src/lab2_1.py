@@ -12,19 +12,17 @@ class IsoscelesTriangle:
         return self.a + self.b > self.c and self.a + self.c > self.b and self.b + self.c > self.a
 
     def perimeter(self):
-        if self.exists():
-            return self.a + self.b + self.c
-        else:
+        if not self.exists():
             print("Такого треугольника не существует")
             return None
+        return self.a + self.b + self.c
 
     def area(self):
-        if self.exists():
-            p = self.perimeter() / 2
-            return math.sqrt(p * (p - self.a) * (p - self.b) * (p - self.c))
-        else:
+        if not self.exists():
             print("Такого треугольника не существует")
             return None
+        p = self.perimeter() / 2
+        return math.sqrt(p * (p - self.a) * (p - self.b) * (p - self.c))
 
     def __eq__(self, other):
         if isinstance(other, IsoscelesTriangle):
