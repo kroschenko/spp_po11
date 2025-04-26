@@ -1,0 +1,72 @@
+[
+  {
+    "name": "fastapi/fastapi",
+    "description": "FastAPI framework, high performance, easy to learn, fast to code, ready for production",
+    "stars": 83754,
+    "forks": 7268,
+    "last_commit": "2025-04-25"
+  },
+  {
+    "name": "fastapi/full-stack-fastapi-template",
+    "description": "Full stack, modern web application template. Using FastAPI, React, SQLModel, PostgreSQL, Docker, GitHub Actions, automatic HTTPS and more.",
+    "stars": 32225,
+    "forks": 6021,
+    "last_commit": "2025-04-25"
+  },
+  {
+    "name": "mouredev/Hello-Python",
+    "description": "Curso para aprender el lenguaje de programación Python desde cero y para principiantes. 100 clases, 44 horas en vídeo, código, proyectos y grupo de chat. Fundamentos, frontend, backend, testing, IA...",
+    "stars": 29685,
+    "forks": 1907,
+    "last_commit": "2025-02-28"
+  },
+  {
+    "name": "jina-ai/serve",
+    "description": "☁️ Build multimodal AI applications with cloud-native stack",
+    "stars": 21538,
+    "forks": 2225,
+    "last_commit": "2025-03-24"
+  },
+  {
+    "name": "fastapi/sqlmodel",
+    "description": "SQL databases in Python, designed for simplicity, compatibility, and robustness.",
+    "stars": 15724,
+    "forks": 717,
+    "last_commit": "2025-04-24"
+  },
+  {
+    "name": "Zeyi-Lin/HivisionIDPhotos",
+    "description": "⚡️HivisionIDPhotos: a lightweight and efficient AI ID photos tools. 一个轻量级的AI证件照制作算法。",
+    "stars": 15628,
+    "forks": 1671,
+    "last_commit": "2025-04-04"
+  },
+  {
+    "name": "Evil0ctal/Douyin_TikTok_Download_API",
+    "description": "🚀「Douyin_TikTok_Download_API」是一个开箱即用的高性能异步抖音、快手、TikTok、Bilibili数据爬取工具，支持API调用，在线批量解析及下载。",
+    "stars": 12116,
+    "forks": 1818,
+    "last_commit": "2025-03-23"
+  },
+  {
+    "name": "zhanymkanov/fastapi-best-practices",
+    "description": "FastAPI Best Practices and Conventions we used at our startup",
+    "stars": 11538,
+    "forks": 852,
+    "last_commit": "2025-04-11"
+  },
+  {
+    "name": "mjhea0/awesome-fastapi",
+    "description": "A curated list of awesome things related to FastAPI",
+    "stars": 9564,
+    "forks": 723,
+    "last_commit": "2025-01-31"
+  },
+  {
+    "name": "pydantic/FastUI",
+    "description": "Build better UIs faster.",
+    "stars": 8800,
+    "forks": 335,
+    "last_commit": "2025-03-15"
+  }
+]
