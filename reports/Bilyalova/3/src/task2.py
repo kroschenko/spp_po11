@@ -55,7 +55,7 @@ class Manager(Employee):
 
 class RegularEmployee(Employee):
     def __init__(self, name: str, department: str, position: str, salary: float):
-        super().__init__(name, department, position, salary)
+        Employee.__init__(self, name, department, position, salary)
 
     def add_subordinate(self, employee):
         print("Обычные сотрудники не могут иметь подчиненных")
