@@ -1,5 +1,4 @@
 def generate_pascal_triangle(num_rows):
-    """Генерирует треугольник Паскаля с заданным количеством строк."""
     if num_rows < 0:
         raise ValueError("Количество строк не может быть отрицательным")
     triangle = []
@@ -10,8 +9,8 @@ def generate_pascal_triangle(num_rows):
         triangle.append(row)
     return triangle
 
+
 def main():
-    """Основная функция для ввода и вывода."""
     try:
         num = int(input("Введите количество строк: "))
         triangle = generate_pascal_triangle(num)
