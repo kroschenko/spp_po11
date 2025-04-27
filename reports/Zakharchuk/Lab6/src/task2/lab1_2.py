@@ -10,6 +10,7 @@ def generate_pascal_triangle(num_rows):
         triangle.append(row)
     return triangle
 
+
 def main():
     """Основная функция для ввода и вывода."""
     try:

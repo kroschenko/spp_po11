@@ -1,4 +1,4 @@
-def repeat(string, separator, repeat):
+def repeat_string(string, separator, count):
     """Повторяет строку заданное количество раз с указанным разделителем."""
     if string is None:
         raise TypeError("Строка должна быть типа str, а не NoneType")
@@ -6,10 +6,10 @@ def repeat(string, separator, repeat):
         raise TypeError("Разделитель должен быть типа str, а не NoneType")
     if not isinstance(string, str) or not isinstance(separator, str):
         raise TypeError("Строка и разделитель должны быть типа str")
-    if repeat < 0:
+    if count < 0:
         raise ValueError("Количество повторений не может быть отрицательным")
-    if repeat == 0:
+    if count == 0:
         return ""
-    if repeat == 1:
+    if count == 1:
         return string
-    return separator.join([string] * repeat)
+    return separator.join([string] * count)

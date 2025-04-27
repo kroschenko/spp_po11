@@ -1,5 +1,6 @@
 import requests
 
+
 class Cart:
     def __init__(self):
         self.items = []
@@ -22,7 +23,9 @@ class Cart:
     def log_purchase(self, item):
         requests.post("https://example.com/log", json=item)
 
+
 coupons = {"SAVE10": 10, "HALF": 50}
+
 
 def apply_coupon(cart, coupon_code):
     if coupon_code in coupons:
