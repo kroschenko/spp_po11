@@ -1,13 +1,13 @@
-import requests
 import datetime
-from dateutil.relativedelta import relativedelta
-import matplotlib.pyplot as plt
-import seaborn as sns
 from urllib.parse import quote
+
+import matplotlib.pyplot as plt
+import requests
+import seaborn as sns
+from dateutil.relativedelta import relativedelta
 
 # Настройка стиля графиков
 sns.set(style="whitegrid")
-
 
 def get_user_input():
     """Получение входных данных от пользователя"""
