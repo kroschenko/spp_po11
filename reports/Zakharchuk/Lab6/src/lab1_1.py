@@ -1,5 +1,3 @@
-import math
-
 def parse_numbers(input_string):
     if not input_string.strip():
         raise ValueError("Все элементы должны быть целыми числами")
