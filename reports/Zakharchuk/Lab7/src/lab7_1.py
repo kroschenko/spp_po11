@@ -1,7 +1,7 @@
 import tkinter as tk
+from datetime import datetime
 from math import cos, sin, radians
 from PIL import ImageGrab
-from datetime import datetime
 
 
 class RotatingRectangle:
@@ -37,7 +37,7 @@ class RotatingRectangle:
 
 
 class RotatingRectangleApp:
-    def __init__(self, root):
+    def __init__(self, root):  # pylint: disable=redefined-outer-name
         self.root = root
         self.root.title("Вращающийся прямоугольник")
 

@@ -1,11 +1,11 @@
 import tkinter as tk
+from datetime import datetime
 from PIL import Image, ImageTk, ImageGrab
 import numpy as np
-from datetime import datetime
 
 
 class JuliaFractalApp:
-    def __init__(self, root):
+    def __init__(self, root):  # pylint: disable=redefined-outer-name
         self.root = root
         self.root.title("Множество Жюлиа")
 
