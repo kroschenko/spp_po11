@@ -21,13 +21,14 @@ class GitHubAnalyzer:
         raise RuntimeError(f"Ошибка при получении контрибьюторов: {response.status_code}")
 
     def get_user_activity(self, owner: str, repo: str, username: str) -> Dict:
-        # Получаем коммиты
         commits_url = f'{self.base_url}/repos/{owner}/{repo}/commits'
         commits_params = {'author': username}
         commits_response = requests.get(commits_url, headers=self.headers, params=commits_params)
-        commits_count = len(commits_response.json()) if commits_response.status_code == 200 else 0
 
-        # Получаем PR
+        commits_count = len(commits_response.json()) if commits_response.status_code == 200 else 0
+        added_lines = 0
+        removed_lines = 0
+
         pr_url = f'{self.base_url}/repos/{owner}/{repo}/pulls'
         pr_params = {'state': 'all', 'creator': username}
         pr_response = requests.get(pr_url, headers=self.headers, params=pr_params)
@@ -36,7 +37,6 @@ class GitHubAnalyzer:
         open_prs = len([pr for pr in prs if pr['state'] == 'open'])
         closed_prs = len([pr for pr in prs if pr['state'] == 'closed'])
 
-        # Получаем issues
         issues_url = f'{self.base_url}/repos/{owner}/{repo}/issues'
         issues_params = {'creator': username}
         issues_response = requests.get(issues_url, headers=self.headers, params=issues_params)
@@ -45,7 +45,13 @@ class GitHubAnalyzer:
         open_issues = len([issue for issue in issues if issue['state'] == 'open'])
         closed_issues = len([issue for issue in issues if issue['state'] == 'closed'])
 
-        # Получаем дату последней активности
+        for commit in commits_response.json():
+            commit_url = commit['url']
+            commit_details = requests.get(commit_url, headers=self.headers).json()
+            for file in commit_details.get('files', []):
+                added_lines += file.get('additions', 0)
+                removed_lines += file.get('deletions', 0)
+
         last_activity = None
         if commits_count > 0:
             last_commit = commits_response.json()[0]
@@ -57,6 +63,8 @@ class GitHubAnalyzer:
             'closed_prs': closed_prs,
             'open_issues': open_issues,
             'closed_issues': closed_issues,
+            'added_lines': added_lines,
+            'removed_lines': removed_lines,
             'last_activity': last_activity
         }
 
@@ -71,17 +79,15 @@ class GitHubAnalyzer:
             stats = self.get_user_activity(owner, repo, username)
             contributor_stats.append((username, stats))
 
-        # Сортируем по общему вкладу
         contributor_stats.sort(
             key=lambda x: x[1]['commits'] + x[1]['open_prs'] + x[1]['closed_prs'] +
-                         x[1]['open_issues'] + x[1]['closed_issues'],
+                          x[1]['open_issues'] + x[1]['closed_issues'],
             reverse=True
         )
 
         return contributor_stats
 
     def plot_contributor_activity(self, contributor_stats: List[Tuple[str, Dict]], repo_name: str):
-        # Подготавливаем данные для графика
         top_5 = contributor_stats[:5]
         usernames = [stat[0] for stat in top_5]
 
@@ -90,12 +96,13 @@ class GitHubAnalyzer:
             'Открытые PR': [stat[1]['open_prs'] for stat in top_5],
             'Закрытые PR': [stat[1]['closed_prs'] for stat in top_5],
             'Открытые Issues': [stat[1]['open_issues'] for stat in top_5],
-            'Закрытые Issues': [stat[1]['closed_issues'] for stat in top_5]
+            'Закрытые Issues': [stat[1]['closed_issues'] for stat in top_5],
+            'Добавленные строки': [stat[1]['added_lines'] for stat in top_5],
+            'Удаленные строки': [stat[1]['removed_lines'] for stat in top_5]
         }
 
         df = pd.DataFrame(data, index=usernames)
 
-        # Создаем график
         plt.figure(figsize=(12, 6))
         df.plot(kind='bar', stacked=True)
         plt.title(f'Активность контрибьюторов в {repo_name}')
@@ -104,16 +111,13 @@ class GitHubAnalyzer:
         plt.xticks(rotation=45)
         plt.tight_layout()
 
-        # Сохраняем график
         plt.savefig(f'{repo_name.replace("/", "_")}_contributors.png')
         plt.close()
 
 
 def main():
-    # Запрашиваем токен GitHub
     token = input("Введите ваш GitHub токен: ")
 
-    # Запрашиваем репозиторий
     repo_input = input("Введите репозиторий для анализа (owner/repo): ")
     owner, repo = repo_input.split('/')
 
@@ -122,14 +126,14 @@ def main():
     try:
         contributor_stats = analyzer.analyze_repository(owner, repo)
 
-        # Выводим топ-5 контрибьюторов
         print("\nТОП-5 самых активных разработчиков:")
         for i, (username, stats) in enumerate(contributor_stats[:5], 1):
             print(f"{i}. {username} - {stats['commits']} коммитов, "
                   f"{stats['open_prs'] + stats['closed_prs']} PR, "
-                  f"{stats['open_issues'] + stats['closed_issues']} issues")
+                  f"{stats['open_issues'] + stats['closed_issues']} issues, "
+                  f"{stats['added_lines']} добавленных строк, "
+                  f"{stats['removed_lines']} удаленных строк")
 
-        # Строим график
         analyzer.plot_contributor_activity(contributor_stats, repo_input)
         print(f"\nГрафики активности сохранены в \"{repo_input.replace('/', '_')}_contributors.png\"")
 
