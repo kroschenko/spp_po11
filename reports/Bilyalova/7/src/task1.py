@@ -9,15 +9,19 @@ class RotatingQuadrilateralApp:
     def __init__(self, master):
         self.master = master
         self.master.title("Вращающийся четырехугольник")
-        
-        self.initialize_defaults()
+
+        self.setup_variables()
         self.create_canvas()
         self.create_control_frame()
+        self.create_speed_controls()
+        self.create_color_controls()
+        self.create_action_buttons()
         self.create_vertex_controls()
+
         self.quadrilateral = None
         self.animate()
 
-    def initialize_defaults(self):
+    def setup_variables(self):
         self.width = 400
         self.height = 400
         self.center_x = self.width // 2
@@ -36,87 +40,53 @@ class RotatingQuadrilateralApp:
     def create_control_frame(self):
         self.control_frame = ttk.Frame(self.master)
         self.control_frame.pack(side=tk.RIGHT, padx=10, pady=10, fill=tk.Y)
-        
-        self.create_speed_control()
-        self.create_color_controls()
-        self.create_action_buttons()
 
-    def create_speed_control(self):
+    def create_speed_controls(self):
         ttk.Label(self.control_frame, text="Скорость вращения:").pack(pady=5)
-        self.speed_slider = ttk.Scale(
-            self.control_frame,
-            from_=0,
-            to=10,
-            command=self.update_speed
-        )
+        self.speed_slider = ttk.Scale(self.control_frame, from_=0, to=10, command=self.update_speed)
         self.speed_slider.set(self.rotation_speed)
         self.speed_slider.pack(pady=5)
 
     def create_color_controls(self):
         ttk.Label(self.control_frame, text="Цвет заливки:").pack(pady=5)
-        self.fill_color_btn = ttk.Button(
-            self.control_frame,
-            text="Выбрать",
-            command=self.choose_fill_color
-        )
+        self.fill_color_btn = ttk.Button(self.control_frame, text="Выбрать", command=self.choose_fill_color)
         self.fill_color_btn.pack(pady=5)
 
         ttk.Label(self.control_frame, text="Цвет контура:").pack(pady=5)
-        self.outline_color_btn = ttk.Button(
-            self.control_frame,
-            text="Выбрать",
-            command=self.choose_outline_color
-        )
+        self.outline_color_btn = ttk.Button(self.control_frame, text="Выбрать", command=self.choose_outline_color)
         self.outline_color_btn.pack(pady=5)
 
     def create_action_buttons(self):
-        self.pause_btn = ttk.Button(
-            self.control_frame,
-            text="Пауза",
-            command=self.toggle_rotation
-        )
+        self.pause_btn = ttk.Button(self.control_frame, text="Пауза", command=self.toggle_rotation)
         self.pause_btn.pack(pady=10)
 
-        self.screenshot_btn = ttk.Button(
-            self.control_frame,
-            text="Сделать скриншот",
-            command=self.take_screenshot
-        )
+        self.screenshot_btn = ttk.Button(self.control_frame, text="Сделать скриншот", command=self.take_screenshot)
         self.screenshot_btn.pack(pady=10)
 
     def create_vertex_controls(self):
         ttk.Label(self.control_frame, text="Вершины четырехугольника:").pack(pady=5)
         self.vertex_entries = []
         for i in range(4):
-            self.create_vertex_entry(i)
+            frame = ttk.Frame(self.control_frame)
+            frame.pack(pady=2)
+            ttk.Label(frame, text=f"Вершина {i+1}:").pack(side=tk.LEFT)
+            x_entry = ttk.Entry(frame, width=5)
+            x_entry.pack(side=tk.LEFT)
+            y_entry = ttk.Entry(frame, width=5)
+            y_entry.pack(side=tk.LEFT)
+            x_entry.insert(0, str(self.vertices[i][0]))
+            y_entry.insert(0, str(self.vertices[i][1]))
+            self.vertex_entries.append((x_entry, y_entry))
 
-        self.update_btn = ttk.Button(
-            self.control_frame,
-            text="Обновить вершины",
-            command=self.update_vertices
-        )
+        self.update_btn = ttk.Button(self.control_frame, text="Обновить вершины", command=self.update_vertices)
         self.update_btn.pack(pady=10)
-
-    def create_vertex_entry(self, index):
-        frame = ttk.Frame(self.control_frame)
-        frame.pack(pady=2)
-        ttk.Label(frame, text=f"Вершина {index+1}:").pack(side=tk.LEFT)
-        x_entry = ttk.Entry(frame, width=5)
-        x_entry.pack(side=tk.LEFT)
-        y_entry = ttk.Entry(frame, width=5)
-        y_entry.pack(side=tk.LEFT)
-        x_entry.insert(0, str(self.vertices[index][0]))
-        y_entry.insert(0, str(self.vertices[index][1]))
-        self.vertex_entries.append((x_entry, y_entry))
 
     def rotate_point(self, point, angle):
         x, y = point
         x -= self.center_x
         y -= self.center_y
-
         new_x = x * math.cos(angle) - y * math.sin(angle)
         new_y = x * math.sin(angle) + y * math.cos(angle)
-
         return (new_x + self.center_x, new_y + self.center_y)
 
     def draw_quadrilateral(self):
@@ -135,7 +105,6 @@ class RotatingQuadrilateralApp:
         if self.is_rotating:
             self.rotation_angle += math.radians(self.rotation_speed)
             self.draw_quadrilateral()
-
         self.master.after(20, self.animate)
 
     def update_speed(self, value):
@@ -162,7 +131,6 @@ class RotatingQuadrilateralApp:
                 x = int(x_entry.get())
                 y = int(y_entry.get())
                 new_vertices.append((x, y))
-
             if len(new_vertices) == 4:
                 self.vertices = new_vertices
         except ValueError:
@@ -173,14 +141,10 @@ class RotatingQuadrilateralApp:
         y = self.master.winfo_rooty() + self.canvas.winfo_y()
         x1 = x + self.canvas.winfo_width()
         y1 = y + self.canvas.winfo_height()
-
         screenshot = ImageGrab.grab((x, y, x1, y1))
-
         timestamp = time.strftime("%Y%m%d_%H%M%S")
         filename = f"quadrilateral_{timestamp}.png"
-
         screenshot.save(filename)
-
         messagebox.showinfo("Скриншот сохранен", f"Скриншот сохранен как {filename}")
 
 
