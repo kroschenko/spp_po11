@@ -59,10 +59,8 @@ def test_log_purchase():
 def test_apply_coupon_valid(cart_fixture, monkeypatch):
     cart_fixture.add_item("Item", 100.0)
     monkeypatch.setattr("shopping.coupons", {"SAVE10": 10, "HALF": 50})
-    
     apply_coupon(cart_fixture, "SAVE10")
     assert cart_fixture.total() == 90.0
-    
     apply_coupon(cart_fixture, "HALF")
     assert cart_fixture.total() == 45.0
 
@@ -70,6 +68,5 @@ def test_apply_coupon_valid(cart_fixture, monkeypatch):
 def test_apply_coupon_invalid(cart_fixture, monkeypatch):
     cart_fixture.add_item("Item", 100.0)
     monkeypatch.setattr("shopping.coupons", {"SAVE10": 10, "HALF": 50})
-    
     with pytest.raises(ValueError, match="Invalid coupon"):
         apply_coupon(cart_fixture, "INVALID")
