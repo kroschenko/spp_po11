@@ -94,7 +94,7 @@ class SierpinskiTriangleApp:
 
         # Координаты вершин
         points = self._calculate_triangle_points(size, height)
-        
+
         # Рисуем фрактал
         self._draw_sierpinski_canvas(points, self.depth)
 
@@ -117,7 +117,7 @@ class SierpinskiTriangleApp:
         else:
             # Вычисляем середины сторон
             mid_points = self._calculate_midpoints(points)
-            
+
             # Рисуем 3 подтреугольника
             self._draw_sierpinski_canvas([points[0], mid_points[0], mid_points[1]], depth - 1)
             self._draw_sierpinski_canvas([mid_points[0], points[1], mid_points[2]], depth - 1)
