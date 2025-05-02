@@ -10,6 +10,11 @@ class RotatingQuadrilateralApp:
         self.master = master
         self.master.title("Вращающийся четырехугольник")
 
+        self.init_state()
+        self.create_widgets()
+        self.animate()
+
+    def init_state(self):
         self.width = 400
         self.height = 400
         self.center_x = self.width // 2
@@ -20,13 +25,18 @@ class RotatingQuadrilateralApp:
         self.fill_color = "blue"
         self.outline_color = "black"
         self.is_rotating = True
+        self.quadrilateral = None
 
-        self.canvas = tk.Canvas(master, width=self.width, height=self.height, bg="white")
+    def create_widgets(self):
+        self.canvas = tk.Canvas(self.master, width=self.width, height=self.height, bg="white")
         self.canvas.pack(side=tk.LEFT, padx=10, pady=10)
 
-        self.control_frame = ttk.Frame(master)
+        self.control_frame = ttk.Frame(self.master)
         self.control_frame.pack(side=tk.RIGHT, padx=10, pady=10, fill=tk.Y)
 
+        self.create_controls()
+
+    def create_controls(self):
         ttk.Label(self.control_frame, text="Скорость вращения:").pack(pady=5)
         self.speed_slider = ttk.Scale(
             self.control_frame,
@@ -37,6 +47,24 @@ class RotatingQuadrilateralApp:
         self.speed_slider.set(self.rotation_speed)
         self.speed_slider.pack(pady=5)
 
+        self.create_color_buttons()
+        self.create_vertex_inputs()
+
+        self.pause_btn = ttk.Button(
+            self.control_frame,
+            text="Пауза",
+            command=self.toggle_rotation
+        )
+        self.pause_btn.pack(pady=10)
+
+        self.screenshot_btn = ttk.Button(
+            self.control_frame,
+            text="Сделать скриншот",
+            command=self.take_screenshot
+        )
+        self.screenshot_btn.pack(pady=10)
+
+    def create_color_buttons(self):
         ttk.Label(self.control_frame, text="Цвет заливки:").pack(pady=5)
         self.fill_color_btn = ttk.Button(
             self.control_frame,
@@ -53,26 +81,14 @@ class RotatingQuadrilateralApp:
         )
         self.outline_color_btn.pack(pady=5)
 
-        self.pause_btn = ttk.Button(
-            self.control_frame,
-            text="Пауза",
-            command=self.toggle_rotation
-        )
-        self.pause_btn.pack(pady=10)
-
-        self.screenshot_btn = ttk.Button(
-            self.control_frame,
-            text="Сделать скриншот",
-            command=self.take_screenshot
-        )
-        self.screenshot_btn.pack(pady=10)
-
+    def create_vertex_inputs(self):
         ttk.Label(self.control_frame, text="Вершины четырехугольника:").pack(pady=5)
         self.vertex_entries = []
+
         for i in range(4):
             frame = ttk.Frame(self.control_frame)
             frame.pack(pady=2)
-            ttk.Label(frame, text=f"Вершина {i+1}:").pack(side=tk.LEFT)
+            ttk.Label(frame, text=f"Вершина {i + 1}:").pack(side=tk.LEFT)
             x_entry = ttk.Entry(frame, width=5)
             x_entry.pack(side=tk.LEFT)
             y_entry = ttk.Entry(frame, width=5)
@@ -88,17 +104,12 @@ class RotatingQuadrilateralApp:
         )
         self.update_btn.pack(pady=10)
 
-        self.quadrilateral = None
-        self.animate()
-
     def rotate_point(self, point, angle):
         x, y = point
         x -= self.center_x
         y -= self.center_y
-
         new_x = x * math.cos(angle) - y * math.sin(angle)
         new_y = x * math.sin(angle) + y * math.cos(angle)
-
         return (new_x + self.center_x, new_y + self.center_y)
 
     def draw_quadrilateral(self):
@@ -144,11 +155,10 @@ class RotatingQuadrilateralApp:
                 x = int(x_entry.get())
                 y = int(y_entry.get())
                 new_vertices.append((x, y))
-
             if len(new_vertices) == 4:
                 self.vertices = new_vertices
         except ValueError:
-            pass
+            messagebox.showerror("Ошибка", "Введите корректные значения координат.")
 
     def take_screenshot(self):
         x = self.master.winfo_rootx() + self.canvas.winfo_x()
@@ -157,18 +167,15 @@ class RotatingQuadrilateralApp:
         y1 = y + self.canvas.winfo_height()
 
         screenshot = ImageGrab.grab((x, y, x1, y1))
-
         timestamp = time.strftime("%Y%m%d_%H%M%S")
         filename = f"quadrilateral_{timestamp}.png"
-
         screenshot.save(filename)
-
         messagebox.showinfo("Скриншот сохранен", f"Скриншот сохранен как {filename}")
 
 
 def main():
     root = tk.Tk()
-    app = RotatingQuadrilateralApp(root)
+    RotatingQuadrilateralApp(root)
     root.mainloop()
 
 

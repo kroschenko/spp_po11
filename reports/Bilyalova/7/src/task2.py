@@ -31,6 +31,12 @@ class SierpinskiTriangleApp:
         self.control_frame.pack(side=tk.RIGHT, padx=10, pady=10, fill=tk.Y)
 
         # Элементы управления
+        self._create_controls()
+
+        self.draw_fractal()
+
+    def _create_controls(self):
+        """Создает элементы управления"""
         ttk.Label(self.control_frame, text="Глубина рекурсии:").pack(pady=5)
         self.depth_slider = ttk.Scale(
             self.control_frame,
@@ -77,8 +83,6 @@ class SierpinskiTriangleApp:
         )
         self.save_btn.pack(pady=10)
 
-        self.draw_fractal()
-
     def draw_fractal(self):
         """Отрисовывает фрактал на холсте"""
         self.canvas.delete("all")
@@ -88,30 +92,44 @@ class SierpinskiTriangleApp:
         size = min(self.width, self.height) - 2 * self.padding
         height = size * math.sqrt(3) / 2
 
-        # Координаты вершин равностороннего треугольника
-        x1, y1 = self.width // 2, self.padding
-        x2, y2 = self.padding, self.padding + height
-        x3, y3 = self.padding + size, self.padding + height
-
+        # Координаты вершин
+        points = self._calculate_triangle_points(size, height)
+        
         # Рисуем фрактал
-        self._draw_sierpinski_canvas(x1, y1, x2, y2, x3, y3, self.depth)
+        self._draw_sierpinski_canvas(points, self.depth)
 
-    def _draw_sierpinski_canvas(self, x1, y1, x2, y2, x3, y3, depth):
+    def _calculate_triangle_points(self, size, height):
+        """Вычисляет координаты вершин треугольника"""
+        return [
+            (self.width // 2, self.padding),
+            (self.padding, self.padding + height),
+            (self.padding + size, self.padding + height)
+        ]
+
+    def _draw_sierpinski_canvas(self, points, depth):
         """Рекурсивная отрисовка на холсте"""
         if depth == 0:
             self.canvas.create_polygon(
-                x1, y1, x2, y2, x3, y3,
+                *points,
                 fill=self.triangle_color,
                 outline="black"
             )
         else:
-            x12, y12 = (x1 + x2) / 2, (y1 + y2) / 2
-            x13, y13 = (x1 + x3) / 2, (y1 + y3) / 2
-            x23, y23 = (x2 + x3) / 2, (y2 + y3) / 2
+            # Вычисляем середины сторон
+            mid_points = self._calculate_midpoints(points)
+            
+            # Рисуем 3 подтреугольника
+            self._draw_sierpinski_canvas([points[0], mid_points[0], mid_points[1]], depth - 1)
+            self._draw_sierpinski_canvas([mid_points[0], points[1], mid_points[2]], depth - 1)
+            self._draw_sierpinski_canvas([mid_points[1], mid_points[2], points[2]], depth - 1)
 
-            self._draw_sierpinski_canvas(x1, y1, x12, y12, x13, y13, depth - 1)
-            self._draw_sierpinski_canvas(x12, y12, x2, y2, x23, y23, depth - 1)
-            self._draw_sierpinski_canvas(x13, y13, x23, y23, x3, y3, depth - 1)
+    def _calculate_midpoints(self, points):
+        """Вычисляет середины сторон треугольника"""
+        return [
+            ((points[0][0] + points[1][0]) / 2, (points[0][1] + points[1][1]) / 2),
+            ((points[0][0] + points[2][0]) / 2, (points[0][1] + points[2][1]) / 2),
+            ((points[1][0] + points[2][0]) / 2, (points[1][1] + points[2][1]) / 2)
+        ]
 
     def update_depth(self, value):
         """Обновляет глубину рекурсии"""
@@ -162,34 +180,27 @@ class SierpinskiTriangleApp:
         """Отрисовка фрактала на изображении"""
         size = min(self.width, self.height) - 2 * self.padding
         height = size * math.sqrt(3) / 2
+        points = self._calculate_triangle_points(size, height)
+        self._draw_sierpinski_image_recursive(draw, points, depth)
 
-        x1, y1 = self.width // 2, self.padding
-        x2, y2 = self.padding, self.padding + height
-        x3, y3 = self.padding + size, self.padding + height
-
-        self._draw_sierpinski_image_recursive(draw, x1, y1, x2, y2, x3, y3, depth)
-
-    def _draw_sierpinski_image_recursive(self, draw, x1, y1, x2, y2, x3, y3, depth):
+    def _draw_sierpinski_image_recursive(self, draw, points, depth):
         """Рекурсивная отрисовка на изображении"""
         if depth == 0:
             draw.polygon(
-                [(x1, y1), (x2, y2), (x3, y3)],
+                points,
                 fill=self.triangle_color,
                 outline="black"
             )
         else:
-            x12, y12 = (x1 + x2) / 2, (y1 + y2) / 2
-            x13, y13 = (x1 + x3) / 2, (y1 + y3) / 2
-            x23, y23 = (x2 + x3) / 2, (y2 + y3) / 2
-
-            self._draw_sierpinski_image_recursive(draw, x1, y1, x12, y12, x13, y13, depth - 1)
-            self._draw_sierpinski_image_recursive(draw, x12, y12, x2, y2, x23, y23, depth - 1)
-            self._draw_sierpinski_image_recursive(draw, x13, y13, x23, y23, x3, y3, depth - 1)
+            mid_points = self._calculate_midpoints(points)
+            self._draw_sierpinski_image_recursive(draw, [points[0], mid_points[0], mid_points[1]], depth - 1)
+            self._draw_sierpinski_image_recursive(draw, [mid_points[0], points[1], mid_points[2]], depth - 1)
+            self._draw_sierpinski_image_recursive(draw, [mid_points[1], mid_points[2], points[2]], depth - 1)
 
 
 def main():
     root = tk.Tk()
-    app = SierpinskiTriangleApp(root)
+    SierpinskiTriangleApp(root)
     root.mainloop()
 
 
