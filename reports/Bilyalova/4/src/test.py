@@ -12,14 +12,14 @@ GITHUB_API_URL = "https://api.github.com/repos/{}/releases/latest"
 
 def load_config():
     if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "r") as f:
+        with open(CONFIG_FILE, "r", encoding='utf-8') as f:
             return json.load(f)
     return {"repositories": {}, "last_check": None}
 
 
 def save_config(config):
-    with open(CONFIG_FILE, "w") as f:
-        json.dump(config, f, indent=2)
+    with open(CONFIG_FILE, "w", encoding='utf-8') as f:
+        json.dump(config, f, indent=2, ensure_ascii=False)
 
 
 def get_user_repositories():
@@ -36,7 +36,7 @@ def fetch_latest_release(repo):
         if response.status_code == 404:
             print(f"Репозиторий {repo} не найден или не имеет релизов")
             return None
-        elif response.status_code != 200:
+        if response.status_code != 200:
             print(f"Ошибка при запросе к API GitHub для {repo}: {response.status_code}")
             return None
 
