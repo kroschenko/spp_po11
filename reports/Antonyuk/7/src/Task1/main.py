@@ -1,6 +1,8 @@
 import sys
 import random
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QSpinBox, QDoubleSpinBox, QGroupBox
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
+                            QHBoxLayout, QLabel, QSpinBox, QDoubleSpinBox,
+                            QGroupBox)
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QPainter, QPen
 from geometry import Point, Rectangle
@@ -9,7 +11,7 @@ from geometry import Point, Rectangle
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        # Инициализация атрибутов
+        # Initialize all attributes
         self.rect_x = None
         self.rect_y = None
         self.rect_width = None
@@ -19,14 +21,20 @@ class MainWindow(QMainWindow):
         self.points = []
         self.canvas = None
         self.timer = None
+        self.generate_btn = None
+        self.screenshot_btn = None
 
-        self._init_ui()
+        self._setup_window()
+        self._create_layout()
+        self._setup_timer()
 
-    def _init_ui(self):
-        """Инициализация пользовательского интерфейса"""
+    def _setup_window(self):
+        """Configure main window settings"""
         self.setWindowTitle("Точки и прямоугольник")
         self.setGeometry(100, 100, 800, 600)
 
+    def _create_layout(self):
+        """Create and arrange UI components"""
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
         layout = QHBoxLayout(main_widget)
@@ -36,79 +44,105 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.canvas)
 
         self.rectangle = Rectangle(0, 0, 100, 100)
-        self.points = []
         self.generate_points()
 
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update)
-        self.timer.start(16)
-
     def _create_control_panel(self):
-        """Создание панели управления"""
-        control_panel = QGroupBox("Управление")
-        control_layout = QVBoxLayout()
+        """Create the control panel"""
+        panel = QGroupBox("Управление")
+        layout = QVBoxLayout()
+        panel.setLayout(layout)
 
-        # Группа для настроек прямоугольника
-        rect_group = QGroupBox("Прямоугольник")
-        rect_layout = QVBoxLayout()
+        layout.addWidget(self._create_rectangle_settings())
+        layout.addWidget(self._create_point_settings())
+        layout.addWidget(self._create_buttons())
 
-        # Создаем элементы управления для прямоугольника
-        self.rect_x = QDoubleSpinBox()
-        self.rect_x.setRange(-100, 100)
-        self.rect_x.setValue(0)
-        rect_layout.addWidget(QLabel("X:"))
-        rect_layout.addWidget(self.rect_x)
+        return panel
 
-        self.rect_y = QDoubleSpinBox()
-        self.rect_y.setRange(-100, 100)
-        self.rect_y.setValue(0)
-        rect_layout.addWidget(QLabel("Y:"))
-        rect_layout.addWidget(self.rect_y)
+    def _create_rectangle_settings(self):
+        """Create rectangle configuration controls"""
+        group = QGroupBox("Прямоугольник")
+        vbox = QVBoxLayout()
 
-        self.rect_width = QDoubleSpinBox()
-        self.rect_width.setRange(1, 200)
-        self.rect_width.setValue(100)
-        rect_layout.addWidget(QLabel("Ширина:"))
-        rect_layout.addWidget(self.rect_width)
+        controls = [
+            ("X:", -100, 100, 0, self._make_spinbox),
+            ("Y:", -100, 100, 0, self._make_spinbox),
+            ("Ширина:", 1, 200, 100, self._make_spinbox),
+            ("Высота:", 1, 200, 100, self._make_spinbox)
+        ]
 
-        self.rect_height = QDoubleSpinBox()
-        self.rect_height.setRange(1, 200)
-        self.rect_height.setValue(100)
-        rect_layout.addWidget(QLabel("Высота:"))
-        rect_layout.addWidget(self.rect_height)
+        for label, min_val, max_val, default, factory in controls:
+            vbox.addWidget(QLabel(label))
+            spinner = factory(min_val, max_val, default)
+            vbox.addWidget(spinner)
+            setattr(self, f"rect_{label.strip(':').lower()}", spinner)
 
-        rect_group.setLayout(rect_layout)
-        control_layout.addWidget(rect_group)
+        group.setLayout(vbox)
+        return group
 
-        # Элементы управления для точек
+    def _make_spinbox(self, min_val, max_val, default):
+        """Helper to create spinboxes"""
+        box = QDoubleSpinBox()
+        box.setRange(min_val, max_val)
+        box.setValue(default)
+        return box
+
+    def _create_point_settings(self):
+        """Create point configuration controls"""
+        group = QWidget()
+        vbox = QVBoxLayout()
+
         self.point_count = QSpinBox()
         self.point_count.setRange(1, 100)
         self.point_count.setValue(10)
-        control_layout.addWidget(QLabel("Количество точек:"))
-        control_layout.addWidget(self.point_count)
 
-        # Кнопки
-        self.generate_btn = QPushButton("Сгенерировать точки")
-        self.generate_btn.clicked.connect(self.generate_points)
-        control_layout.addWidget(self.generate_btn)
+        vbox.addWidget(QLabel("Количество точек:"))
+        vbox.addWidget(self.point_count)
+        group.setLayout(vbox)
 
-        self.screenshot_btn = QPushButton("Сделать скриншот")
-        self.screenshot_btn.clicked.connect(self.take_screenshot)
-        control_layout.addWidget(self.screenshot_btn)
+        return group
 
-        control_panel.setLayout(control_layout)
-        return control_panel
+    def _create_buttons(self):
+        """Create action buttons"""
+        group = QWidget()
+        vbox = QVBoxLayout()
+
+        self.generate_btn = self._make_button(
+            "Сгенерировать точки", self.generate_points)
+        self.screenshot_btn = self._make_button(
+            "Сделать скриншот", self.take_screenshot)
+
+        vbox.addWidget(self.generate_btn)
+        vbox.addWidget(self.screenshot_btn)
+        group.setLayout(vbox)
+
+        return group
+
+    def _make_button(self, text, handler):
+        """Helper to create buttons"""
+        btn = QPushButton(text)
+        btn.clicked.connect(handler)
+        return btn
+
+    def _setup_timer(self):
+        """Configure update timer"""
+        self.timer = QTimer()
+        self.timer.timeout.connect(self._update_display)
+        self.timer.start(16)  # ~60 FPS
 
     def generate_points(self):
-        """Генерация случайных точек"""
+        """Generate random points"""
         self.points = [
             Point(random.uniform(-200, 200), random.uniform(-200, 200))
             for _ in range(self.point_count.value())
         ]
-        self.canvas.update()
+        self._update_display()
 
-    def update(self):
-        """Обновление прямоугольника и точек"""
+    def take_screenshot(self):
+        """Save canvas screenshot"""
+        self.canvas.grab().save("screenshot.png")
+
+    def _update_display(self):
+        """Update the displayed elements"""
         self.rectangle = Rectangle(
             self.rect_x.value(),
             self.rect_y.value(),
@@ -117,11 +151,6 @@ class MainWindow(QMainWindow):
         )
         self.canvas.set_data(self.rectangle, self.points)
         self.canvas.update()
-
-    def take_screenshot(self):
-        """Сохранение скриншота"""
-        screenshot = self.canvas.grab()
-        screenshot.save("screenshot.png")
 
 
 class Canvas(QWidget):
@@ -132,36 +161,55 @@ class Canvas(QWidget):
         self.setMinimumSize(400, 400)
 
     def set_data(self, rectangle, points):
-        """Установка данных для отрисовки"""
+        """Set data to be drawn"""
         self.rectangle = rectangle
         self.points = points
 
-    def paintEvent(self, event):
-        """Отрисовка элементов на холсте"""
+    def paintEvent(self, event=None):
+        """Handle paint events"""
+        if event:
+            event.accept()
+
         if not self.rectangle or not self.points:
             return
 
         painter = QPainter(self)
-        painter.setRenderHint(QPainter.Antialiasing)
+        self._draw_scene(painter)
 
-        width = self.width()
-        height = self.height()
+    def _draw_scene(self, painter):
+        """Draw all scene elements"""
+        painter.setRenderHint(QPainter.Antialiasing)
+        self._setup_coordinate_system(painter)
+        self._draw_axes(painter)
+        self._draw_rectangle(painter)
+        self._draw_points(painter)
+
+    def _setup_coordinate_system(self, painter):
+        """Set up scaling and translation"""
+        width, height = self.width(), self.height()
         scale = min(width, height) / 400
         painter.translate(width / 2, height / 2)
         painter.scale(scale, scale)
 
+    def _draw_axes(self, painter):
+        """Draw coordinate axes"""
         painter.setPen(QPen(Qt.gray, 1))
         painter.drawLine(-200, 0, 200, 0)
         painter.drawLine(0, -200, 0, 200)
 
+    def _draw_rectangle(self, painter):
+        """Draw the rectangle"""
         painter.setPen(QPen(Qt.blue, 2))
+        rect = self.rectangle
         painter.drawRect(
-            int(self.rectangle.x - self.rectangle.width / 2),
-            int(self.rectangle.y - self.rectangle.height / 2),
-            int(self.rectangle.width),
-            int(self.rectangle.height)
+            int(rect.x - rect.width / 2),
+            int(rect.y - rect.height / 2),
+            int(rect.width),
+            int(rect.height)
         )
 
+    def _draw_points(self, painter):
+        """Draw all points"""
         for i, point in enumerate(self.points):
             color = Qt.green if point.is_inside_rectangle(self.rectangle) else Qt.red
             painter.setPen(QPen(color, 2))
