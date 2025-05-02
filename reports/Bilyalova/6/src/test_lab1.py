@@ -1,9 +1,8 @@
-import os
 import sys
 from pathlib import Path
 import pytest
 
-from main import find_modes
+from main import find_modes, main
 from main2 import find_first_occurrence
 
 lab1_path = str(Path(__file__).parent.parent.parent / "1" / "src")
@@ -76,6 +75,4 @@ class TestFindFirstOccurrence:
 def test_main_input_handling(monkeypatch):
     inputs = iter(["3", "1", "2", "2"])
     monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-    
-    from main import main
     main()

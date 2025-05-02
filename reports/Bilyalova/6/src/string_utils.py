@@ -5,6 +5,5 @@ def keep(str_, pattern):
         return None
     if str_ == "" or pattern is None or pattern == "":
         return ""
-    
     keep_chars = set(pattern)
-    return ''.join(char for char in str_ if char in keep_chars)
+    return "".join(char for char in str_ if char in keep_chars)
