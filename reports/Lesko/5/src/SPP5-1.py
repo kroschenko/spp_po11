@@ -322,4 +322,3 @@ def update_match(match_id: int, match: MatchCreate, db: SessionLocal = Depends(g
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
- 
