@@ -1,7 +1,9 @@
 import sys
 import random
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, QDoubleSpinBox, QGroupBox
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
+                            QHBoxLayout, QLabel, QSpinBox, QDoubleSpinBox, 
+                            QGroupBox, QPushButton)
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QPen
 from geometry import Point, Rectangle
 
@@ -9,16 +11,18 @@ from geometry import Point, Rectangle
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        # Инициализация атрибутов
         self.rect_x = None
         self.rect_y = None
         self.rect_width = None
         self.rect_height = None
         self.point_count = None
         self.rectangle = None
+        self.point_count = None
         self.points = []
         self.canvas = None
         self.timer = None
+        self.generate_btn = None
+        self.screenshot_btn = None
 
         self._init_ui()
 
@@ -69,14 +73,13 @@ class MainWindow(QMainWindow):
         self.rect_height = QDoubleSpinBox()
         self.rect_height.setRange(1, 200)
         self.rect_height.setValue(100)
-        #####
         rect_layout.addWidget(QLabel("Высота:"))
         rect_layout.addWidget(self.rect_height)
 
         rect_group.setLayout(rect_layout)
         layout.addWidget(rect_group)
 
-        # Элементы управления для точек
+        # Элементы управления для точки
         self.point_count = QSpinBox()
         self.point_count.setRange(1, 100)
         self.point_count.setValue(10)
@@ -101,7 +104,7 @@ class MainWindow(QMainWindow):
             Point(random.uniform(-200, 200), random.uniform(-200, 200))
             for _ in range(self.point_count.value())
         ]
-        self.canvas.update()
+        self.update()
 
     def take_screenshot(self):
         """Сохранение скриншота"""
@@ -143,7 +146,7 @@ class Canvas(QWidget):
         height = self.height()
         scale = min(width, height) / 400
         painter.translate(width / 2, height / 2)
-        painter.scale(scale, scale)
+        painter.scale(scale, -scale)  # Инвертируем ось Y
 
         painter.setPen(QPen(Qt.gray, 1))
         painter.drawLine(-200, 0, 200, 0)
