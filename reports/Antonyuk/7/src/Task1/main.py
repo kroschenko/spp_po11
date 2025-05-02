@@ -1,8 +1,10 @@
 import sys
 import random
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, 
-                            QHBoxLayout, QLabel, QSpinBox, QDoubleSpinBox, 
-                            QGroupBox, QPushButton)
+from PyQt5.QtWidgets import (
+    QApplication, QMainWindow, QWidget, QVBoxLayout,
+    QHBoxLayout, QLabel, QSpinBox, QDoubleSpinBox,
+    QGroupBox, QPushButton
+)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPainter, QPen
 from geometry import Point, Rectangle
@@ -17,7 +19,6 @@ class MainWindow(QMainWindow):
         self.rect_height = None
         self.point_count = None
         self.rectangle = None
-        self.point_count = None
         self.points = []
         self.canvas = None
         self.timer = None
@@ -52,34 +53,15 @@ class MainWindow(QMainWindow):
         rect_layout = QVBoxLayout()
 
         # Создаем элементы управления
-        self.rect_x = QDoubleSpinBox()
-        self.rect_x.setRange(-100, 100)
-        self.rect_x.setValue(0)
-        rect_layout.addWidget(QLabel("X:"))
-        rect_layout.addWidget(self.rect_x)
-
-        self.rect_y = QDoubleSpinBox()
-        self.rect_y.setRange(-100, 100)
-        self.rect_y.setValue(0)
-        rect_layout.addWidget(QLabel("Y:"))
-        rect_layout.addWidget(self.rect_y)
-
-        self.rect_width = QDoubleSpinBox()
-        self.rect_width.setRange(1, 200)
-        self.rect_width.setValue(100)
-        rect_layout.addWidget(QLabel("Ширина:"))
-        rect_layout.addWidget(self.rect_width)
-
-        self.rect_height = QDoubleSpinBox()
-        self.rect_height.setRange(1, 200)
-        self.rect_height.setValue(100)
-        rect_layout.addWidget(QLabel("Высота:"))
-        rect_layout.addWidget(self.rect_height)
+        self._add_spinbox(rect_layout, "X:", self.rect_x, -100, 100, 0)
+        self._add_spinbox(rect_layout, "Y:", self.rect_y, -100, 100, 0)
+        self._add_spinbox(rect_layout, "Ширина:", self.rect_width, 1, 200, 100)
+        self._add_spinbox(rect_layout, "Высота:", self.rect_height, 1, 200, 100)
 
         rect_group.setLayout(rect_layout)
         layout.addWidget(rect_group)
 
-        # Элементы управления для точки
+        # Элементы управления для точек
         self.point_count = QSpinBox()
         self.point_count.setRange(1, 100)
         self.point_count.setValue(10)
@@ -97,6 +79,15 @@ class MainWindow(QMainWindow):
 
         panel.setLayout(layout)
         return panel
+
+    def _add_spinbox(self, layout, label, variable, min_val, max_val, default):
+        """Вспомогательный метод для добавления SpinBox"""
+        variable = QDoubleSpinBox()
+        variable.setRange(min_val, max_val)
+        variable.setValue(default)
+        layout.addWidget(QLabel(label))
+        layout.addWidget(variable)
+        setattr(self, label[:-1].lower(), variable)
 
     def generate_points(self):
         """Генерация случайных точек"""
@@ -134,7 +125,7 @@ class Canvas(QWidget):
         self.rectangle = rectangle
         self.points = points
 
-    def paintEvent(self, event):
+    def paintEvent(self, _):
         """Отрисовка элементов на холсте"""
         if not self.rectangle or not self.points:
             return
