@@ -123,8 +123,9 @@ class Canvas(QWidget):
         self.line_color = color
         self.line_width = width
 
-    def paintEvent(self, event=None):
+    def paintEvent(self, event):
         """Отрисовка фрактала."""
+        # Убрали неиспользуемый параметр event=None и оставили только event
         if not self.fractal:
             return
 
