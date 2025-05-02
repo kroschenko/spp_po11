@@ -41,7 +41,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.canvas)
 
         self.rectangle = Rectangle(0, 0, 100, 100)
-        self.generate_points()
+        self.generate_point()
 
     def _create_control_panel(self):
         """Создание панели управления"""
@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
 
         # Кнопки
         self.generate_btn = QPushButton("Сгенерировать точки")
-        self.generate_btn.clicked.connect(self.generate_points)
+        self.generate_btn.clicked.connect(self.generate_point)
         layout.addWidget(self.generate_btn)
 
         self.screenshot_btn = QPushButton("Сделать скриншот")
@@ -89,7 +89,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(spinbox)
         setattr(self, f"rect_{name}", spinbox)
 
-    def generate_points(self):
+    def generate_point(self):
         """Генерация случайных точек"""
         self.points = [
             Point(random.uniform(-200, 200), random.uniform(-200, 200))
@@ -120,10 +120,10 @@ class Canvas(QWidget):
         self.points = []
         self.setMinimumSize(400, 400)
 
-    def set_data(self, rectangle, points):
+    def set_data(self, rectangle, point):
         """Установка данных для отрисовки"""
         self.rectangle = rectangle
-        self.points = points
+        self.points = point
 
     def paintEvent(self, _):
         """Отрисовка элементов на холсте"""
@@ -137,7 +137,7 @@ class Canvas(QWidget):
         height = self.height()
         scale = min(width, height) / 400
         painter.translate(width / 2, height / 2)
-        painter.scale(scale, -scale)  # Инвертируем ось Y
+        painter.scale(scale, -scale)
 
         painter.setPen(QPen(Qt.gray, 1))
         painter.drawLine(-200, 0, 200, 0)
