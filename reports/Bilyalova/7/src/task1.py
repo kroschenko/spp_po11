@@ -9,7 +9,7 @@ class RotatingQuadrilateralApp:
     def __init__(self, master):
         self.master = master
         self.master.title("Вращающийся четырехугольник")
-        
+
         # Initialize all instance attributes here
         self.width = 400
         self.height = 400
@@ -23,20 +23,20 @@ class RotatingQuadrilateralApp:
         self.is_rotating = True
         self.quadrilateral = None
         self.vertex_entries = []
-        
+
         self.canvas = tk.Canvas(self.master, width=self.width, height=self.height, bg="white")
         self.canvas.pack(side=tk.LEFT, padx=10, pady=10)
 
         self.control_frame = ttk.Frame(self.master)
         self.control_frame.pack(side=tk.RIGHT, padx=10, pady=10, fill=tk.Y)
-        
+
         self.speed_slider = None
         self.fill_color_btn = None
         self.outline_color_btn = None
         self.pause_btn = None
         self.screenshot_btn = None
         self.update_btn = None
-        
+
         self.setup_ui()
         self.animate()
 
