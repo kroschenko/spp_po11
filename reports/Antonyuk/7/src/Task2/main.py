@@ -9,7 +9,7 @@ from fractal import Point, HFractal
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        # Инициализация атрибутов
+        # Инициализация всех атрибутов
         self.size = None
         self.depth = None
         self.line_width = None
@@ -19,26 +19,27 @@ class MainWindow(QMainWindow):
         self.fractal = None
         self.line_color = QColor(Qt.black)
 
-        # Настройка окна
+        # Настройка основного окна
         self.setWindowTitle("Н-фрактал")
         self.setGeometry(100, 100, 800, 600)
 
-        # Инициализация UI
+        # Инициализация интерфейса
         self._init_ui()
 
     def _init_ui(self):
-        """Инициализация пользовательского интерфейса."""
+        """Инициализация пользовательского интерфейса"""
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
 
         layout = QHBoxLayout(main_widget)
         layout.addWidget(self._create_control_panel())
-        layout.addWidget(self._create_canvas())
+        self.canvas = Canvas()
+        layout.addWidget(self.canvas)
 
         self.update_fractal()
 
     def _create_control_panel(self):
-        """Создание панели управления."""
+        """Создание панели управления"""
         panel = QGroupBox("Управление")
         layout = QVBoxLayout()
 
@@ -47,15 +48,15 @@ class MainWindow(QMainWindow):
         self.depth = self._create_spinbox_control(1, 10, 4, "Глубина:")
         self.line_width = self._create_spinbox_control(1, 10, 1, "Толщина линий:")
 
-        layout.addLayout(self.size['layout'])
-        layout.addLayout(self.depth['layout'])
-        layout.addLayout(self.line_width['layout'])
+        # Добавление элементов в layout
+        for control in [self.size, self.depth, self.line_width]:
+            layout.addLayout(control['layout'])
 
         # Кнопки
         self.color_btn = QPushButton("Выбрать цвет")
         self.color_btn.clicked.connect(self.choose_color)
-        color_layout = self._create_labeled_control(self.color_btn, "Цвет линий:")
-        layout.addLayout(color_layout)
+        layout.addWidget(QLabel("Цвет линий:"))
+        layout.addWidget(self.color_btn)
 
         self.screenshot_btn = QPushButton("Сделать скриншот")
         self.screenshot_btn.clicked.connect(self.take_screenshot)
@@ -65,37 +66,26 @@ class MainWindow(QMainWindow):
         return panel
 
     def _create_spinbox_control(self, min_val, max_val, default, label_text):
-        """Создание элемента управления SpinBox."""
+        """Создание элемента управления SpinBox"""
         spinbox = QDoubleSpinBox() if isinstance(default, float) else QSpinBox()
         spinbox.setRange(min_val, max_val)
         spinbox.setValue(default)
         spinbox.valueChanged.connect(self.update_fractal)
 
-        layout = self._create_labeled_control(spinbox, label_text)
-        return {'spinbox': spinbox, 'layout': layout}
-
-    def _create_labeled_control(self, control, label_text):
-        """Создание layout с подписью."""
         layout = QVBoxLayout()
         layout.addWidget(QLabel(label_text))
-        layout.addWidget(control)
-        return layout
-
-    def _create_canvas(self):
-        """Создание холста для рисования."""
-        self.canvas = Canvas()
-        self.canvas.setMinimumSize(400, 400)
-        return self.canvas
+        layout.addWidget(spinbox)
+        return {'spinbox': spinbox, 'layout': layout}
 
     def choose_color(self):
-        """Выбор цвета линий."""
+        """Выбор цвета линий"""
         color = QColorDialog.getColor(self.line_color, self, "Выберите цвет линий")
         if color.isValid():
             self.line_color = color
             self.update_fractal()
 
     def update_fractal(self):
-        """Обновление фрактала."""
+        """Обновление параметров фрактала"""
         center = Point(0, 0)
         size = self.size['spinbox'].value()
         depth = self.depth['spinbox'].value()
@@ -106,9 +96,8 @@ class MainWindow(QMainWindow):
         self.canvas.update()
 
     def take_screenshot(self):
-        """Сохранение скриншота."""
-        screenshot = self.canvas.grab()
-        screenshot.save("fractal_screenshot.png")
+        """Сохранение скриншота"""
+        self.canvas.grab().save("fractal_screenshot.png")
 
 class Canvas(QWidget):
     def __init__(self):
@@ -116,28 +105,32 @@ class Canvas(QWidget):
         self.fractal = None
         self.line_color = Qt.black
         self.line_width = 1
+        self.setMinimumSize(400, 400)
 
     def set_fractal(self, fractal, color, width):
-        """Установка параметров фрактала."""
+        """Установка параметров фрактала"""
         self.fractal = fractal
         self.line_color = color
         self.line_width = width
 
     def paintEvent(self, event):
-        """Отрисовка фрактала."""
-        # Убрали неиспользуемый параметр event=None и оставили только event
+        """Отрисовка фрактала"""
+        del event  # Явное указание неиспользуемого параметра
+
         if not self.fractal:
             return
 
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
+        # Настройка масштабирования
         width = self.width()
         height = self.height()
         scale = min(width, height) / (self.fractal.size * 1.2)
         painter.translate(width/2, height/2)
         painter.scale(scale, scale)
 
+        # Отрисовка линий фрактала
         painter.setPen(QPen(self.line_color, self.line_width))
         for line in self.fractal.lines:
             painter.drawLine(

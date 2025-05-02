@@ -1,8 +1,6 @@
 import sys
 import random
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
-                            QHBoxLayout, QPushButton, QLabel, QSpinBox,
-                            QDoubleSpinBox, QGroupBox)
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QSpinBox, QDoubleSpinBox, QGroupBox
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QPainter, QPen
 from geometry import Point, Rectangle
@@ -11,8 +9,18 @@ from geometry import Point, Rectangle
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        # Инициализация атрибутов
+        self.rect_x = None
+        self.rect_y = None
+        self.rect_width = None
+        self.rect_height = None
+        self.point_count = None
+        self.rectangle = None
+        self.points = []
+        self.canvas = None
+        self.timer = None
+
         self._init_ui()
-        self._setup_timer()
 
     def _init_ui(self):
         """Инициализация пользовательского интерфейса"""
@@ -31,6 +39,10 @@ class MainWindow(QMainWindow):
         self.points = []
         self.generate_points()
 
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.update)
+        self.timer.start(16)
+
     def _create_control_panel(self):
         """Создание панели управления"""
         control_panel = QGroupBox("Управление")
@@ -41,10 +53,29 @@ class MainWindow(QMainWindow):
         rect_layout = QVBoxLayout()
 
         # Создаем элементы управления для прямоугольника
-        self.rect_x = self._create_spinbox(-100, 100, 0, "X:", rect_layout)
-        self.rect_y = self._create_spinbox(-100, 100, 0, "Y:", rect_layout)
-        self.rect_width = self._create_spinbox(1, 200, 100, "Ширина:", rect_layout)
-        self.rect_height = self._create_spinbox(1, 200, 100, "Высота:", rect_layout)
+        self.rect_x = QDoubleSpinBox()
+        self.rect_x.setRange(-100, 100)
+        self.rect_x.setValue(0)
+        rect_layout.addWidget(QLabel("X:"))
+        rect_layout.addWidget(self.rect_x)
+
+        self.rect_y = QDoubleSpinBox()
+        self.rect_y.setRange(-100, 100)
+        self.rect_y.setValue(0)
+        rect_layout.addWidget(QLabel("Y:"))
+        rect_layout.addWidget(self.rect_y)
+
+        self.rect_width = QDoubleSpinBox()
+        self.rect_width.setRange(1, 200)
+        self.rect_width.setValue(100)
+        rect_layout.addWidget(QLabel("Ширина:"))
+        rect_layout.addWidget(self.rect_width)
+
+        self.rect_height = QDoubleSpinBox()
+        self.rect_height.setRange(1, 200)
+        self.rect_height.setValue(100)
+        rect_layout.addWidget(QLabel("Высота:"))
+        rect_layout.addWidget(self.rect_height)
 
         rect_group.setLayout(rect_layout)
         control_layout.addWidget(rect_group)
@@ -57,32 +88,16 @@ class MainWindow(QMainWindow):
         control_layout.addWidget(self.point_count)
 
         # Кнопки
-        self._create_button("Сгенерировать точки", self.generate_points, control_layout)
-        self._create_button("Сделать скриншот", self.take_screenshot, control_layout)
+        self.generate_btn = QPushButton("Сгенерировать точки")
+        self.generate_btn.clicked.connect(self.generate_points)
+        control_layout.addWidget(self.generate_btn)
+
+        self.screenshot_btn = QPushButton("Сделать скриншот")
+        self.screenshot_btn.clicked.connect(self.take_screenshot)
+        control_layout.addWidget(self.screenshot_btn)
 
         control_panel.setLayout(control_layout)
         return control_panel
-
-    def _create_spinbox(self, min_val, max_val, default, label, layout):
-        """Создание SpinBox с подписью"""
-        spinbox = QDoubleSpinBox()
-        spinbox.setRange(min_val, max_val)
-        spinbox.setValue(default)
-        layout.addWidget(QLabel(label))
-        layout.addWidget(spinbox)
-        return spinbox
-
-    def _create_button(self, text, handler, layout):
-        """Создание кнопки"""
-        button = QPushButton(text)
-        button.clicked.connect(handler)
-        layout.addWidget(button)
-
-    def _setup_timer(self):
-        """Настройка таймера для обновления"""
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update)
-        self.timer.start(16)  # ~60 FPS
 
     def generate_points(self):
         """Генерация случайных точек"""
@@ -91,10 +106,6 @@ class MainWindow(QMainWindow):
             for _ in range(self.point_count.value())
         ]
         self.canvas.update()
-
-    def take_screenshot(self):
-        """Сохранение скриншота"""
-        self.canvas.grab().save("screenshot.png")
 
     def update(self):
         """Обновление прямоугольника и точек"""
@@ -106,6 +117,11 @@ class MainWindow(QMainWindow):
         )
         self.canvas.set_data(self.rectangle, self.points)
         self.canvas.update()
+
+    def take_screenshot(self):
+        """Сохранение скриншота"""
+        screenshot = self.canvas.grab()
+        screenshot.save("screenshot.png")
 
 
 class Canvas(QWidget):
@@ -120,48 +136,40 @@ class Canvas(QWidget):
         self.rectangle = rectangle
         self.points = points
 
-    def paintEvent(self, event=None):
+    def paintEvent(self, event):
         """Отрисовка элементов на холсте"""
-        if event:  # Явно указываем, что параметр event может быть использован
-            pass
-
         if not self.rectangle or not self.points:
             return
 
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        # Настройка масштабирования
         width = self.width()
         height = self.height()
         scale = min(width, height) / 400
-        painter.translate(width/2, height/2)
+        painter.translate(width / 2, height / 2)
         painter.scale(scale, scale)
 
-        # Отрисовка осей координат
         painter.setPen(QPen(Qt.gray, 1))
         painter.drawLine(-200, 0, 200, 0)
         painter.drawLine(0, -200, 0, 200)
 
-        # Отрисовка прямоугольника
         painter.setPen(QPen(Qt.blue, 2))
         painter.drawRect(
-            int(self.rectangle.x - self.rectangle.width/2),
-            int(self.rectangle.y - self.rectangle.height/2),
+            int(self.rectangle.x - self.rectangle.width / 2),
+            int(self.rectangle.y - self.rectangle.height / 2),
             int(self.rectangle.width),
             int(self.rectangle.height)
         )
 
-        # Отрисовка точек
         for i, point in enumerate(self.points):
             color = Qt.green if point.is_inside_rectangle(self.rectangle) else Qt.red
             painter.setPen(QPen(color, 2))
             painter.setBrush(color)
             painter.drawEllipse(int(point.x) - 5, int(point.y) - 5, 10, 10)
 
-            # Подпись точки
             painter.setPen(QPen(Qt.black, 1))
-            painter.drawText(int(point.x) + 10, int(point.y) + 5, f"P{i+1}")
+            painter.drawText(int(point.x) + 10, int(point.y) + 5, f"P{i + 1}")
 
 
 if __name__ == '__main__':
