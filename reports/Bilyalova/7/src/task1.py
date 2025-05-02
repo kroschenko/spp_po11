@@ -9,7 +9,15 @@ class RotatingQuadrilateralApp:
     def __init__(self, master):
         self.master = master
         self.master.title("Вращающийся четырехугольник")
+        
+        self.initialize_defaults()
+        self.create_canvas()
+        self.create_control_frame()
+        self.create_vertex_controls()
+        self.quadrilateral = None
+        self.animate()
 
+    def initialize_defaults(self):
         self.width = 400
         self.height = 400
         self.center_x = self.width // 2
@@ -21,12 +29,19 @@ class RotatingQuadrilateralApp:
         self.outline_color = "black"
         self.is_rotating = True
 
-        self.canvas = tk.Canvas(master, width=self.width, height=self.height, bg="white")
+    def create_canvas(self):
+        self.canvas = tk.Canvas(self.master, width=self.width, height=self.height, bg="white")
         self.canvas.pack(side=tk.LEFT, padx=10, pady=10)
 
-        self.control_frame = ttk.Frame(master)
+    def create_control_frame(self):
+        self.control_frame = ttk.Frame(self.master)
         self.control_frame.pack(side=tk.RIGHT, padx=10, pady=10, fill=tk.Y)
+        
+        self.create_speed_control()
+        self.create_color_controls()
+        self.create_action_buttons()
 
+    def create_speed_control(self):
         ttk.Label(self.control_frame, text="Скорость вращения:").pack(pady=5)
         self.speed_slider = ttk.Scale(
             self.control_frame,
@@ -37,6 +52,7 @@ class RotatingQuadrilateralApp:
         self.speed_slider.set(self.rotation_speed)
         self.speed_slider.pack(pady=5)
 
+    def create_color_controls(self):
         ttk.Label(self.control_frame, text="Цвет заливки:").pack(pady=5)
         self.fill_color_btn = ttk.Button(
             self.control_frame,
@@ -53,6 +69,7 @@ class RotatingQuadrilateralApp:
         )
         self.outline_color_btn.pack(pady=5)
 
+    def create_action_buttons(self):
         self.pause_btn = ttk.Button(
             self.control_frame,
             text="Пауза",
@@ -67,19 +84,11 @@ class RotatingQuadrilateralApp:
         )
         self.screenshot_btn.pack(pady=10)
 
+    def create_vertex_controls(self):
         ttk.Label(self.control_frame, text="Вершины четырехугольника:").pack(pady=5)
         self.vertex_entries = []
         for i in range(4):
-            frame = ttk.Frame(self.control_frame)
-            frame.pack(pady=2)
-            ttk.Label(frame, text=f"Вершина {i+1}:").pack(side=tk.LEFT)
-            x_entry = ttk.Entry(frame, width=5)
-            x_entry.pack(side=tk.LEFT)
-            y_entry = ttk.Entry(frame, width=5)
-            y_entry.pack(side=tk.LEFT)
-            x_entry.insert(0, str(self.vertices[i][0]))
-            y_entry.insert(0, str(self.vertices[i][1]))
-            self.vertex_entries.append((x_entry, y_entry))
+            self.create_vertex_entry(i)
 
         self.update_btn = ttk.Button(
             self.control_frame,
@@ -88,8 +97,17 @@ class RotatingQuadrilateralApp:
         )
         self.update_btn.pack(pady=10)
 
-        self.quadrilateral = None
-        self.animate()
+    def create_vertex_entry(self, index):
+        frame = ttk.Frame(self.control_frame)
+        frame.pack(pady=2)
+        ttk.Label(frame, text=f"Вершина {index+1}:").pack(side=tk.LEFT)
+        x_entry = ttk.Entry(frame, width=5)
+        x_entry.pack(side=tk.LEFT)
+        y_entry = ttk.Entry(frame, width=5)
+        y_entry.pack(side=tk.LEFT)
+        x_entry.insert(0, str(self.vertices[index][0]))
+        y_entry.insert(0, str(self.vertices[index][1]))
+        self.vertex_entries.append((x_entry, y_entry))
 
     def rotate_point(self, point, angle):
         x, y = point
