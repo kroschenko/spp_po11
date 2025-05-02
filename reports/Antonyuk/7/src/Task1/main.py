@@ -53,10 +53,10 @@ class MainWindow(QMainWindow):
         rect_layout = QVBoxLayout()
 
         # Создаем элементы управления
-        self._add_spinbox(rect_layout, "X:", self.rect_x, -100, 100, 0)
-        self._add_spinbox(rect_layout, "Y:", self.rect_y, -100, 100, 0)
-        self._add_spinbox(rect_layout, "Ширина:", self.rect_width, 1, 200, 100)
-        self._add_spinbox(rect_layout, "Высота:", self.rect_height, 1, 200, 100)
+        self._add_spinbox(rect_layout, "X", -100, 100, 0)
+        self._add_spinbox(rect_layout, "Y", -100, 100, 0)
+        self._add_spinbox(rect_layout, "Ширина", 1, 200, 100)
+        self._add_spinbox(rect_layout, "Высота", 1, 200, 100)
 
         rect_group.setLayout(rect_layout)
         layout.addWidget(rect_group)
@@ -80,14 +80,14 @@ class MainWindow(QMainWindow):
         panel.setLayout(layout)
         return panel
 
-    def _add_spinbox(self, layout, label, variable, min_val, max_val, default):
+    def _add_spinbox(self, layout, name, min_val, max_val, default):
         """Вспомогательный метод для добавления SpinBox"""
-        variable = QDoubleSpinBox()
-        variable.setRange(min_val, max_val)
-        variable.setValue(default)
-        layout.addWidget(QLabel(label))
-        layout.addWidget(variable)
-        setattr(self, label[:-1].lower(), variable)
+        spinbox = QDoubleSpinBox()
+        spinbox.setRange(min_val, max_val)
+        spinbox.setValue(default)
+        layout.addWidget(QLabel(f"{name}:"))
+        layout.addWidget(spinbox)
+        setattr(self, f"rect_{name.lower()}", spinbox)
 
     def generate_points(self):
         """Генерация случайных точек"""
