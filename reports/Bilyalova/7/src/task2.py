@@ -1,13 +1,14 @@
+import math
 import tkinter as tk
 from tkinter import ttk, colorchooser, filedialog, messagebox
-from PIL import Image, ImageDraw, ImageTk
-import math
+from PIL import Image, ImageDraw
+
 
 class SierpinskiTriangleApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Треугольная салфетка Серпинского")
-        
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Треугольная салфетка Серпинского")
+
         # Параметры фрактала
         self.depth = 3
         self.width = 600
@@ -15,138 +16,182 @@ class SierpinskiTriangleApp:
         self.bg_color = "white"
         self.triangle_color = "blue"
         self.padding = 20
-        
+
         # Создаем холст для отрисовки
-        self.canvas = tk.Canvas(root, width=self.width, height=self.height, bg=self.bg_color)
+        self.canvas = tk.Canvas(
+            master,
+            width=self.width,
+            height=self.height,
+            bg=self.bg_color
+        )
         self.canvas.pack(side=tk.LEFT, padx=10, pady=10)
-        
+
         # Создаем панель управления
-        self.control_frame = ttk.Frame(root)
+        self.control_frame = ttk.Frame(master)
         self.control_frame.pack(side=tk.RIGHT, padx=10, pady=10, fill=tk.Y)
-        
+
         # Элементы управления
         ttk.Label(self.control_frame, text="Глубина рекурсии:").pack(pady=5)
-        self.depth_slider = ttk.Scale(self.control_frame, from_=0, to=8, 
-                                     command=self.update_depth)
+        self.depth_slider = ttk.Scale(
+            self.control_frame,
+            from_=0,
+            to=8,
+            command=self.update_depth
+        )
         self.depth_slider.set(self.depth)
         self.depth_slider.pack(pady=5)
-        
-        self.depth_label = ttk.Label(self.control_frame, text=f"Текущая глубина: {self.depth}")
+
+        self.depth_label = ttk.Label(
+            self.control_frame,
+            text=f"Текущая глубина: {self.depth}"
+        )
         self.depth_label.pack(pady=5)
-        
+
         ttk.Label(self.control_frame, text="Цвет треугольника:").pack(pady=5)
-        self.color_btn = ttk.Button(self.control_frame, text="Выбрать", 
-                                  command=self.choose_color)
+        self.color_btn = ttk.Button(
+            self.control_frame,
+            text="Выбрать",
+            command=self.choose_color
+        )
         self.color_btn.pack(pady=5)
-        
+
         ttk.Label(self.control_frame, text="Цвет фона:").pack(pady=5)
-        self.bg_color_btn = ttk.Button(self.control_frame, text="Выбрать", 
-                                     command=self.choose_bg_color)
+        self.bg_color_btn = ttk.Button(
+            self.control_frame,
+            text="Выбрать",
+            command=self.choose_bg_color
+        )
         self.bg_color_btn.pack(pady=5)
-        
-        self.draw_btn = ttk.Button(self.control_frame, text="Нарисовать", 
-                                 command=self.draw_fractal)
+
+        self.draw_btn = ttk.Button(
+            self.control_frame,
+            text="Нарисовать",
+            command=self.draw_fractal
+        )
         self.draw_btn.pack(pady=10)
-        
-        self.save_btn = ttk.Button(self.control_frame, text="Сохранить изображение", 
-                                 command=self.save_image)
+
+        self.save_btn = ttk.Button(
+            self.control_frame,
+            text="Сохранить изображение",
+            command=self.save_image
+        )
         self.save_btn.pack(pady=10)
-        
+
         self.draw_fractal()
-    
+
     def draw_fractal(self):
+        """Отрисовывает фрактал на холсте"""
         self.canvas.delete("all")
         self.canvas.config(bg=self.bg_color)
-        
+
         # Размеры треугольника с учетом отступов
         size = min(self.width, self.height) - 2 * self.padding
         height = size * math.sqrt(3) / 2
-        
+
         # Координаты вершин равностороннего треугольника
         x1, y1 = self.width // 2, self.padding
         x2, y2 = self.padding, self.padding + height
         x3, y3 = self.padding + size, self.padding + height
-        
+
         # Рисуем фрактал
-        self.draw_sierpinski(x1, y1, x2, y2, x3, y3, self.depth)
-    
-    def draw_sierpinski(self, x1, y1, x2, y2, x3, y3, depth):
+        self._draw_sierpinski_canvas(x1, y1, x2, y2, x3, y3, self.depth)
+
+    def _draw_sierpinski_canvas(self, x1, y1, x2, y2, x3, y3, depth):
+        """Рекурсивная отрисовка на холсте"""
         if depth == 0:
-            self.canvas.create_polygon(x1, y1, x2, y2, x3, y3, 
-                                     fill=self.triangle_color, 
-                                     outline="black")
+            self.canvas.create_polygon(
+                x1, y1, x2, y2, x3, y3,
+                fill=self.triangle_color,
+                outline="black"
+            )
         else:
-            x12 = (x1 + x2) / 2
-            y12 = (y1 + y2) / 2
-            x13 = (x1 + x3) / 2
-            y13 = (y1 + y3) / 2
-            x23 = (x2 + x3) / 2
-            y23 = (y2 + y3) / 2
-            
-            self.draw_sierpinski(x1, y1, x12, y12, x13, y13, depth-1)
-            self.draw_sierpinski(x12, y12, x2, y2, x23, y23, depth-1)
-            self.draw_sierpinski(x13, y13, x23, y23, x3, y3, depth-1)
-    
+            x12, y12 = (x1 + x2) / 2, (y1 + y2) / 2
+            x13, y13 = (x1 + x3) / 2, (y1 + y3) / 2
+            x23, y23 = (x2 + x3) / 2, (y2 + y3) / 2
+
+            self._draw_sierpinski_canvas(x1, y1, x12, y12, x13, y13, depth - 1)
+            self._draw_sierpinski_canvas(x12, y12, x2, y2, x23, y23, depth - 1)
+            self._draw_sierpinski_canvas(x13, y13, x23, y23, x3, y3, depth - 1)
+
     def update_depth(self, value):
+        """Обновляет глубину рекурсии"""
         self.depth = int(float(value))
         self.depth_label.config(text=f"Текущая глубина: {self.depth}")
-    
+
     def choose_color(self):
+        """Выбор цвета треугольника"""
         color = colorchooser.askcolor(title="Выберите цвет треугольника")[1]
         if color:
             self.triangle_color = color
-    
+
     def choose_bg_color(self):
+        """Выбор цвета фона"""
         color = colorchooser.askcolor(title="Выберите цвет фона")[1]
         if color:
             self.bg_color = color
             self.canvas.config(bg=self.bg_color)
-    
+
     def save_image(self):
+        """Сохраняет изображение в файл"""
         image = Image.new("RGB", (self.width, self.height), self.bg_color)
         draw = ImageDraw.Draw(image)
-        
+
         # Рисуем фрактал на изображении
-        self.draw_sierpinski_on_image(draw, self.depth)
-        
-        filetypes = [("PNG файлы", "*.png"), ("JPEG файлы", "*.jpg"), ("Все файлы", "*.*")]
-        filename = filedialog.asksaveasfilename(defaultextension=".png", 
-                                              filetypes=filetypes)
-        if filename:
-            try:
-                image.save(filename)
-                messagebox.showinfo("Успешно", "Изображение сохранено")
-            except Exception as e:
-                messagebox.showerror("Ошибка", f"Не удалось сохранить файл: {e}")
-    
-    def draw_sierpinski_on_image(self, draw, depth):
+        self._draw_sierpinski_image(draw, self.depth)
+
+        filetypes = [
+            ("PNG файлы", "*.png"),
+            ("JPEG файлы", "*.jpg"),
+            ("Все файлы", "*.*")
+        ]
+        filename = filedialog.asksaveasfilename(
+            defaultextension=".png",
+            filetypes=filetypes
+        )
+
+        if not filename:
+            return
+
+        try:
+            image.save(filename)
+            messagebox.showinfo("Успешно", "Изображение сохранено")
+        except (IOError, OSError) as e:
+            messagebox.showerror("Ошибка", f"Не удалось сохранить файл: {e}")
+
+    def _draw_sierpinski_image(self, draw, depth):
+        """Отрисовка фрактала на изображении"""
         size = min(self.width, self.height) - 2 * self.padding
         height = size * math.sqrt(3) / 2
-        
+
         x1, y1 = self.width // 2, self.padding
         x2, y2 = self.padding, self.padding + height
         x3, y3 = self.padding + size, self.padding + height
-        
-        self._draw_sierpinski_recursive(draw, x1, y1, x2, y2, x3, y3, depth)
-    
-    def _draw_sierpinski_recursive(self, draw, x1, y1, x2, y2, x3, y3, depth):
-        if depth == 0:
-            draw.polygon([(x1, y1), (x2, y2), (x3, y3)], 
-                        fill=self.triangle_color, 
-                        outline="black")
-        else:
-            x12 = (x1 + x2) / 2
-            y12 = (y1 + y2) / 2
-            x13 = (x1 + x3) / 2
-            y13 = (y1 + y3) / 2
-            x23 = (x2 + x3) / 2
-            y23 = (y2 + y3) / 2
-            
-            self._draw_sierpinski_recursive(draw, x1, y1, x12, y12, x13, y13, depth-1)
-            self._draw_sierpinski_recursive(draw, x12, y12, x2, y2, x23, y23, depth-1)
-            self._draw_sierpinski_recursive(draw, x13, y13, x23, y23, x3, y3, depth-1)
 
-if __name__ == "__main__":
+        self._draw_sierpinski_image_recursive(draw, x1, y1, x2, y2, x3, y3, depth)
+
+    def _draw_sierpinski_image_recursive(self, draw, x1, y1, x2, y2, x3, y3, depth):
+        """Рекурсивная отрисовка на изображении"""
+        if depth == 0:
+            draw.polygon(
+                [(x1, y1), (x2, y2), (x3, y3)],
+                fill=self.triangle_color,
+                outline="black"
+            )
+        else:
+            x12, y12 = (x1 + x2) / 2, (y1 + y2) / 2
+            x13, y13 = (x1 + x3) / 2, (y1 + y3) / 2
+            x23, y23 = (x2 + x3) / 2, (y2 + y3) / 2
+
+            self._draw_sierpinski_image_recursive(draw, x1, y1, x12, y12, x13, y13, depth - 1)
+            self._draw_sierpinski_image_recursive(draw, x12, y12, x2, y2, x23, y23, depth - 1)
+            self._draw_sierpinski_image_recursive(draw, x13, y13, x23, y23, x3, y3, depth - 1)
+
+
+def main():
     root = tk.Tk()
     app = SierpinskiTriangleApp(root)
     root.mainloop()
+
+
+if __name__ == "__main__":
+    main()
