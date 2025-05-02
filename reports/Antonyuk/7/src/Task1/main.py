@@ -53,10 +53,10 @@ class MainWindow(QMainWindow):
         rect_layout = QVBoxLayout()
 
         # Создаем элементы управления
-        self._add_spinbox(rect_layout, "X", -100, 100, 0)
-        self._add_spinbox(rect_layout, "Y", -100, 100, 0)
-        self._add_spinbox(rect_layout, "Ширина", 1, 200, 100)
-        self._add_spinbox(rect_layout, "Высота", 1, 200, 100)
+        self._add_spinbox(rect_layout, "x", -100, 100, 0)
+        self._add_spinbox(rect_layout, "y", -100, 100, 0)
+        self._add_spinbox(rect_layout, "width", 1, 200, 100)
+        self._add_spinbox(rect_layout, "height", 1, 200, 100)
 
         rect_group.setLayout(rect_layout)
         layout.addWidget(rect_group)
@@ -87,7 +87,7 @@ class MainWindow(QMainWindow):
         spinbox.setValue(default)
         layout.addWidget(QLabel(f"{name}:"))
         layout.addWidget(spinbox)
-        setattr(self, f"rect_{name.lower()}", spinbox)
+        setattr(self, f"rect_{name}", spinbox)
 
     def generate_points(self):
         """Генерация случайных точек"""
