@@ -50,7 +50,6 @@ def test_apply_discount_invalid(cart_fixture, invalid_discount):
 def test_log_purchase():
     mock_response = Mock()
     mock_response.status_code = 200
-    
     with patch("requests.post", return_value=mock_response) as mock_post:
         log_purchase({"item": "Apple", "price": 10.0})
         mock_post.assert_called_once_with("https://example.com/log", json={"item": "Apple", "price": 10.0})
