@@ -7,10 +7,10 @@ from PIL import ImageGrab
 
 
 class KochSnowflake:
-    def __init__(self, app_window):
-        self.app_window = app_window
-        self.app_window.title("Снежинка Коха")
-        self.app_window.geometry("800x600")
+    def __init__(self, parent_window):
+        self.parent_window = parent_window
+        self.parent_window.title("Снежинка Коха")
+        self.parent_window.geometry("800x600")
 
         # Параметры снежинки
         self.depth = 0
@@ -23,14 +23,14 @@ class KochSnowflake:
         self.create_controls()
 
         # Создание холста
-        self.canvas = tk.Canvas(app_window, width=800, height=600, bg="white")
+        self.canvas = tk.Canvas(parent_window, width=800, height=600, bg="white")
         self.canvas.pack()
 
         # Отрисовка снежинки
         self.draw_snowflake()
 
     def create_controls(self):
-        control_frame = ttk.Frame(self.app_window)
+        control_frame = ttk.Frame(self.parent_window)
         control_frame.pack(pady=10)
 
         # Кнопка выбора цвета
@@ -104,6 +104,6 @@ class KochSnowflake:
 
 
 if __name__ == "__main__":
-    app_window = tk.Tk()
-    app = KochSnowflake(app_window)
-    app_window.mainloop()
+    parent_window = tk.Tk()
+    app = KochSnowflake(parent_window)
+    parent_window.mainloop()
