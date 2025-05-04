@@ -36,6 +36,10 @@ class RotatingLineApp:
         self.animate()
 
     def create_controls(self):
+        self.create_control_frame()
+        self.create_coord_frame()
+
+    def create_control_frame(self):
         control_frame = ttk.Frame(self.root_window)
         control_frame.pack(pady=10)
 
@@ -55,7 +59,7 @@ class RotatingLineApp:
         self.speed_scale.set(5)
         self.speed_scale.pack(side=tk.LEFT, padx=5)
 
-        # Поля ввода координат
+    def create_coord_frame(self):
         coord_frame = ttk.Frame(self.root_window)
         coord_frame.pack(pady=10)
 
