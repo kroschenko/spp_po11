@@ -1,16 +1,15 @@
-import math
-import time
 import tkinter as tk
 from tkinter import ttk
-
-from PIL import Image, ImageGrab
+from PIL import ImageGrab
+import math
+import time
 
 
 class RotatingLineApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Вращающийся отрезок")
-        self.root.geometry("800x600")
+    def __init__(self, window):
+        self.window = window
+        self.window.title("Вращающийся отрезок")
+        self.window.geometry("800x600")
 
         # Параметры анимации
         self.rotation_angle = 0
@@ -29,14 +28,14 @@ class RotatingLineApp:
         self.create_controls()
 
         # Создание холста
-        self.canvas = tk.Canvas(root, width=800, height=600, bg="white")
+        self.canvas = tk.Canvas(window, width=800, height=600, bg="white")
         self.canvas.pack()
 
         # Запуск анимации
         self.animate()
 
     def create_controls(self):
-        control_frame = ttk.Frame(self.root)
+        control_frame = ttk.Frame(self.window)
         control_frame.pack(pady=10)
 
         # Кнопка паузы
@@ -56,7 +55,7 @@ class RotatingLineApp:
         self.speed_scale.pack(side=tk.LEFT, padx=5)
 
         # Поля ввода координат
-        coord_frame = ttk.Frame(self.root)
+        coord_frame = ttk.Frame(self.window)
         coord_frame.pack(pady=10)
 
         # X1
@@ -111,10 +110,10 @@ class RotatingLineApp:
     def take_screenshot(self):
         # Делаем скриншот всего экрана
         screenshot = ImageGrab.grab()
-
+        
         # Создаем имя файла с текущим временем
         filename = f"screenshot_{int(time.time())}.png"
-
+        
         # Сохраняем скриншот
         screenshot.save(filename)
         print(f"Скриншот сохранен как {filename}")
@@ -128,7 +127,7 @@ class RotatingLineApp:
 
             self.draw_line()
 
-        self.root.after(16, self.animate)  # ~60 FPS
+        self.window.after(16, self.animate)  # ~60 FPS
 
     def draw_line(self):
         self.canvas.delete("all")
@@ -140,7 +139,7 @@ class RotatingLineApp:
         # Длина отрезка
         dx = self.x2 - self.x1
         dy = self.y2 - self.y1
-        length = math.sqrt(dx * dx + dy * dy)
+        length = math.sqrt(dx*dx + dy*dy)
 
         # Угол наклона отрезка
         angle = math.atan2(dy, dx)
@@ -159,10 +158,12 @@ class RotatingLineApp:
         self.canvas.create_line(x1_new, y1_new, x2_new, y2_new, width=2, fill="blue")
 
         # Рисуем точку вращения (центр отрезка)
-        self.canvas.create_oval(center_x - 5, center_y - 5, center_x + 5, center_y + 5, fill="red")
+        self.canvas.create_oval(center_x - 5, center_y - 5, 
+                              center_x + 5, center_y + 5, 
+                              fill="red")
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = RotatingLineApp(root)
-    root.mainloop()
+    window = tk.Tk()
+    app = RotatingLineApp(window)
+    window.mainloop()

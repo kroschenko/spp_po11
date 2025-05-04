@@ -2,15 +2,14 @@ import math
 import time
 import tkinter as tk
 from tkinter import colorchooser, ttk
-
-from PIL import Image, ImageGrab
+from PIL import ImageGrab
 
 
 class KochSnowflake:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Снежинка Коха")
-        self.root.geometry("800x600")
+    def __init__(self, window):
+        self.window = window
+        self.window.title("Снежинка Коха")
+        self.window.geometry("800x600")
 
         # Параметры снежинки
         self.depth = 0
@@ -23,14 +22,14 @@ class KochSnowflake:
         self.create_controls()
 
         # Создание холста
-        self.canvas = tk.Canvas(root, width=800, height=600, bg="white")
+        self.canvas = tk.Canvas(window, width=800, height=600, bg="white")
         self.canvas.pack()
 
         # Отрисовка снежинки
         self.draw_snowflake()
 
     def create_controls(self):
-        control_frame = ttk.Frame(self.root)
+        control_frame = ttk.Frame(self.window)
         control_frame.pack(pady=10)
 
         # Кнопка выбора цвета
@@ -66,10 +65,10 @@ class KochSnowflake:
     def take_screenshot(self):
         # Делаем скриншот всего экрана
         screenshot = ImageGrab.grab()
-
+        
         # Создаем имя файла с текущим временем
         filename = f"screenshot_{int(time.time())}.png"
-
+        
         # Сохраняем скриншот
         screenshot.save(filename)
         print(f"Скриншот сохранен как {filename}")
@@ -123,6 +122,6 @@ class KochSnowflake:
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = KochSnowflake(root)
-    root.mainloop()
+    window = tk.Tk()
+    app = KochSnowflake(window)
+    window.mainloop()
