@@ -7,10 +7,10 @@ from PIL import ImageGrab
 
 
 class RotatingLineApp:
-    def __init__(self, master):
-        self.master = master
-        self.master.title("Вращающийся отрезок")
-        self.master.geometry("800x600")
+    def __init__(self, root_window):
+        self.root_window = root_window
+        self.root_window.title("Вращающийся отрезок")
+        self.root_window.geometry("800x600")
 
         # Параметры анимации
         self.rotation_angle = 0
@@ -29,14 +29,14 @@ class RotatingLineApp:
         self.create_controls()
 
         # Создание холста
-        self.canvas = tk.Canvas(master, width=800, height=600, bg="white")
+        self.canvas = tk.Canvas(root_window, width=800, height=600, bg="white")
         self.canvas.pack()
 
         # Запуск анимации
         self.animate()
 
     def create_controls(self):
-        control_frame = ttk.Frame(self.master)
+        control_frame = ttk.Frame(self.root_window)
         control_frame.pack(pady=10)
 
         # Кнопка паузы
@@ -56,7 +56,7 @@ class RotatingLineApp:
         self.speed_scale.pack(side=tk.LEFT, padx=5)
 
         # Поля ввода координат
-        coord_frame = ttk.Frame(self.master)
+        coord_frame = ttk.Frame(self.root_window)
         coord_frame.pack(pady=10)
 
         # X1
@@ -121,7 +121,7 @@ class RotatingLineApp:
             if self.point_position > 1:
                 self.point_position = 0
             self.draw_line()
-        self.master.after(16, self.animate)
+        self.root_window.after(16, self.animate)
 
     def draw_line(self):
         self.canvas.delete("all")
@@ -142,6 +142,6 @@ class RotatingLineApp:
 
 
 if __name__ == "__main__":
-    master = tk.Tk()
-    app = RotatingLineApp(master)
-    master.mainloop()
+    root = tk.Tk()
+    app = RotatingLineApp(root)
+    root.mainloop()
