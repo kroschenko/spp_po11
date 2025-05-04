@@ -48,7 +48,7 @@ def test_invalid_discount(cart, invalid_discount):
 
 
 @patch("shopping.requests.post")
-def test_log_purchase(mock_post):
+def test_log_purchase(mock_post, cart):  # Добавлен параметр cart
     item = {"name": "Apple", "price": 10.0}
     log_purchase(item)
     mock_post.assert_called_once_with("https://example.com/log", json=item)
@@ -73,7 +73,7 @@ def test_invalid_coupon(cart):
 
 
 @patch("shopping.coupons", {"TEST": 20})
-def test_monkeypatch_coupons(cart):
+def test_monkeypatch_coupons(cart):  # Уже правильно - cart передается как параметр
     cart.add_item("Apple", 100.0)
     apply_coupon(cart, "TEST")
     assert cart.apply_discount(20) == 80.0
