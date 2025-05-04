@@ -2,14 +2,15 @@ import math
 import time
 import tkinter as tk
 from tkinter import ttk
+
 from PIL import ImageGrab
 
 
 class RotatingLineApp:
-    def __init__(self, main_window):
-        self.main_window = main_window
-        self.main_window.title("Вращающийся отрезок")
-        self.main_window.geometry("800x600")
+    def __init__(self, app_window):
+        self.app_window = app_window
+        self.app_window.title("Вращающийся отрезок")
+        self.app_window.geometry("800x600")
 
         # Параметры анимации
         self.rotation_angle = 0
@@ -28,14 +29,14 @@ class RotatingLineApp:
         self.create_controls()
 
         # Создание холста
-        self.canvas = tk.Canvas(main_window, width=800, height=600, bg="white")
+        self.canvas = tk.Canvas(app_window, width=800, height=600, bg="white")
         self.canvas.pack()
 
         # Запуск анимации
         self.animate()
 
     def create_controls(self):
-        control_frame = ttk.Frame(self.main_window)
+        control_frame = ttk.Frame(self.app_window)
         control_frame.pack(pady=10)
 
         # Кнопка паузы
@@ -55,7 +56,7 @@ class RotatingLineApp:
         self.speed_scale.pack(side=tk.LEFT, padx=5)
 
         # Поля ввода координат
-        coord_frame = ttk.Frame(self.main_window)
+        coord_frame = ttk.Frame(self.app_window)
         coord_frame.pack(pady=10)
 
         # X1
@@ -120,7 +121,7 @@ class RotatingLineApp:
             if self.point_position > 1:
                 self.point_position = 0
             self.draw_line()
-        self.main_window.after(16, self.animate)
+        self.app_window.after(16, self.animate)
 
     def draw_line(self):
         self.canvas.delete("all")
@@ -128,7 +129,7 @@ class RotatingLineApp:
         center_y = (self.y1 + self.y2) / 2
         dx = self.x2 - self.x1
         dy = self.y2 - self.y1
-        length = math.sqrt(dx*dx + dy*dy)
+        length = math.sqrt(dx * dx + dy * dy)
         angle = math.atan2(dy, dx)
         new_angle = angle + self.rotation_angle
         half_length = length / 2
@@ -137,12 +138,10 @@ class RotatingLineApp:
         x2_new = center_x + half_length * math.cos(new_angle)
         y2_new = center_y + half_length * math.sin(new_angle)
         self.canvas.create_line(x1_new, y1_new, x2_new, y2_new, width=2, fill="blue")
-        self.canvas.create_oval(center_x - 5, center_y - 5,
-                              center_x + 5, center_y + 5,
-                              fill="red")
+        self.canvas.create_oval(center_x - 5, center_y - 5, center_x + 5, center_y + 5, fill="red")
 
 
 if __name__ == "__main__":
-    main_window = tk.Tk()
-    app = RotatingLineApp(main_window)
-    main_window.mainloop()
+    app_window = tk.Tk()
+    app = RotatingLineApp(app_window)
+    app_window.mainloop()

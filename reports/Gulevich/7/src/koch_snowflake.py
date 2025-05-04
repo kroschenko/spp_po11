@@ -2,14 +2,15 @@ import math
 import time
 import tkinter as tk
 from tkinter import colorchooser, ttk
+
 from PIL import ImageGrab
 
 
 class KochSnowflake:
-    def __init__(self, main_window):
-        self.main_window = main_window
-        self.main_window.title("Снежинка Коха")
-        self.main_window.geometry("800x600")
+    def __init__(self, app_window):
+        self.app_window = app_window
+        self.app_window.title("Снежинка Коха")
+        self.app_window.geometry("800x600")
 
         # Параметры снежинки
         self.depth = 0
@@ -22,14 +23,14 @@ class KochSnowflake:
         self.create_controls()
 
         # Создание холста
-        self.canvas = tk.Canvas(main_window, width=800, height=600, bg="white")
+        self.canvas = tk.Canvas(app_window, width=800, height=600, bg="white")
         self.canvas.pack()
 
         # Отрисовка снежинки
         self.draw_snowflake()
 
     def create_controls(self):
-        control_frame = ttk.Frame(self.main_window)
+        control_frame = ttk.Frame(self.app_window)
         control_frame.pack(pady=10)
 
         # Кнопка выбора цвета
@@ -81,28 +82,28 @@ class KochSnowflake:
         self.draw_koch_line(x2, y2, x3, y3, self.depth)
         self.draw_koch_line(x3, y3, x1, y1, self.depth)
 
-    def draw_koch_line(self, x1, y1, x2, y2, depth):
+    def draw_koch_line(self, start_x, start_y, end_x, end_y, depth):
         if depth == 0:
-            self.canvas.create_line(x1, y1, x2, y2, width=2, fill=self.color)
+            self.canvas.create_line(start_x, start_y, end_x, end_y, width=2, fill=self.color)
         else:
-            dx = x2 - x1
-            dy = y2 - y1
-            x1_3 = x1 + dx / 3
-            y1_3 = y1 + dy / 3
-            x2_3 = x1 + 2 * dx / 3
-            y2_3 = y1 + 2 * dy / 3
+            dx = end_x - start_x
+            dy = end_y - start_y
+            x1_3 = start_x + dx / 3
+            y1_3 = start_y + dy / 3
+            x2_3 = start_x + 2 * dx / 3
+            y2_3 = start_y + 2 * dy / 3
             angle = math.radians(60)
             vx = (x2_3 - x1_3) * math.cos(angle) - (y2_3 - y1_3) * math.sin(angle)
             vy = (x2_3 - x1_3) * math.sin(angle) + (y2_3 - y1_3) * math.cos(angle)
             x_triangle = x1_3 + vx
             y_triangle = y1_3 + vy
-            self.draw_koch_line(x1, y1, x1_3, y1_3, depth - 1)
+            self.draw_koch_line(start_x, start_y, x1_3, y1_3, depth - 1)
             self.draw_koch_line(x1_3, y1_3, x_triangle, y_triangle, depth - 1)
             self.draw_koch_line(x_triangle, y_triangle, x2_3, y2_3, depth - 1)
-            self.draw_koch_line(x2_3, y2_3, x2, y2, depth - 1)
+            self.draw_koch_line(x2_3, y2_3, end_x, end_y, depth - 1)
 
 
 if __name__ == "__main__":
-    main_window = tk.Tk()
-    app = KochSnowflake(main_window)
-    main_window.mainloop()
+    app_window = tk.Tk()
+    app = KochSnowflake(app_window)
+    app_window.mainloop()
