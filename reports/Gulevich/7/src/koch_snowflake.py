@@ -6,10 +6,10 @@ from PIL import ImageGrab
 
 
 class KochSnowflake:
-    def __init__(self, window):
-        self.window = window
-        self.window.title("Снежинка Коха")
-        self.window.geometry("800x600")
+    def __init__(self, main_window):
+        self.main_window = main_window
+        self.main_window.title("Снежинка Коха")
+        self.main_window.geometry("800x600")
 
         # Параметры снежинки
         self.depth = 0
@@ -22,14 +22,14 @@ class KochSnowflake:
         self.create_controls()
 
         # Создание холста
-        self.canvas = tk.Canvas(window, width=800, height=600, bg="white")
+        self.canvas = tk.Canvas(main_window, width=800, height=600, bg="white")
         self.canvas.pack()
 
         # Отрисовка снежинки
         self.draw_snowflake()
 
     def create_controls(self):
-        control_frame = ttk.Frame(self.window)
+        control_frame = ttk.Frame(self.main_window)
         control_frame.pack(pady=10)
 
         # Кнопка выбора цвета
@@ -63,20 +63,13 @@ class KochSnowflake:
             pass
 
     def take_screenshot(self):
-        # Делаем скриншот всего экрана
         screenshot = ImageGrab.grab()
-        
-        # Создаем имя файла с текущим временем
         filename = f"screenshot_{int(time.time())}.png"
-        
-        # Сохраняем скриншот
         screenshot.save(filename)
         print(f"Скриншот сохранен как {filename}")
 
     def draw_snowflake(self):
         self.canvas.delete("all")
-
-        # Вычисляем координаты вершин равностороннего треугольника
         height = self.size * math.sqrt(3) / 2
         x1 = self.center_x - self.size / 2
         y1 = self.center_y + height / 2
@@ -84,8 +77,6 @@ class KochSnowflake:
         y2 = self.center_y + height / 2
         x3 = self.center_x
         y3 = self.center_y - height / 2
-
-        # Рисуем три стороны снежинки
         self.draw_koch_line(x1, y1, x2, y2, self.depth)
         self.draw_koch_line(x2, y2, x3, y3, self.depth)
         self.draw_koch_line(x3, y3, x1, y1, self.depth)
@@ -94,27 +85,17 @@ class KochSnowflake:
         if depth == 0:
             self.canvas.create_line(x1, y1, x2, y2, width=2, fill=self.color)
         else:
-            # Вычисляем точки деления отрезка
             dx = x2 - x1
             dy = y2 - y1
-
-            # Точки деления на три части
             x1_3 = x1 + dx / 3
             y1_3 = y1 + dy / 3
             x2_3 = x1 + 2 * dx / 3
             y2_3 = y1 + 2 * dy / 3
-
-            # Вычисляем вершину треугольника
-            # Поворачиваем вектор на 60 градусов
             angle = math.radians(60)
             vx = (x2_3 - x1_3) * math.cos(angle) - (y2_3 - y1_3) * math.sin(angle)
             vy = (x2_3 - x1_3) * math.sin(angle) + (y2_3 - y1_3) * math.cos(angle)
-
-            # Координаты вершины треугольника
             x_triangle = x1_3 + vx
             y_triangle = y1_3 + vy
-
-            # Рекурсивно рисуем четыре отрезка
             self.draw_koch_line(x1, y1, x1_3, y1_3, depth - 1)
             self.draw_koch_line(x1_3, y1_3, x_triangle, y_triangle, depth - 1)
             self.draw_koch_line(x_triangle, y_triangle, x2_3, y2_3, depth - 1)
@@ -122,6 +103,6 @@ class KochSnowflake:
 
 
 if __name__ == "__main__":
-    window = tk.Tk()
-    app = KochSnowflake(window)
-    window.mainloop()
+    main_window = tk.Tk()
+    app = KochSnowflake(main_window)
+    main_window.mainloop()
