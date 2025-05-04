@@ -72,35 +72,50 @@ class KochSnowflake:
     def draw_snowflake(self):
         self.canvas.delete("all")
         height = self.size * math.sqrt(3) / 2
-        x1 = self.center_x - self.size / 2
-        y1 = self.center_y + height / 2
-        x2 = self.center_x + self.size / 2
-        y2 = self.center_y + height / 2
-        x3 = self.center_x
-        y3 = self.center_y - height / 2
-        self.draw_koch_line(start_x=x1, start_y=y1, end_x=x2, end_y=y2, depth=self.depth)
-        self.draw_koch_line(start_x=x2, start_y=y2, end_x=x3, end_y=y3, depth=self.depth)
-        self.draw_koch_line(start_x=x3, start_y=y3, end_x=x1, end_y=y1, depth=self.depth)
+        points = [
+            (self.center_x - self.size / 2, self.center_y + height / 2),  # Нижняя левая точка
+            (self.center_x + self.size / 2, self.center_y + height / 2),  # Нижняя правая точка
+            (self.center_x, self.center_y - height / 2),  # Верхняя точка
+        ]
 
-    def draw_koch_line(self, start_x, start_y, end_x, end_y, depth=0):
+        # Рисуем три стороны снежинки
+        self.draw_koch_line(points[0], points[1], self.depth)
+        self.draw_koch_line(points[1], points[2], self.depth)
+        self.draw_koch_line(points[2], points[0], self.depth)
+
+    def draw_koch_line(self, start_point, end_point, depth):
+        """Рисует линию Коха с заданной глубиной рекурсии.
+
+        Args:
+            start_point: Кортеж (x, y) начальной точки
+            end_point: Кортеж (x, y) конечной точки
+            depth: Глубина рекурсии
+        """
         if depth == 0:
-            self.canvas.create_line(start_x, start_y, end_x, end_y, width=2, fill=self.color)
-        else:
-            dx = end_x - start_x
-            dy = end_y - start_y
-            x1_3 = start_x + dx / 3
-            y1_3 = start_y + dy / 3
-            x2_3 = start_x + 2 * dx / 3
-            y2_3 = start_y + 2 * dy / 3
-            angle = math.radians(60)
-            vx = (x2_3 - x1_3) * math.cos(angle) - (y2_3 - y1_3) * math.sin(angle)
-            vy = (x2_3 - x1_3) * math.sin(angle) + (y2_3 - y1_3) * math.cos(angle)
-            x_triangle = x1_3 + vx
-            y_triangle = y1_3 + vy
-            self.draw_koch_line(start_x=start_x, start_y=start_y, end_x=x1_3, end_y=y1_3, depth=depth - 1)
-            self.draw_koch_line(start_x=x1_3, start_y=y1_3, end_x=x_triangle, end_y=y_triangle, depth=depth - 1)
-            self.draw_koch_line(start_x=x_triangle, start_y=y_triangle, end_x=x2_3, end_y=y2_3, depth=depth - 1)
-            self.draw_koch_line(start_x=x2_3, start_y=y2_3, end_x=end_x, end_y=end_y, depth=depth - 1)
+            self.canvas.create_line(
+                start_point[0], start_point[1], end_point[0], end_point[1], width=2, fill=self.color
+            )
+            return
+
+        # Разбиваем отрезок на части
+        dx = end_point[0] - start_point[0]
+        dy = end_point[1] - start_point[1]
+
+        # Точки на 1/3 и 2/3 отрезка
+        p1 = (start_point[0] + dx / 3, start_point[1] + dy / 3)
+        p2 = (start_point[0] + 2 * dx / 3, start_point[1] + 2 * dy / 3)
+
+        # Вычисляем вершину треугольника
+        angle = math.radians(60)
+        vx = (p2[0] - p1[0]) * math.cos(angle) - (p2[1] - p1[1]) * math.sin(angle)
+        vy = (p2[0] - p1[0]) * math.sin(angle) + (p2[1] - p1[1]) * math.cos(angle)
+        triangle_point = (p1[0] + vx, p1[1] + vy)
+
+        # Рекурсивно рисуем 4 новых отрезка
+        segments = [(start_point, p1), (p1, triangle_point), (triangle_point, p2), (p2, end_point)]
+
+        for segment in segments:
+            self.draw_koch_line(segment[0], segment[1], depth - 1)
 
 
 if __name__ == "__main__":
