@@ -78,9 +78,9 @@ class KochSnowflake:
         y2 = self.center_y + height / 2
         x3 = self.center_x
         y3 = self.center_y - height / 2
-        self.draw_koch_line(x1, y1, x2, y2, self.depth)
-        self.draw_koch_line(x2, y2, x3, y3, self.depth)
-        self.draw_koch_line(x3, y3, x1, y1, self.depth)
+        self.draw_koch_line(start_x=x1, start_y=y1, end_x=x2, end_y=y2, depth=self.depth)
+        self.draw_koch_line(start_x=x2, start_y=y2, end_x=x3, end_y=y3, depth=self.depth)
+        self.draw_koch_line(start_x=x3, start_y=y3, end_x=x1, end_y=y1, depth=self.depth)
 
     def draw_koch_line(self, start_x, start_y, end_x, end_y, depth=0):
         if depth == 0:
@@ -97,10 +97,10 @@ class KochSnowflake:
             vy = (x2_3 - x1_3) * math.sin(angle) + (y2_3 - y1_3) * math.cos(angle)
             x_triangle = x1_3 + vx
             y_triangle = y1_3 + vy
-            self.draw_koch_line(start_x, start_y, x1_3, y1_3, depth - 1)
-            self.draw_koch_line(x1_3, y1_3, x_triangle, y_triangle, depth - 1)
-            self.draw_koch_line(x_triangle, y_triangle, x2_3, y2_3, depth - 1)
-            self.draw_koch_line(x2_3, y2_3, end_x, end_y, depth - 1)
+            self.draw_koch_line(start_x=start_x, start_y=start_y, end_x=x1_3, end_y=y1_3, depth=depth - 1)
+            self.draw_koch_line(start_x=x1_3, start_y=y1_3, end_x=x_triangle, end_y=y_triangle, depth=depth - 1)
+            self.draw_koch_line(start_x=x_triangle, start_y=y_triangle, end_x=x2_3, end_y=y2_3, depth=depth - 1)
+            self.draw_koch_line(start_x=x2_3, start_y=y2_3, end_x=end_x, end_y=end_y, depth=depth - 1)
 
 
 if __name__ == "__main__":
