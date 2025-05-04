@@ -82,7 +82,7 @@ class KochSnowflake:
         self.draw_koch_line(x2, y2, x3, y3, self.depth)
         self.draw_koch_line(x3, y3, x1, y1, self.depth)
 
-    def draw_koch_line(self, start_x, start_y, end_x, end_y, depth):
+    def draw_koch_line(self, start_x, start_y, end_x, end_y, depth=0):
         if depth == 0:
             self.canvas.create_line(start_x, start_y, end_x, end_y, width=2, fill=self.color)
         else:

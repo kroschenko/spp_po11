@@ -25,6 +25,18 @@ class RotatingLineApp:
         self.x2 = 500
         self.y2 = 300
 
+        # Инициализация атрибутов для элементов управления
+        self.pause_button = None
+        self.screenshot_button = None
+        self.speed_label = None
+        self.speed_scale = None
+        self.x1_entry = None
+        self.y1_entry = None
+        self.x2_entry = None
+        self.y2_entry = None
+        self.update_coords_button = None
+        self.canvas = None
+
         # Создание элементов управления
         self.create_controls()
 
