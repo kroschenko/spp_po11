@@ -1,7 +1,8 @@
+from datetime import datetime
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from database import Base
-from datetime import datetime
+
 
 class Supplier(Base):
     __tablename__ = "suppliers"
@@ -10,6 +11,7 @@ class Supplier(Base):
     contact = Column(String)
 
     products = relationship("Product", back_populates="supplier")
+
 
 class Product(Base):
     __tablename__ = "products"
@@ -21,6 +23,7 @@ class Product(Base):
     supplier = relationship("Supplier", back_populates="products")
     order_items = relationship("OrderItem", back_populates="product")
 
+
 class Customer(Base):
     __tablename__ = "customers"
     id = Column(Integer, primary_key=True, index=True)
@@ -28,6 +31,7 @@ class Customer(Base):
     email = Column(String)
 
     orders = relationship("Order", back_populates="customer")
+
 
 class Order(Base):
     __tablename__ = "orders"
@@ -37,6 +41,7 @@ class Order(Base):
 
     customer = relationship("Customer", back_populates="orders")
     items = relationship("OrderItem", back_populates="order")
+
 
 class OrderItem(Base):
     __tablename__ = "order_items"

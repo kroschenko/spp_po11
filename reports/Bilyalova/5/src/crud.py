@@ -1,5 +1,7 @@
+# Module Bilyalova.5.src.crud
 from sqlalchemy.orm import Session
-import models, schemas
+import models
+import schemas
 
 def create_supplier(db: Session, supplier: schemas.SupplierCreate):
     db_supplier = models.Supplier(**supplier.dict())
