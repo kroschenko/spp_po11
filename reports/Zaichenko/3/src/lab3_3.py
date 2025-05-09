@@ -17,8 +17,8 @@ class ATM:
     def enter_pin(self, entered_pin):
         self.state.enter_pin(entered_pin)
 
-    def withdraw(self, withdraw_amount):
-        self.state.withdraw(withdraw_amount)
+    def withdraw(self, amount_to_withdraw):
+        self.state.withdraw(amount_to_withdraw)
 
     def finish(self):
         self.state.finish()
@@ -37,7 +37,7 @@ class ATMState(ABC):
         pass
 
     @abstractmethod
-    def withdraw(self, withdraw_amount):
+    def withdraw(self, amount_to_withdraw):
         pass
 
     @abstractmethod
@@ -53,7 +53,7 @@ class WaitingState(ATMState):
     def enter_pin(self, entered_pin):
         print("Вставьте карту сначала.")
 
-    def withdraw(self, withdraw_amount):
+    def withdraw(self, amount_to_withdraw):
         print("Невозможно снять деньги. Нет карты.")
 
     def finish(self):
@@ -72,7 +72,7 @@ class AuthenticationState(ATMState):
             print("Неверный ПИН-код.")
             self.atm.set_state(WaitingState(self.atm))
 
-    def withdraw(self, withdraw_amount):
+    def withdraw(self, amount_to_withdraw):
         print("Сначала введите ПИН.")
 
     def finish(self):
@@ -86,10 +86,10 @@ class OperationState(ATMState):
     def enter_pin(self, entered_pin):
         print("ПИН уже введён.")
 
-    def withdraw(self, withdraw_amount):
-        if withdraw_amount <= self.atm.total_money:
-            self.atm.total_money -= withdraw_amount
-            print(f"Выдано: {withdraw_amount}. Остаток: {self.atm.total_money}")
+    def withdraw(self, amount_to_withdraw):
+        if amount_to_withdraw <= self.atm.total_money:
+            self.atm.total_money -= amount_to_withdraw
+            print(f"Выдано: {amount_to_withdraw}. Остаток: {self.atm.total_money}")
             if self.atm.total_money == 0:
                 print("Банкомат пуст. Блокировка.")
                 self.atm.set_state(BlockedState(self.atm))
@@ -108,7 +108,7 @@ class BlockedState(ATMState):
     def enter_pin(self, entered_pin):
         print("Банкомат заблокирован.")
 
-    def withdraw(self, withdraw_amount):
+    def withdraw(self, amount_to_withdraw):
         print("Невозможно выполнить операцию. Банкомат пуст.")
 
     def finish(self):
