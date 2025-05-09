@@ -1,6 +1,7 @@
-import pytest
 import os
 import sys
+import pytest
+
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
