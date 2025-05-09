@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import colorchooser
+from dataclasses import dataclass  
 from PIL import ImageGrab
-from dataclasses import dataclass
 
 
 @dataclass
