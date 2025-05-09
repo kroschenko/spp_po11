@@ -91,7 +91,7 @@ def user_interface():
             car = factory.create_suv()
             car.drive()
         else:
-            print("Неверный тип автомобиля. Попробуйте снова.\n")
+            print("Неверный тип автомобиля. Попробуйте ещё.\n")
 
 
 if __name__ == "__main__":
