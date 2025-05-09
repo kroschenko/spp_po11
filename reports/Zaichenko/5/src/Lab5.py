@@ -373,7 +373,7 @@ def delete_subject(subject_id: int, db: SessionLocal = Depends(get_db)):
     if related_grades > 0:
         raise HTTPException(
             status_code=400,
-            detail=f"Невозможно удалить предмет , так как есть связанные с ним оценки .",
+            detail="Невозможно удалить предмет , так как есть связанные с ним оценки .",
         )
     db.delete(db_subject)
     db.commit()
