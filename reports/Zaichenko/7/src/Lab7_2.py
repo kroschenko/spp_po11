@@ -17,7 +17,7 @@ class PeanoCurveApp:
 
         tk.Label(frame, text="Глубина:").grid(row=0, column=0)
         self.depth_entry = tk.Entry(frame, width=4)
-        self.depth_entry.insert(0, "4")
+        self.depth_entry.insert(0, "3")
         self.depth_entry.grid(row=0, column=1)
 
         tk.Label(frame, text="Цвет:").grid(row=0, column=2)
@@ -41,35 +41,30 @@ class PeanoCurveApp:
         try:
             depth = int(self.depth_entry.get())
             self.canvas.delete("all")
-            self._draw_peano_curve(50, 50, self.canvas_size - 100, depth)
+            start_x = 50
+            start_y = 50
+            size = self.canvas_size - 100
+            self.peano(start_x, start_y, size, size, depth)
         except ValueError as e:
             print("Ошибка:", e)
 
-    def _draw_peano_curve(self, x, y, size, depth):
+    def peano(self, x, y, dx, dy, depth):
         if depth == 0:
-            return
-
-        length = size / 3
-
-        self._draw_peano_curve_segment(x, y, length, 0, depth)
-        self._draw_peano_curve_segment(x + length, y, length, 90, depth)
-        self._draw_peano_curve_segment(x + length, y + length, length, 180, depth)
-        self._draw_peano_curve_segment(x, y + length, length, 270, depth)
-
-    def _draw_peano_curve_segment(self, x, y, size, angle, depth):
-        if depth == 0:
-            dx = size * math.cos(math.radians(angle))
-            dy = size * math.sin(math.radians(angle))
-            x2 = x + dx
-            y2 = y + dy
-            self.canvas.create_line(x, y, x2, y2, fill=self.color)
-            return x2, y2
+            x1 = x + dx / 2
+            y1 = y + dy / 2
+            self.points.append((x1, y1))
         else:
-            length = size / 3
-            self._draw_peano_curve_segment(x, y, length, angle, depth - 1)
-            self._draw_peano_curve_segment(x + length, y, length, angle + 90, depth - 1)
-            self._draw_peano_curve_segment(x + length, y + length, length, angle + 180, depth - 1)
-            self._draw_peano_curve_segment(x, y + length, length, angle + 270, depth - 1)
+            dx3 = dx / 3
+            dy3 = dy / 3
+            self.peano(x, y, dx3, dy3, depth - 1)
+            self.peano(x + dx3, y, dx3, dy3, depth - 1)
+            self.peano(x + 2 * dx3, y, dx3, dy3, depth - 1)
+            self.peano(x + 2 * dx3, y + dy3, dx3, dy3, depth - 1)
+            self.peano(x + dx3, y + dy3, dx3, dy3, depth - 1)
+            self.peano(x, y + dy3, dx3, dy3, depth - 1)
+            self.peano(x, y + 2 * dy3, dx3, dy3, depth - 1)
+            self.peano(x + dx3, y + 2 * dy3, dx3, dy3, depth - 1)
+            self.peano(x + 2 * dx3, y + 2 * dy3, dx3, dy3, depth - 1)
 
     def screenshot(self):
         x = self.root.winfo_rootx() + self.canvas.winfo_x()
@@ -77,6 +72,25 @@ class PeanoCurveApp:
         x1 = x + self.canvas.winfo_width()
         y1 = y + self.canvas.winfo_height()
         ImageGrab.grab().crop((x, y, x1, y1)).save("peano_curve.png")
+
+    def draw_curve(self):
+        try:
+            depth = int(self.depth_entry.get())
+            self.canvas.delete("all")
+            self.points = []
+            start_x = 50
+            start_y = 50
+            size = self.canvas_size - 100
+            self.peano(start_x, start_y, size, size, depth)
+            self.draw_lines()
+        except ValueError as e:
+            print("Ошибка:", e)
+
+    def draw_lines(self):
+        for i in range(len(self.points) - 1):
+            x1, y1 = self.points[i]
+            x2, y2 = self.points[i + 1]
+            self.canvas.create_line(x1, y1, x2, y2, fill=self.color)
 
 
 if __name__ == "__main__":
