@@ -1,15 +1,25 @@
 import tkinter as tk
 from tkinter import colorchooser
 from PIL import ImageGrab
+from dataclasses import dataclass
+
+
+@dataclass
+class BallParams:
+    radius: int
+    speed: float
+    color: str
+    x: float
+    y: float
 
 
 class Ball:
-    def __init__(self, radius, speed, color, x, y): # pylint: disable=too-many-arguments
-        self.radius = radius
-        self.speed = speed
-        self.color = color
-        self.x = x
-        self.y = y
+    def __init__(self, params: BallParams):
+        self.radius = params.radius
+        self.speed = params.speed
+        self.color = params.color
+        self.x = params.x
+        self.y = params.y
         self.direction = 1
 
     def move(self):
