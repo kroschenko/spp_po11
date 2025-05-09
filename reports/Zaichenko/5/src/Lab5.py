@@ -638,6 +638,7 @@ def get_grades(
     limit: int = 100,
     db: SessionLocal = Depends(get_db),
 ):
+    skip= 0
     query = db.query(Grade)
     if student_id:
         query = query.filter(Grade.student_id == student_id)
