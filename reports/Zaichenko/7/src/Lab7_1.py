@@ -4,7 +4,7 @@ from PIL import ImageGrab
 
 
 class Ball:
-    def __init__(self, radius, speed, color, x, y):
+    def __init__(self, radius, speed, color, x, y): # pylint: disable=too-many-arguments
         self.radius = radius
         self.speed = speed
         self.color = color
