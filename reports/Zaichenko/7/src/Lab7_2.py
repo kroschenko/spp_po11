@@ -1,11 +1,11 @@
 import tkinter as tk
 from tkinter import colorchooser
-import math
 from PIL import ImageGrab
 
 
 class PeanoCurveApp:
     def __init__(self, tk_root):
+        self.points = []
         self.root = tk_root
         self.root.title("Кривая Пеано")
         self.canvas_size = 600
@@ -37,17 +37,6 @@ class PeanoCurveApp:
             self.color = color[1]
             self.color_btn.config(bg=self.color)
 
-    def draw_curve(self):
-        try:
-            depth = int(self.depth_entry.get())
-            self.canvas.delete("all")
-            start_x = 50
-            start_y = 50
-            size = self.canvas_size - 100
-            self.peano(start_x, start_y, size, size, depth)
-        except ValueError as e:
-            print("Ошибка:", e)
-
     def peano(self, x, y, dx, dy, depth):
         if depth == 0:
             x1 = x + dx / 2
@@ -77,7 +66,6 @@ class PeanoCurveApp:
         try:
             depth = int(self.depth_entry.get())
             self.canvas.delete("all")
-            self.points = []
             start_x = 50
             start_y = 50
             size = self.canvas_size - 100
