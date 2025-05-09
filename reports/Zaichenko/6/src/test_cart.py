@@ -31,29 +31,29 @@ def test_add_multiple_items(cart):
     assert cart.items[1]["name"] == "orange"
 
 
-def test_remove_item(cart_with_items):
-    cart_with_items.remove_item("apple")
-    assert len(cart_with_items.items) == 1
-    assert cart_with_items.items[0]["name"] == "banana"
+def test_remove_item(cart_with_items_fixture):
+    cart_with_items_fixture.remove_item("apple")
+    assert len(cart_with_items_fixture.items) == 1
+    assert cart_with_items_fixture.items[0]["name"] == "banana"
 
 
-def test_remove_nonexistent_item(cart_with_items):
+def test_remove_nonexistent_item(cart_with_items_fixture):
     with pytest.raises(ValueError):
-        cart_with_items.remove_item("grape")
+        cart_with_items_fixture.remove_item("grape")
 
 
-def test_calculate_total(cart_with_items):
-    assert cart_with_items.calculate_total() == 4.0
+def test_calculate_total(cart_with_items_fixture):
+    assert cart_with_items_fixture.calculate_total() == 4.0
 
 
-def test_apply_discount(cart_with_items):
-    cart_with_items.apply_discount(10)
-    assert cart_with_items.calculate_total() == 3.6
+def test_apply_discount(cart_with_items_fixture):
+    cart_with_items_fixture.apply_discount(10)
+    assert cart_with_items_fixture.calculate_total() == 3.6
 
 
-def test_apply_invalid_discount(cart_with_items):
+def test_apply_invalid_discount(cart_with_items_fixture):
     with pytest.raises(ValueError):
-        cart_with_items.apply_discount(120)
+        cart_with_items_fixture.apply_discount(120)
 
 
 @patch("requests.post")
