@@ -1,25 +1,15 @@
-from dataclasses import dataclass
 import tkinter as tk
 from tkinter import colorchooser
 from PIL import ImageGrab
 
 
-@dataclass
-class BallParams:
-    radius: int
-    speed: float
-    color: str
-    x: float
-    y: float
-
-
 class Ball:
-    def __init__(self, params: BallParams):
-        self.radius = params.radius
-        self.speed = params.speed
-        self.color = params.color
-        self.x = params.x
-        self.y = params.y
+    def __init__(self, radius, speed, color, x, y):
+        self.radius = radius
+        self.speed = speed
+        self.color = color
+        self.x = x
+        self.y = y
         self.direction = 1
 
     def move(self):
@@ -98,8 +88,7 @@ class App:
             x = float(self.x_entry.get())
             y = float(self.y_entry.get())
             speed = float(self.speed_entry.get())
-            params = BallParams(radius=20, speed=speed, color=self.color, x=x, y=y)
-            self.ball = Ball(params=params)
+            self.ball = Ball(radius=20, speed=speed, color=self.color, x=x, y=y)
             self.draw()
         except ValueError as e:
             print("Ошибка параметров:", e)
