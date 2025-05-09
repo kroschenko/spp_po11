@@ -1,12 +1,11 @@
 import os
 import sys
 import pytest
+from lab1_1 import find_the_max
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 lab1_dir = os.path.abspath(os.path.join(current_dir, "..", "..", "1", "src"))
 sys.path.append(lab1_dir)
-
-from lab1_1 import find_the_max
 
 
 @pytest.mark.parametrize(
