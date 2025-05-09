@@ -1,5 +1,5 @@
-import pytest
 from unittest.mock import patch
+import pytest
 from shopping import ShoppingCart
 
 
@@ -16,19 +16,19 @@ def cart_with_items():
     return cart
 
 
-def test_add_item_to_cart(empty_cart):
-    empty_cart.add_item("orange", 3.0)
-    assert len(empty_cart.items) == 1
-    assert empty_cart.items[0]["name"] == "orange"
-    assert empty_cart.items[0]["price"] == 3.0
+def test_add_item_to_cart(cart):
+    cart.add_item("orange", 3.0)
+    assert len(cart.items) == 1
+    assert cart.items[0]["name"] == "orange"
+    assert cart.items[0]["price"] == 3.0
 
 
-def test_add_multiple_items(empty_cart):
-    empty_cart.add_item("orange", 3.0)
-    empty_cart.add_item("orange", 3.0)
-    assert len(empty_cart.items) == 2
-    assert empty_cart.items[0]["name"] == "orange"
-    assert empty_cart.items[1]["name"] == "orange"
+def test_add_multiple_items(cart):
+    cart.add_item("orange", 3.0)
+    cart.add_item("orange", 3.0)
+    assert len(cart.items) == 2
+    assert cart.items[0]["name"] == "orange"
+    assert cart.items[1]["name"] == "orange"
 
 
 def test_remove_item(cart_with_items):
@@ -57,19 +57,19 @@ def test_apply_invalid_discount(cart_with_items):
 
 
 @patch("requests.post")
-def test_log_purchase(mock_post, empty_cart):
+def test_log_purchase(mock_post, cart):
     item = {"name": "orange", "price": 3.0}
-    empty_cart.log_purchase(item)
+    cart.log_purchase(item)
     mock_post.assert_called_once_with("https://example.com/purchase", json=item)
 
 
-def test_apply_valid_coupon(empty_cart):
-    empty_cart.add_item("item", 100.0)
-    empty_cart.apply_coupon("DISCOUNT20")
-    assert empty_cart.calculate_total() == 80.0
+def test_apply_valid_coupon(cart):
+    cart.add_item("item", 100.0)
+    cart.apply_coupon("DISCOUNT20")
+    assert cart.calculate_total() == 80.0
 
 
-def test_apply_invalid_coupon(empty_cart):
-    empty_cart.add_item("item", 100.0)
+def test_apply_invalid_coupon(cart):
+    cart.add_item("item", 100.0)
     with pytest.raises(ValueError, match="Неверный код купона"):
-        empty_cart.apply_coupon("INVALID")
+        cart.apply_coupon("INVALID")
